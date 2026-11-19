@@ -1,0 +1,544 @@
+(function(){
+"use strict";
+const PI = (document.getElementById("pageInfo") || document.body).dataset;
+
+/* ---------- Data ---------- */
+const RESORTS = [{"id": "whistler", "name": "Whistler Blackcomb", "region": "BC", "lat": 50.115, "lon": -122.9486, "mid": 1500, "ex": {"air": -2, "rh": 88, "snow48": 12, "pastMax": 1, "cloud": 90, "code": 73, "tmrMin": -5, "tmrMax": -1, "tmrSnow": 6}}, {"id": "vail", "name": "Vail", "region": "CO", "lat": 39.6061, "lon": -106.355, "mid": 3000, "ex": {"air": -8, "rh": 55, "snow48": 3, "pastMax": -2, "cloud": 20, "code": 1, "tmrMin": -13, "tmrMax": -4, "tmrSnow": 0}}, {"id": "parkcity", "name": "Park City", "region": "UT", "lat": 40.6514, "lon": -111.508, "mid": 2560, "ex": {"air": -5, "rh": 60, "snow48": 0, "pastMax": 2, "cloud": 10, "code": 0, "tmrMin": -9, "tmrMax": -1, "tmrSnow": 0}}, {"id": "jackson", "name": "Jackson Hole", "region": "WY", "lat": 43.5875, "lon": -110.8279, "mid": 2550, "ex": {"air": -11, "rh": 72, "snow48": 18, "pastMax": -6, "cloud": 95, "code": 75, "tmrMin": -15, "tmrMax": -8, "tmrSnow": 9}}, {"id": "aspen", "name": "Aspen Snowmass", "region": "CO", "lat": 39.2084, "lon": -106.949, "mid": 3100, "ex": {"air": -7, "rh": 50, "snow48": 2, "pastMax": -1, "cloud": 30, "code": 2, "tmrMin": -12, "tmrMax": -3, "tmrSnow": 0}}, {"id": "mammoth", "name": "Mammoth Mountain", "region": "CA", "lat": 37.6308, "lon": -119.0326, "mid": 2900, "ex": {"air": -1, "rh": 45, "snow48": 0, "pastMax": 4, "cloud": 5, "code": 0, "tmrMin": -4, "tmrMax": 3, "tmrSnow": 0}}, {"id": "bigsky", "name": "Big Sky", "region": "MT", "lat": 45.2833, "lon": -111.4014, "mid": 2700, "ex": {"air": -14, "rh": 75, "snow48": 8, "pastMax": -9, "cloud": 70, "code": 71, "tmrMin": -19, "tmrMax": -10, "tmrSnow": 3}}, {"id": "telluride", "name": "Telluride", "region": "CO", "lat": 37.9375, "lon": -107.8123, "mid": 3300, "ex": {"air": -9, "rh": 50, "snow48": 5, "pastMax": -3, "cloud": 40, "code": 2, "tmrMin": -14, "tmrMax": -4, "tmrSnow": 2}}, {"id": "snowbird", "name": "Snowbird", "region": "UT", "lat": 40.583, "lon": -111.6556, "mid": 2850, "ex": {"air": -6, "rh": 82, "snow48": 22, "pastMax": -4, "cloud": 100, "code": 75, "tmrMin": -9, "tmrMax": -5, "tmrSnow": 15}}, {"id": "killington", "name": "Killington", "region": "VT", "lat": 43.6045, "lon": -72.8201, "mid": 800, "ex": {"air": -3, "rh": 82, "snow48": 1, "pastMax": 3, "cloud": 80, "code": 3, "tmrMin": -6, "tmrMax": 0, "tmrSnow": 1}}, {"id": "bogus", "name": "Bogus Basin", "region": "ID", "lat": 43.764, "lon": -116.0975, "mid": 2040, "ex": {"air": -2, "rh": 84, "snow48": 4, "pastMax": 2, "cloud": 75, "code": 3, "tmrMin": -5, "tmrMax": 0, "tmrSnow": 3}}];
+
+const STYLES = {
+  cruiser:{label:"Cruiser", sub:"Groomers, relaxed pace", sym:"circle", base:1, side:1,
+    detune:"Dull the first and last few centimeters of edge, past the tip and tail contact points, so the ski doesn't hook."},
+  allmtn:{label:"All-mountain", sub:"Some of everything", sym:"square", base:1, side:2,
+    detune:"Lightly dull the edge just past the tip and tail contact points. Leave the rest sharp."},
+  carver:{label:"Carver", sub:"Hard snow, high edge angles", sym:"diamond", base:0.7, side:3,
+    detune:"Barely touch the contact points, if at all. You want the whole edge working."},
+  racer:{label:"Racer", sub:"Gates, GS and slalom", sym:"double", base:0.5, side:3,
+    detune:"No detune. Race skis use the full length of the edge."},
+  park:{label:"Park", sub:"Rails, boxes, jumps", sym:"park", base:1, side:1,
+    detune:"Detune tip and tail firmly, and lightly underfoot, so the edges don't catch on rails and boxes."},
+  powder:{label:"Powder", sub:"Off-piste, soft snow", sym:"pow", base:1, side:1,
+    detune:"Light detune at tip and tail. Soft snow doesn't need a razor edge."}
+};
+
+// Coldest → warmest. lo/hi = snow-temperature range in °C as printed on typical wax labels.
+const BANDS = [
+  {id:"polar",  name:"Polar",     color:"var(--wax-polar)",  lo:-30, hi:-15, iron:150, ex:"Swix PS Polar or a polar/arctic wax",  race:"Swix HS5 Turquoise"},
+  {id:"turq",   name:"Turquoise", color:"var(--wax-turq)",   lo:-18, hi:-10, iron:145, ex:"Swix PS5 Turquoise or a very cold wax", race:"Swix HS5 Turquoise"},
+  {id:"blue",   name:"Blue",      color:"var(--wax-blue)",   lo:-12, hi:-6,  iron:140, ex:"Swix PS6 Blue or a cold wax",           race:"Swix HS6 Blue"},
+  {id:"violet", name:"Violet",    color:"var(--wax-violet)", lo:-8,  hi:-2,  iron:135, ex:"Swix PS7 Violet or a cool/mid wax",     race:"Swix HS7 Violet"},
+  {id:"red",    name:"Red",       color:"var(--wax-red)",    lo:-4,  hi:4,   iron:130, ex:"Swix PS8 Red or a mild wax",            race:"Swix HS8 Red"},
+  {id:"yellow", name:"Yellow",    color:"var(--wax-yellow)", lo:0,   hi:10,  iron:120, ex:"Swix PS10 Yellow or a warm wax",        race:"Swix HS10 Yellow"}
+];
+// Non-overlapping picking thresholds on the strip (°C): segment edges.
+const STRIP_MIN = -24, STRIP_MAX = 6;
+const SEG = [[-24,-17],[-17,-11],[-11,-7],[-7,-3],[-3,1],[1,6]];
+
+const SURFACES = {
+  new:{label:"New snow"}, packed:{label:"Packed groomers"}, refrozen:{label:"Refrozen / firm"},
+  manmade:{label:"Man-made"}, wet:{label:"Wet / spring"}
+};
+
+const WMO = c => c===0?"Clear":c<=2?"Partly cloudy":c===3?"Overcast":(c===45||c===48)?"Fog":
+  (c>=51&&c<=67)?"Rain or drizzle":(c>=71&&c<=77)?"Snowing":(c>=80&&c<=82)?"Showers":
+  (c===85||c===86)?"Snow showers":c>=95?"Storms":"—";
+
+/* ---------- State ---------- */
+const store = {
+  get(k, d){ try{ const v = localStorage.getItem("ew:"+k); return v===null? d : JSON.parse(v); }catch(e){ return d; } },
+  set(k, v){ try{ localStorage.setItem("ew:"+k, JSON.stringify(v)); }catch(e){} }
+};
+const state = {
+  resort: PI.resort || "vail",
+  unit: store.get("unit","F"),
+  day: "today",
+  style: store.get("style","allmtn"),
+  raceMode: store.get("raceMode","race") === "training" ? "training" : "race",
+  adj: {air:null, snow48:null, surface:"auto"},
+  live: null,          // {id: conditions}
+  updatedAt: null,
+  diag: null,          // {base, side} when user overrides diagram
+  done: store.get("done", {})
+};
+if(!RESORTS.some(r=>r.id===state.resort)) state.resort="vail";
+if(!STYLES[state.style]) state.style="allmtn";
+if(state.unit!=="F" && state.unit!=="C") state.unit="F";
+
+/* ---------- Formatting ---------- */
+const $ = id => document.getElementById(id);
+const c2f = c => c*9/5+32;
+function num(v, d){ const r = Number(v.toFixed(d)); return (r<0?"−":"") + Math.abs(r).toFixed(d); }
+function fmtT(c, d=0){ const v = state.unit==="F"? c2f(c) : c; return num(Object.is(Math.round(v),-0)?0:v, d)+"°"+state.unit; }
+function fmtTshort(c){ const v = state.unit==="F"? c2f(c) : c; return num(v,0)+"°"; }
+function fmtSnow(cm){ if(state.unit==="F"){ const i=cm/2.54; return (i>0&&i<1? i.toFixed(1): Math.round(i))+" in"; } return Math.round(cm)+" cm"; }
+function fmtElev(m){ return state.unit==="F"? (Math.round(m*3.28084/10)*10).toLocaleString("en-US")+" ft" : m.toLocaleString("en-US")+" m"; }
+function fmtIron(c){ return state.unit==="F"? Math.round(c2f(c)/5)*5+"°F" : c+"°C"; }
+function fmtRange(b){ return state.unit==="F"? `${Math.round(c2f(b.lo))}° to ${Math.round(c2f(b.hi))}°F` : `${num(b.lo,0)}° to ${b.hi>0?"+":""}${num(b.hi,0)}°C`; }
+const resort = () => RESORTS.find(r=>r.id===state.resort);
+
+/* ---------- Conditions logic ---------- */
+function rawConditions(){
+  const r = resort();
+  return (state.live && state.live[r.id]) || r.ex;
+}
+// A week of daily forecasts, index 0 = today. Live data supplies it; example data synthesizes one.
+function dayList(raw){
+  if(raw.days && raw.days.length >= 8) return raw.days;
+  const now = new Date(), out = [];
+  for(let i=0;i<8;i++){
+    const date = new Date(now.getFullYear(), now.getMonth(), now.getDate()+i), dow = date.getDay();
+    let min = raw.tmrMin, max = raw.tmrMax, snow = 0;
+    if(i===0){ min = raw.air-3; max = raw.air+2; snow = raw.snow48/2; }
+    else if(i===1){ snow = raw.tmrSnow; }
+    else if(dow===6){ min = raw.tmrMin-2; max = raw.tmrMax-1; snow = raw.snow48>=8 ? 6 : 1; }
+    else if(dow===0){ min = raw.tmrMin+1; max = raw.tmrMax+2; }
+    out.push({date, min, max, snow});
+  }
+  return out;
+}
+// Conditions for a forecast day: weight toward the skiing hours, count the day before's snow.
+function forecastDay(days, i, raw){
+  const d = days[i], prev = i>0 ? days[i-1] : null;
+  return {
+    air:(d.min + 2*d.max)/3,
+    snow48:(prev ? prev.snow : raw.snow48/2) + d.snow,
+    cloudy:d.snow>0.5,
+    pastMax:Math.max(prev ? prev.max : raw.pastMax, d.max),
+    rh:null,
+    sky:d.snow>0.5 ? "Snow forecast" : "Mostly dry",
+    date:d.date
+  };
+}
+function finalize(b){
+  const air = state.adj.air!==null ? state.adj.air : b.air;
+  const snow48 = state.adj.snow48!==null ? state.adj.snow48 : b.snow48;
+  // Snow surface can't exceed 0°C; clear skies radiate heat away so the surface runs colder than air.
+  const snowTemp = Math.min(0, air - (b.cloudy? 0.5 : 1.5));
+  let surface = state.adj.surface;
+  if(surface==="auto"){
+    if(air > 0.5) surface = "wet";
+    else if(snow48 >= 8) surface = "new";
+    else if(b.pastMax > 1) surface = "refrozen";
+    else surface = "packed";
+  }
+  return Object.assign({}, b, {air, snow48, snowTemp, surface});
+}
+function conditions(){
+  const raw = rawConditions();
+  if(state.day==="today")
+    return finalize({air:raw.air, snow48:raw.snow48, cloudy:raw.cloud>=60, pastMax:raw.pastMax, rh:raw.rh, sky:WMO(raw.code)});
+  const days = dayList(raw);
+  if(state.day==="tomorrow") return finalize(forecastDay(days, 1, raw));
+  // Weekend: the next Saturday and Sunday (today and tomorrow if it's Saturday).
+  let sat = days.findIndex(d=>d.date.getDay()===6);
+  if(sat<0 || sat+1>=days.length) sat = Math.max(0, days.length-2);
+  const idxs = [sat, sat+1];
+  const both = idxs.map(i=>finalize(forecastDay(days, i, raw)));
+  const picks = both.map(pickWax);
+  // One wax job for two days: take the colder wax. It lasts longer and drags less if the forecast is off.
+  let k = picks[0].idx < picks[1].idx ? 0 : picks[1].idx < picks[0].idx ? 1 : (both[0].snowTemp <= both[1].snowTemp ? 0 : 1);
+  const c = both[k];
+  c.weekend = {
+    daysOut: sat, chosen: k, differ: picks[0].idx!==picks[1].idx,
+    days: idxs.map((i,j)=>({date:days[i].date, min:days[i].min, max:days[i].max, snow:days[i].snow, band:picks[j].band}))
+  };
+  return c;
+}
+
+function pickWax(c){
+  const T = c.surface==="wet" ? Math.max(c.air, 0.5) : c.snowTemp;
+  let seg = SEG.findIndex(([lo,hi]) => T>=lo && T<hi);
+  if(seg<0) seg = T<STRIP_MIN? 0 : SEG.length-1;
+  let idx = seg, shifted = null;
+  if((c.surface==="new"||c.surface==="manmade") && idx>0){ idx -= 1; shifted = c.surface; }
+  if(c.surface==="wet") idx = SEG.length-1;
+  return {band:BANDS[idx], idx, T, shifted};
+}
+
+function pickEdges(c){
+  const s = STYLES[state.style];
+  let base = s.base, side = s.side, note = "";
+  const hard = c.surface==="refrozen" || c.surface==="manmade";
+  if(hard && side<2 && state.style!=="park"){ side = 2; note = `<strong>Firm snow today.</strong> A 2° side edge holds better than your usual 1°. Go back to 1° when it softens.`; }
+  else if(hard && state.style==="park"){ note = `<strong>Firm snow today.</strong> Keep the 1° side edge. The detune keeps it from catching on features.`; }
+  else if(hard){ note = `<strong>Firm snow today.</strong> Sharpen right before you ski. The edge does most of the work on ice.`; }
+  else if(c.surface==="new" || c.surface==="wet"){ note = `<strong>Soft snow today.</strong> Edges matter less than usual. A quick deburr is enough if they're already in shape.`; }
+  else { note = `These are standard settings for ${s.label.toLowerCase()} skiing. Most skis come from the shop at 1° base and 1–2° side.`; }
+  if(state.style==="racer") note += state.raceMode==="race"
+    ? " <strong>Race day:</strong> give the side edge a final polish with a fine stone the night before."
+    : " <strong>Training:</strong> a quick polish with a fine stone every couple of days keeps the edge consistent.";
+  return {base, side, incl: 90 - side + base, note, hard};
+}
+
+/* ---------- Rendering: static pieces ---------- */
+function symSVG(kind){
+  const s = 'width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"';
+  switch(kind){
+    case "circle": return `<svg ${s}><circle cx="10" cy="10" r="8" fill="#2F9E44"/></svg>`;
+    case "square": return `<svg ${s}><rect x="2" y="2" width="16" height="16" fill="#1F5FD1"/></svg>`;
+    case "diamond": return `<svg ${s}><rect x="10" y="1.5" width="12" height="12" transform="rotate(45 10 1.5)" fill="currentColor"/></svg>`;
+    case "double": return `<svg width="26" height="20" viewBox="0 0 26 20" aria-hidden="true"><rect x="7" y="3" width="9" height="9" transform="rotate(45 7 3)" fill="currentColor"/><rect x="19" y="3" width="9" height="9" transform="rotate(45 19 3)" fill="currentColor"/></svg>`;
+    case "park": return `<svg ${s}><rect x="1" y="4" width="18" height="12" rx="6" fill="var(--sym-park)"/></svg>`;
+    default: return `<svg ${s}><g stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 2v16M3 6l14 8M17 6L3 14"/></g></svg>`;
+  }
+}
+
+function buildResortChips(){
+  const el = $("resortChips"); if(!el) return;
+  el.innerHTML = RESORTS.map(r => `<a class="chip" href="${r.id}.html"${r.id===state.resort?' aria-current="page"':''}>${r.name}<small>${r.region}</small></a>`).join("");
+  const cur = el.querySelector("[aria-current]"); if(cur) el.scrollLeft = Math.max(0, cur.offsetLeft - 16);
+}
+function buildStyles(){
+  $("styles").innerHTML = Object.entries(STYLES).map(([k,s]) =>
+    `<button type="button" class="style-btn" data-k="${k}" aria-pressed="${k===state.style}"><span class="sym">${symSVG(s.sym)}</span><span><b>${s.label}</b><span class="s">${s.sub}</span></span></button>`).join("");
+  $("styles").addEventListener("click", e => {
+    const b = e.target.closest(".style-btn"); if(!b) return;
+    state.style = b.dataset.k; store.set("style", state.style); state.diag = null; render();
+  });
+}
+function buildStripBands(){
+  $("stripBands").innerHTML = SEG.map(([lo,hi],i) =>
+    `<span data-i="${i}" style="width:${(hi-lo)/(STRIP_MAX-STRIP_MIN)*100}%;background:${BANDS[i].color}"></span>`).join("");
+}
+function buildTicks(){
+  const pos = c => (Math.min(STRIP_MAX,Math.max(STRIP_MIN,c))-STRIP_MIN)/(STRIP_MAX-STRIP_MIN)*100;
+  const ticks = state.unit==="F" ? [-10,0,10,20,30,40].map(f=>({c:(f-32)*5/9, t:f+"°"})) : [-20,-15,-10,-5,0,5].map(c=>({c, t:num(c,0)+"°"}));
+  $("stripTicks").innerHTML = ticks.filter(t=>t.c>STRIP_MIN && t.c<STRIP_MAX).map(t=>`<span style="left:${pos(t.c)}%">${t.t}</span>`).join("");
+  return pos;
+}
+function buildSnowSelect(){
+  const opts = [0,3,8,15,25,40];
+  const cur = $("snowSel").value;
+  $("snowSel").innerHTML = `<option value="">From forecast</option>` + opts.map(cm=>`<option value="${cm}">${cm===0?"None":fmtSnow(cm)}${cm===40?"+":""}</option>`).join("");
+  $("snowSel").value = cur;
+}
+
+/* ---------- Edge diagram ---------- */
+function edgeSVG(b, s){
+  const k=5, B=b*k*Math.PI/180, S=s*k*Math.PI/180;
+  const x0=118, R=356, baseY=166, L=76, topY=26, steelTop=124, baseThick=16;
+  const C={x:x0, y:baseY - L*Math.sin(B)};
+  const E={x:x0 + L*Math.cos(B), y:baseY};
+  const sx = y => x0 + (C.y - y)*Math.tan(S);
+  const P = pts => pts.map(p=>p.map(v=>v.toFixed(1)).join(",")).join(" ");
+  const core = P([[sx(topY),topY],[R,topY],[R,baseY-baseThick],[E.x,baseY-baseThick],[E.x,steelTop],[sx(steelTop),steelTop]]);
+  const steel = P([[sx(steelTop),steelTop],[E.x,steelTop],[E.x,E.y],[C.x,C.y]]);
+  const base = P([[E.x,baseY-baseThick],[R,baseY-baseThick],[R,baseY],[E.x,baseY]]);
+  const cutSide = P([[C.x,C.y],[x0,topY],[sx(topY),topY]]);
+  const cutBase = P([[x0,baseY],[E.x,E.y],[C.x,C.y]]);
+  const incl = 90 - s + b;
+  return `<svg viewBox="0 0 370 222" role="img" aria-label="Edge cross-section: base bevel ${b} degrees, side bevel ${s} degrees, edge angle ${incl} degrees">
+    <rect class="d-snow" x="0" y="${baseY}" width="370" height="56"/>
+    <text class="d-sub" x="${R-4}" y="${baseY+22}" text-anchor="end">snow</text>
+    <polygon class="d-core" points="${core}"/>
+    <polygon class="d-base" points="${base}"/>
+    <polygon class="d-steel" points="${steel}"/>
+    <polygon class="d-cut" points="${cutSide}"/>
+    <polygon class="d-cut" points="${cutBase}"/>
+    <line class="d-ref" x1="${x0}" y1="${topY}" x2="${x0}" y2="${baseY}"/>
+    <line class="d-ref" x1="${x0-26}" y1="${baseY}" x2="${E.x}" y2="${baseY}"/>
+    <text class="d-sub" x="${(R+E.x)/2}" y="${(baseY-baseThick+steelTop)/2 - 18}" text-anchor="middle">ski core</text>
+    <text class="d-sub" x="${(R+E.x)/2+20}" y="${baseY-4}" text-anchor="middle" style="fill:#F2F5F8">base</text>
+    <text class="d-sub" x="${x0+L/2}" y="${steelTop-6}" text-anchor="middle">steel edge</text>
+    <text class="d-txt" x="${x0-10}" y="74" text-anchor="end">side ${s}°</text>
+    <text class="d-sub" x="${x0-10}" y="90" text-anchor="end">bevel</text>
+    <text class="d-txt" x="${x0+L+6}" y="${baseY+40}" text-anchor="start">base ${b}°</text>
+    <text class="d-sub" x="${x0+L+6}" y="${baseY+54}" text-anchor="start">bevel</text>
+    <path d="M${x0+L+2} ${baseY+30} L${x0+L/2} ${baseY+4}" stroke="var(--muted)" stroke-width="1" fill="none"/>
+    <circle cx="${C.x}" cy="${C.y}" r="3.5" fill="var(--ink)"/>
+    <text class="d-txt" x="${x0-10}" y="${baseY+40}" text-anchor="end">${incl}° edge</text>
+    <path d="M${x0-12} ${baseY+30} L${C.x-3} ${C.y+3}" stroke="var(--muted)" stroke-width="1" fill="none"/>
+  </svg>`;
+}
+function buildRadio(rowId, values, fmt, key){
+  $(rowId).innerHTML = values.map(v=>`<button type="button" data-v="${v}" aria-pressed="false">${fmt(v)}</button>`).join("");
+  $(rowId).addEventListener("click", e => {
+    const b = e.target.closest("button"); if(!b) return;
+    const rec = pickEdges(conditions());
+    state.diag = Object.assign({base:rec.base, side:rec.side}, state.diag||{}, {[key]: Number(b.dataset.v)});
+    renderDiagram(rec);
+  });
+}
+function renderDiagram(rec){
+  const d = state.diag || {base:rec.base, side:rec.side};
+  $("diagram").innerHTML = edgeSVG(d.base, d.side);
+  [["baseRow",d.base],["sideRow",d.side]].forEach(([id,v])=>{
+    $(id).querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed", Number(b.dataset.v)===v));
+  });
+  const incl = 90 - d.side + d.base;
+  const feel = d.side>=3 ? "a very sharp edge that grips ice and hard groomers, but catches easily if you're sloppy"
+             : d.side===2 ? "a sharp, forgiving edge that suits most resort snow"
+             : d.side===4 ? "race-room sharpness, mostly for slalom on injected snow"
+             : "an easygoing edge that releases easily, good for soft snow and park";
+  const roll = d.base<=0.5 ? "The low base bevel makes the ski bite the instant you tip it." : d.base>=1 ? "The 1° base bevel lets the ski roll onto its edge gradually." : "The 0.7° base bevel splits the difference: quick, but not twitchy.";
+  $("diagramText").textContent = `${d.base}° base and ${d.side}° side give an included edge angle of ${incl}°: ${feel}. ${roll}`;
+  $("diagReset").hidden = !state.diag;
+}
+
+/* ---------- Steps + kit ---------- */
+function stepsFor(c, wax, edges){
+  const r = resort(), st = STYLES[state.style], band = wax.band;
+  const coldBand = wax.idx <= 2, racer = state.style==="racer", raceDay = racer && state.raceMode==="race";
+  return [
+    {id:"setup", t:"Set up the bench", m:"5 min", tools:"Vise or straps, rubber bands",
+     body:"Clamp the ski base-up in a vise, or strap it flat to a table. Loop a thick rubber band over the brake arms to hold them up out of the way.",
+     tip:"Run a fingernail across the edge in a few spots. If it catches or feels rough, give the edge steps extra time."},
+    {id:"clean", t:"Clean the base", m:"10 min", tools:"Brass or nylon brush, soft wax, iron",
+     body:"Brush tip to tail to open the base structure. If the base is dirty, hot-scrape it: iron on a soft, warm wax and scrape it off while it's still warm. It lifts dirt out of the base.",
+     tip:"Skip citrus base cleaners unless the base is very dirty. They dry the base out."},
+    {id:"repair", t:"Fill gouges (if any)", m:"15 min", tools:"P-tex candle, steel scraper",
+     body:"Light a P-tex candle and drip it into the clean gouge, keeping the flame low so the drips stay clear, not black. Let it cool, then scrape flush with a sharp steel scraper.",
+     tip:"If you can see wood or metal in the gouge, that's a core shot. Take it to a shop."},
+    {id:"base", t:`Base edge: ${edges.base}°`, m:"10 min", tools:`${edges.base}° base guide, diamond stone`,
+     body:`Base bevel is usually set by the shop's grind, so at home you only maintain it. Put a diamond stone in a ${edges.base}° base guide and make one or two light passes tip to tail to remove burrs.`,
+     tip:"Taking too much off the base edge makes the ski feel vague. Less is more here."},
+    {id:"side", t:`Side edge: ${edges.side}° (${90-edges.side}°)`, m:"15 min", tools:`${edges.side}° side guide, 200/400/600 diamond stones`, flag: edges.hard ? "Priority today" : null,
+     body:`Set a ${edges.side}° side guide on the edge. Work coarse to fine: 200 grit diamond, then 400, then 600, in long overlapping strokes tip to tail. Give every edge the same number of passes. Use a file only if the edge is badly damaged or you're changing the angle.` +
+       (edges.hard ? ` Snow at ${r.name} is firm right now, so the side edge is the step that matters most.` : ""),
+     tip:"Wet the diamond stones with water or alcohol. They cut cleaner and last longer."},
+    {id:"deburr", t:"Deburr and detune", m:"5 min", tools:"Gummy stone",
+     body:`Run a gummy stone lightly along the base and side edges to knock off the tiny burr the stones leave. ${st.detune}`,
+     tip:"Find the contact points by laying the skis base to base: where they touch near tip and tail."},
+    raceDay ?
+    {id:"wax", t:`Hot wax: base layer, then ${band.name} race wax`, m:"25 min", tools:`Waxing iron, hard base-layer wax, ${band.race} or equivalent`, flag:"Race prep",
+     body:`Iron in a hard, cold base-layer wax first, let it cool, then scrape and brush it out. It protects the base on abrasive race snow. Then iron in ${band.race} or an equivalent fluoro-free race wax at about ${fmtIron(band.iron)}, in slow, steady passes tip to tail. Keep the iron moving.` +
+       (c.surface==="wet" ? " For wet snow, two thin race-wax layers beat one thick one." : ""),
+     tip:"Many racers build two or three race-wax layers over the week before a race. Each layer adds durability. The wax label's iron temperature beats this number."}
+    :
+    {id:"wax", t:`Hot wax: ${band.name}${racer ? " training wax" : ""}`, m:"10 min", tools:`Waxing iron, ${band.name.toLowerCase()} wax`, flag: c.surface==="wet" ? "Wet snow" : null,
+     body:`Set a dedicated waxing iron to about ${fmtIron(band.iron)}. Hold the wax bar against the iron and drip a line down each side of the base, then spread it in slow, steady passes tip to tail. Keep the iron moving. If the wax smokes, the iron is too hot. The topsheet should feel warm, never hot.` +
+       (c.surface==="wet" ? " For wet snow, two thin coats beat one thick one." : ""),
+     tip: racer ? "Training wax: one layer is enough. Man-made training snow strips wax fast, so re-wax every few training days."
+        : "The temperature on the wax's own label beats this number. Colder, harder waxes need more heat."},
+    {id:"cool", t:"Let it cool", m:"30 min+", tools:"Time",
+     body:"Leave the ski at room temperature for at least 30 minutes, overnight if you can. Wax hardens as it cools, and scraping too early pulls it back out of the base.",
+     tip: state.day==="weekend" ? "Tuning days before the trip? Leave this coat unscraped. It protects the base and edges while the skis travel. Scrape and brush the night before you ski."
+        : state.day==="tomorrow" ? "Waxing the night before is ideal. Scrape and brush in the morning."
+        : "Don't put warm skis outside to speed it up. Cooling too fast leaves less wax in the base."},
+    {id:"scrape", t:"Scrape", m:"10 min", tools:"Plexi scraper",
+     body:"Hold a plastic (plexi) scraper at a slight forward lean and pull it tip to tail until only fine dust comes off. Clear the edges and sidewalls with the scraper's notch.",
+     tip:"Never use a metal scraper on wax. It gouges the base."},
+    {id:"brush", t:"Brush and polish", m:"10 min", tools: coldBand ? "Brass, nylon brushes; polishing pad" : "Nylon, horsehair brushes; polishing pad", flag: c.surface==="wet" ? "Brush extra" : null,
+     body: (coldBand ? "Cold, hard wax: start with a brass brush, then nylon, tip to tail, until the base shines." : "Start with a nylon brush, then horsehair, tip to tail, until the base shines.") +
+       (c.surface==="wet" ? " Extra brushing reopens the base structure, which breaks the suction of wet snow." : "") +
+       " Finish with a light buff from a Fibertex pad or polishing cloth." +
+       (raceDay ? " Race morning: apply a fluoro-free top coat in the same temperature range, following its instructions, then cork or brush it in." : ""),
+     tip:"Brush in one direction only, tip to tail."}
+  ];
+}
+function renderSteps(c, wax, edges){
+  const steps = stepsFor(c, wax, edges);
+  const openIds = new Set([...$("steps").querySelectorAll("details[open]")].map(d=>d.dataset.id));
+  $("steps").innerHTML = steps.map((s,i)=>{
+    const done = !!state.done[s.id];
+    return `<li class="step${done?" done":""}">
+      <input type="checkbox" id="chk-${s.id}" data-id="${s.id}" ${done?"checked":""} aria-label="Mark step ${i+1} done">
+      <details data-id="${s.id}" ${openIds.has(s.id)?"open":""}>
+        <summary><span class="step-n">${String(i+1).padStart(2,"0")}</span><span class="step-t">${s.t}</span>${s.flag?`<span class="flag">${s.flag}</span>`:""}<span class="step-time">${s.m}</span></summary>
+        <div class="step-body"><p>${s.body}</p><p class="step-tools"><b>Tools:</b> ${s.tools}</p><p class="tip">${s.tip}</p></div>
+      </details></li>`;
+  }).join("");
+  const n = steps.filter(s=>state.done[s.id]).length;
+  $("progBar").style.width = (n/steps.length*100)+"%";
+  $("progText").textContent = `${n} of ${steps.length}`;
+}
+function renderKit(wax, edges){
+  const band = wax.band, training = state.style==="racer" && state.raceMode==="training";
+  const racer = state.style==="racer" && !training;
+  const items = [
+    {n:"Ski vise or straps", w:"Holds the ski steady and base-up while you work.", q:"ski tuning vise"},
+    {n:"Waxing iron", w:"A dedicated iron holds a steady temperature. Clothes irons run hot and uneven.", q:"ski waxing iron"},
+    racer ? {n:`${band.name} race wax`, w:`Fluoro-free race wax for snow ${fmtRange(band)}, such as ${band.race}.`, q:`${band.race} race wax`}
+          : {n:`${band.name} ${training ? "training " : ""}wax`, w:`For snow ${fmtRange(band)}. ${band.ex}.`, q:`${band.name.toLowerCase()} ski wax`},
+    racer ? {n:"Base-layer wax", w:"A hard, cold wax ironed in under the race wax so it lasts on abrasive race snow.", q:"cold base prep ski wax"}
+          : {n:"Universal wax", w:"An all-temperature wax for cleaning and for weeks you don't want to think about it.", q:"universal ski wax"},
+    {n:"Plexi scraper", w:"Removes excess wax without hurting the base. Keep its edge sharp.", q:"ski wax scraper"},
+    {n:"Brushes", w:"Brass, nylon and horsehair cover every wax and snow type.", q:"ski wax brush"},
+    {n:`${edges.base}° base edge guide`, w:"Holds the stone at your base bevel so you only remove burrs.", q:`${edges.base} degree base bevel guide`},
+    {n:`${edges.side}° side edge guide`, w:`Sets the ${90-edges.side}° side edge from today's recommendation.`, q:`${edges.side} degree side edge guide`},
+    {n:"Diamond stones", w:"200, 400 and 600 grit for sharpening and polishing the edge.", q:"diamond stone ski edge"},
+    {n:"Gummy stone", w:"Takes off burrs and detunes tips and tails.", q:"gummy stone ski"},
+    racer ? {n:"Race top coat", w:"A fluoro-free top coat (block, powder or liquid) for race morning, in the same temperature range.", q:"fluoro free ski race top coat"}
+          : {n:"P-tex candles", w:"Fills small base gouges at home.", q:"p-tex candle"},
+    {n:"Polishing pad", w:"A Fibertex pad or cloth for the final buff.", q:"fibertex ski"}
+  ];
+  $("kitGrid").innerHTML = items.map(it =>
+    `<div class="kit-item"><b>${it.n}</b><p>${it.w}</p><a href="https://www.rei.com/search?q=${encodeURIComponent(it.q)}" target="_blank" rel="noopener sponsored">Shop</a></div>`).join("");
+}
+
+/* ---------- Main render ---------- */
+function render(){
+  const r = resort(), c = conditions(), wax = pickWax(c), edges = pickEdges(c), band = wax.band;
+  document.querySelectorAll("#styles .style-btn").forEach(b=>b.setAttribute("aria-pressed", b.dataset.k===state.style));
+  $("unitF").setAttribute("aria-pressed", state.unit==="F"); $("unitC").setAttribute("aria-pressed", state.unit==="C");
+  $("dayToday").setAttribute("aria-pressed", state.day==="today"); $("dayTomorrow").setAttribute("aria-pressed", state.day==="tomorrow");
+  $("dayWeekend").setAttribute("aria-pressed", state.day==="weekend");
+
+  $("heroEyebrow").textContent = `${{today:"Today",tomorrow:"Tomorrow",weekend:"This weekend"}[state.day]} · ${r.region} · mid-mountain, ${fmtElev(r.mid)}`;
+
+  const adjusted = state.adj.air!==null || state.adj.snow48!==null || state.adj.surface!=="auto";
+  const isLive = !!(state.live && state.live[r.id]);
+  const badge = $("sourceBadge");
+  badge.className = "badge " + (adjusted ? "" : isLive ? "live" : "example");
+  $("sourceText").textContent = adjusted ? "Adjusted by you" :
+    isLive ? `Live forecast · ${state.updatedAt.toLocaleTimeString([], {hour:"numeric", minute:"2-digit"})}` :
+    state.live===null ? "Loading conditions…" : "Example conditions";
+
+  const wk = c.weekend;
+  const dayName = d => d.toLocaleDateString("en-US", {weekday:"long"});
+  $("condLabel").textContent = state.day==="today" ? "Estimated snow temperature"
+    : state.day==="tomorrow" ? "Tomorrow's estimated snow temperature"
+    : `${dayName(wk.days[wk.chosen].date)}'s estimated snow temperature${wk.differ ? " (the colder day)" : ""}`;
+  $("snowTemp").textContent = c.surface==="wet" && c.air>0 ? "0°"+state.unit+" wet" : fmtT(c.snowTemp);
+  $("surfacePill").textContent = SURFACES[c.surface].label;
+  $("statAir").textContent = fmtT(c.air);
+  $("statRh").textContent = c.rh===null ? "—" : Math.round(c.rh)+"%";
+  $("statSnowLabel").textContent = state.day==="today" ? "New snow, 48 h" : `New snow by ${c.date.toLocaleDateString("en-US",{weekday:"short"})}`;
+  $("statSnow").textContent = fmtSnow(c.snow48);
+  $("statSky").textContent = c.sky;
+
+  // weekend breakdown
+  $("wkBox").hidden = !wk; $("wkNote").hidden = !(wk && wk.daysOut>=3);
+  if(wk){
+    const fmtDay = d => d.toLocaleDateString("en-US", {weekday:"short", month:"short", day:"numeric"});
+    $("wkBox").innerHTML = `<span class="label">Weekend forecast · low / high · new snow</span>` +
+      wk.days.map((d,j)=>`<div class="wk-row${j===wk.chosen?" pick":""}"><b>${fmtDay(d.date)}</b><span class="wk-chip"><i style="background:${d.band.color}"></i>${d.band.name}</span><span class="mono">${fmtTshort(d.min)} / ${fmtT(d.max)} · ${fmtSnow(d.snow)}</span></div>`).join("") +
+      (wk.differ ? `<p class="note">The two days call for different waxes. For one wax job, use the colder one. It lasts longer and drags less if the forecast is off.</p>` : "");
+    if(wk.daysOut>=3) $("wkNote").innerHTML = `<strong>${dayName(wk.days[0].date)} is ${wk.daysOut} days out.</strong> Forecasts that far ahead often miss by several degrees. Wax now, check this page again the night before you leave, and switch waxes if the color changed.`;
+  }
+  $("statElev").textContent = fmtElev(r.mid);
+  $("statPastMax").textContent = fmtT(c.pastMax);
+
+  // adjust controls mirror current values
+  $("airRange").value = c.air; $("airRangeVal").textContent = fmtT(c.air,0);
+  buildSnowSelect(); $("snowSel").value = state.adj.snow48===null ? "" : String(state.adj.snow48);
+  $("surfSel").value = state.adj.surface;
+
+  // wax
+  $("waxBar").style.background = band.color;
+  $("waxName").textContent = band.name;
+  $("waxRange").textContent = fmtRange(band);
+  $("waxIron").textContent = fmtIron(band.iron);
+  document.querySelectorAll("#stripBands span").forEach(s=>s.classList.toggle("on", Number(s.dataset.i)===wax.idx));
+  const pos = buildTicks();
+  $("stripMarker").style.left = pos(wax.T)+"%";
+  $("stripMarker").firstChild ? $("stripMarker").firstChild.nodeValue = fmtTshort(wax.T) : $("stripMarker").textContent = fmtTshort(wax.T);
+  const why = [];
+  why.push(c.surface==="wet" ? `Air is above freezing (${fmtT(c.air)}), so the snow is wet.` : `Snow is about ${fmtT(c.snowTemp)} at mid-mountain${c.cloudy?"":", a little colder than the air under clear skies"}.`);
+  if(wax.shifted==="new") why.push("Fresh snow has sharp crystals, so go one step colder (harder) than the temperature alone suggests.");
+  if(wax.shifted==="manmade") why.push("Man-made snow is abrasive, so go one step colder (harder) than the temperature alone suggests.");
+  if(c.surface==="wet") why.push("Wet snow causes suction. Warm wax plus extra brushing breaks it up. For dirty spring snow, a graphite wax helps.");
+  if(c.surface==="refrozen") why.push("The surface has thawed and refrozen. Wax choice matters less today than sharp edges.");
+  if(c.rh>=85 && c.surface!=="wet" && wax.T>-6) why.push(`Humidity is high (${Math.round(c.rh)}%). If you're between two waxes, pick the warmer one.`);
+  if(state.style==="cruiser" || state.style==="powder") why.push("Waxing only once in a while? A universal all-temperature wax does fine. Use this one for the best glide.");
+  const racer = state.style==="racer", raceDay = racer && state.raceMode==="race";
+  if(raceDay) why.push("Race day: build the wax in three layers, below. Fluorinated waxes are banned in FIS racing, so everything here is fluoro-free.");
+  else if(racer) why.push("Training day: one durable layer of performance wax. Save the race wax and top coat for race day.");
+  $("waxWhy").innerHTML = why.map(w=>`<li>${w}</li>`).join("");
+  $("raceSeg").hidden = !racer;
+  $("modeTraining").setAttribute("aria-pressed", state.raceMode==="training");
+  $("modeRace").setAttribute("aria-pressed", state.raceMode==="race");
+  $("raceList").hidden = !racer;
+  if(racer){
+    const layers = raceDay ? [
+      ["Base layer", "A hard, cold wax ironed in, cooled and scraped. It makes the race wax last on abrasive, injected or man-made race snow. Skip it on soft, warm days."],
+      [`Race wax: ${band.race}`, `Or an equivalent fluoro-free race wax for ${fmtRange(band)}. Iron at about ${fmtIron(band.iron)}, cool fully, scrape and brush.`],
+      ["Top coat, race morning", "A fluoro-free race top coat (block, powder or liquid) in the same temperature range, corked or brushed in per its instructions."]
+    ] : [
+      [`Training wax: ${band.ex.split(" or ")[0]}`, `Or any fluoro-free performance wax for ${fmtRange(band)}. Iron at about ${fmtIron(band.iron)}, cool, scrape and brush. One layer is enough.`],
+      ["Built to last", "Training laps on injected or man-made snow strip wax fast. Re-wax every few training days. When you're between two waxes, pick the colder, harder one."]
+    ];
+    $("raceList").innerHTML = layers.map(([t,d],i)=>`<li><span class="ln">${i+1}</span><span><b>${t}</b><span class="d">${d}</span></span></li>`).join("");
+  }
+  $("waxEx").textContent = raceDay
+    ? "Toko, Holmenkol, Vauhti and others make fluoro-free race lines too. Match the temperature on the label."
+    : racer ? "Any brand's fluoro-free performance wax works for training. Match the temperature on the label."
+    : `Examples: ${band.ex}. Toko, Holmenkol and others make equivalents; match the temperature on the label.`;
+
+  // edges
+  $("eBase").textContent = edges.base+"°";
+  $("eSide").textContent = edges.side+"°";
+  $("eIncl").textContent = edges.incl+"°";
+  $("edgeNote").innerHTML = edges.note;
+
+  renderDiagram(edges);
+  renderSteps(c, wax, edges);
+  renderKit(wax, edges);
+}
+
+/* ---------- Live data ---------- */
+async function loadLive(){
+  const q = k => RESORTS.map(r=>r[k]).join(",");
+  const url = "https://api.open-meteo.com/v1/forecast?latitude="+q("lat")+"&longitude="+q("lon")+"&elevation="+q("mid")+
+    "&current=temperature_2m,relative_humidity_2m,weather_code,cloud_cover&daily=temperature_2m_max,temperature_2m_min,snowfall_sum"+
+    "&past_days=2&forecast_days=8&timezone=auto";
+  const ctl = new AbortController(); const timer = setTimeout(()=>ctl.abort(), 8000);
+  try{
+    const res = await fetch(url, {signal:ctl.signal});
+    if(!res.ok) throw new Error("HTTP "+res.status);
+    let data = await res.json();
+    if(!Array.isArray(data)) data = [data];
+    const live = {};
+    data.forEach((d,i)=>{
+      const r = RESORTS[i]; if(!r || !d.current || !d.daily) return;
+      const s = d.daily.snowfall_sum.map(v=>v||0), mx = d.daily.temperature_2m_max, mn = d.daily.temperature_2m_min;
+      live[r.id] = {
+        air:d.current.temperature_2m, rh:d.current.relative_humidity_2m, cloud:d.current.cloud_cover, code:d.current.weather_code,
+        snow48:s[1]+s[2], pastMax:Math.max(mx[0],mx[1]), tmrMin:mn[3], tmrMax:mx[3], tmrSnow:s[3],
+        days: d.daily.time.slice(2).map((t,j)=>{ const [y,m,dd] = t.split("-").map(Number);
+          return {date:new Date(y,m-1,dd), min:mn[j+2], max:mx[j+2], snow:s[j+2]}; })
+      };
+    });
+    if(!Object.keys(live).length) throw new Error("empty");
+    state.live = live; state.updatedAt = new Date();
+    setText("dataNote", "Weather from the Open-Meteo forecast, downscaled to each resort's mid-mountain elevation.");
+  }catch(e){
+    state.live = {};
+    setText("dataNote", "Live weather couldn't load here, so the page is showing example conditions. On the hosted site, conditions come from the Open-Meteo forecast at each resort's mid-mountain elevation.");
+  }finally{ clearTimeout(timer); (PAGE==="resort" ? render : renderHome)(); }
+}
+
+/* ---------- Home + guides ---------- */
+function setText(id, t){ const el = $(id); if(el) el.textContent = t; }
+function renderHome(){
+  const live = !!(state.live && Object.keys(state.live).length);
+  const keep = state.resort;
+  document.querySelectorAll("[data-home-wax]").forEach(el=>{
+    state.resort = el.dataset.homeWax;
+    const c = conditions(), wax = pickWax(c);
+    el.innerHTML = `<i style="background:${wax.band.color}"></i><span>${wax.band.name} wax · snow ${fmtT(c.snowTemp)}${live ? "" : " (example)"}</span>`;
+  });
+  state.resort = keep;
+  setText("homeDataNote", live ? "Wax picks use today's live forecast at each resort's mid-mountain elevation."
+    : "These wax picks use example conditions. Live forecasts load on the hosted site.");
+}
+
+/* ---------- Wire up ---------- */
+const PAGE = PI.page;
+document.querySelectorAll("[data-edge-diagram]").forEach(el=>{ el.innerHTML = edgeSVG(Number(el.dataset.base), Number(el.dataset.side)); });
+if(PAGE==="resort"){
+  buildResortChips(); buildStyles(); buildStripBands();
+  buildRadio("baseRow", [0.5,0.7,1], v=>v+"°", "base");
+  buildRadio("sideRow", [1,2,3,4], v=>`${v}° (${90-v}°)`, "side");
+  $("unitF").onclick = ()=>{ state.unit="F"; store.set("unit","F"); render(); };
+  $("unitC").onclick = ()=>{ state.unit="C"; store.set("unit","C"); render(); };
+  $("dayToday").onclick = ()=>{ state.day="today"; state.adj={air:null,snow48:null,surface:"auto"}; render(); };
+  $("dayTomorrow").onclick = ()=>{ state.day="tomorrow"; state.adj={air:null,snow48:null,surface:"auto"}; render(); };
+  $("modeTraining").onclick = ()=>{ state.raceMode="training"; store.set("raceMode","training"); render(); };
+  $("modeRace").onclick = ()=>{ state.raceMode="race"; store.set("raceMode","race"); render(); };
+  $("dayWeekend").onclick =()=>{ state.day="weekend"; state.adj={air:null,snow48:null,surface:"auto"}; render(); };
+  $("airRange").addEventListener("input", e=>{ state.adj.air = Number(e.target.value); state.diag=null; render(); });
+  $("snowSel").addEventListener("change", e=>{ state.adj.snow48 = e.target.value==="" ? null : Number(e.target.value); render(); });
+  $("surfSel").addEventListener("change", e=>{ state.adj.surface = e.target.value; state.diag=null; render(); });
+  $("resetAdj").onclick = ()=>{ state.adj={air:null,snow48:null,surface:"auto"}; render(); };
+  $("diagReset").onclick = ()=>{ state.diag=null; render(); };
+  $("steps").addEventListener("change", e=>{
+    if(e.target.matches("input[type=checkbox]")){ state.done[e.target.dataset.id] = e.target.checked; store.set("done", state.done); render(); }
+  });
+  $("stepsReset").onclick = ()=>{ state.done={}; store.set("done",{}); render(); };
+  render();
+  loadLive();
+} else if(document.querySelector("[data-home-wax]")){
+  renderHome();
+  loadLive();
+}
+})();

@@ -1,0 +1,115 @@
+
+/* ===== Multi-page site additions ===== */
+:root{
+  --hero-ink:#FFFFFF; --hero-muted:rgba(255,255,255,.86); --hero-dark:#0F1B26;
+  --hero-sky1:#3F6FB0; --hero-sky2:#D6E3EF; --hero-m1:#AFC2D6; --hero-m2:#7F93A9; --hero-m3:#4C5D70;
+}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{-webkit-text-size-adjust:100%}
+body{margin:0}
+img{max-width:100%}
+[hidden]{display:none!important}
+
+.brand{color:var(--ink);text-decoration:none}
+.nav{display:flex;gap:18px;align-items:center}
+.nav a{color:var(--ink);text-decoration:none;font-weight:600;font-size:15px}
+.nav a:hover,.nav a[aria-current="page"]{color:var(--accent)}
+.top-row{padding-block:10px}
+.top .chips{padding-block:0 12px}
+a.chip{text-decoration:none;color:var(--ink)}
+.chip[aria-current="page"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.chip[aria-current="page"] small{color:inherit;opacity:.7}
+.crumbs{display:flex;flex-wrap:wrap;gap:6px;font-size:13px;color:var(--muted);padding-top:20px}
+.crumbs a{color:var(--muted)}
+.crumbs span[aria-hidden]{opacity:.6}
+
+/* Home hero: live flyover */
+.hero-fly{position:relative;height:clamp(480px,74vh,700px);overflow:hidden;background:linear-gradient(180deg,var(--hero-sky1),var(--hero-sky2))}
+.hero-fly .sil,.hero-fly canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.hero-fly canvas{opacity:0;transition:opacity 1.4s ease}
+.hero-fly.ready canvas{opacity:1}
+.hero-fly::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(to top,rgba(6,13,21,.86) 0%,rgba(6,13,21,.5) 38%,rgba(6,13,21,0) 70%)}
+.hero-copy{position:absolute;left:0;right:0;bottom:0;z-index:2;padding-block:0 34px}
+.hero-copy .wrap{display:flex;flex-direction:column;gap:14px;color:var(--hero-ink)}
+.hero-copy .label{color:var(--hero-muted)}
+.hero-copy h1{font-size:clamp(46px,8.4vw,96px);font-weight:800;text-transform:uppercase;line-height:.9;max-width:13ch;letter-spacing:.005em}
+.hero-copy p{max-width:54ch;color:var(--hero-muted);font-size:18px;line-height:1.45}
+.hero-cta{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.hero-cta select{background:var(--hero-ink);color:var(--hero-dark);border:0;padding:11px 12px;font-weight:600;min-width:0;max-width:100%}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:11px 18px;border-radius:8px;font-weight:700;text-decoration:none;background:var(--accent);color:var(--accent-ink);border:1px solid var(--accent)}
+.hero-cta .btn{background:var(--hero-ink);color:var(--hero-dark);border-color:var(--hero-ink)}
+.hero-cta .btn.ghost{background:transparent;color:var(--hero-ink);border-color:rgba(255,255,255,.65)}
+.fly-ctrl{position:absolute;z-index:3;top:14px;right:max(16px,env(safe-area-inset-right,0px));background:rgba(6,13,21,.55);color:var(--hero-ink);border:1px solid rgba(255,255,255,.35);border-radius:999px;padding:6px 12px;font-size:13px;font-weight:600;cursor:pointer}
+
+/* Home sections */
+.home-sec{padding-block:44px 8px;display:flex;flex-direction:column;gap:18px}
+.resort-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.resort-card{display:flex;flex-direction:column;gap:6px;padding:16px;border:1px solid var(--line);border-radius:12px;background:var(--surface);text-decoration:none;color:var(--ink);min-width:0}
+.resort-card:hover{border-color:var(--ink)}
+.resort-card h3{font-size:25px}
+.resort-card .meta{font-size:13px;color:var(--muted);font-weight:600;letter-spacing:.04em;text-transform:uppercase}
+.resort-card p{font-size:14.5px;color:var(--muted);flex:1}
+.wax-chip{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600;padding-top:10px;border-top:1px solid var(--line)}
+.wax-chip i{flex:none;width:18px;height:12px;border-radius:2px;background:var(--line)}
+.resort-card.alt{background:var(--soft);border-style:dashed}
+.guide-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.guide-card{display:flex;flex-direction:column;gap:6px;padding:16px;border:1px solid var(--line);border-radius:12px;background:var(--surface);text-decoration:none;color:var(--ink);min-width:0}
+.guide-card:hover{border-color:var(--ink)}
+.guide-card b{font-size:18px;line-height:1.25}
+.guide-card span{font-size:14.5px;color:var(--muted)}
+.guide-card small{font-size:12px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.08em}
+.how{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;list-style:none;margin:0;padding:0}
+.how li{display:flex;flex-direction:column;gap:6px;padding:16px;border-top:3px solid var(--ink)}
+.how b{font-family:var(--display);font-size:22px;text-transform:uppercase}
+.how span{color:var(--muted);font-size:15px}
+
+/* Resort page: about */
+.about{display:grid;gap:16px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:860px){.about{grid-template-columns:minmax(0,7fr) minmax(0,5fr)}}
+.about .prose{display:grid;gap:12px;max-width:68ch}
+.about .prose p{font-size:17px;line-height:1.6}
+.tips{margin:0;padding-left:20px;display:grid;gap:8px}
+.related{display:flex;flex-wrap:wrap;gap:8px}
+.related a{font-size:14px;font-weight:600;text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:5px 12px;color:var(--ink);background:var(--surface)}
+.related a:hover{border-color:var(--ink)}
+
+/* Guides */
+.article{max-width:740px;margin:0 auto;padding-block:8px 24px;display:flex;flex-direction:column;gap:16px}
+.article h1{font-size:clamp(38px,6.2vw,62px);font-weight:800;text-transform:uppercase}
+.dek{font-size:20px;line-height:1.45;color:var(--muted)}
+.byline{font-size:13px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.08em}
+.article h2{font-size:30px;margin-top:14px}
+.article p,.article li{font-size:17.5px;line-height:1.65}
+.article ul,.article ol{margin:0;padding-left:24px;display:grid;gap:8px}
+.article li b{font-weight:700}
+.table-wrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:15px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);white-space:nowrap}
+tr:last-child td{border-bottom:0}
+th{font-size:12px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600}
+td.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+.swatch{display:inline-block;width:18px;height:12px;border-radius:2px;vertical-align:-1px;margin-right:8px}
+.figs{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px}
+figure{margin:0;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px;display:flex;flex-direction:column;gap:6px;min-width:0}
+figure svg{width:100%;height:auto;display:block}
+figcaption{font-size:13.5px;color:var(--muted);text-align:center}
+.cta-box{background:var(--soft);border-radius:12px;padding:18px;display:grid;gap:10px;margin-top:10px}
+.cta-box b{font-family:var(--display);font-size:24px;text-transform:uppercase}
+.shop{font-weight:700;font-size:14px;text-decoration:none;border:1px solid var(--accent);border-radius:6px;padding:2px 10px;margin-left:6px;white-space:nowrap}
+.disclose{font-size:13.5px;color:var(--muted)}
+
+/* Site footer */
+.site-foot{margin-top:56px;border-top:1px solid var(--line);padding-block:28px 40px;display:block;font-size:14px;color:var(--muted)}
+.foot-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:22px}
+.foot-grid h3{font-size:16px;color:var(--ink);margin-bottom:8px}
+.foot-grid ul{list-style:none;margin:0;padding:0;display:grid;gap:4px}
+.foot-grid a{color:var(--muted);text-decoration:none}
+.foot-grid a:hover{color:var(--accent)}
+.site-foot p{max-width:80ch}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.lede{max-width:62ch;color:var(--muted);font-size:17px;line-height:1.5}
+.notes{display:grid;gap:8px;font-size:13px;color:var(--muted);padding-top:28px}
+.notes p{max-width:80ch}
+.home-sec,section.block{scroll-margin-top:80px}
+td:last-child{white-space:normal;min-width:200px}

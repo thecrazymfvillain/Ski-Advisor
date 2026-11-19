@@ -1,0 +1,129 @@
+  <div class="today">
+    <!-- Conditions -->
+    <div class="card" id="conditionsCard">
+      <div class="label" id="condLabel">Estimated snow temperature</div>
+      <div class="readout">
+        <div class="big" id="snowTemp">−6°F</div>
+      </div>
+      <span class="surface-pill" id="surfacePill">Packed groomers</span>
+      <p class="callout" id="wkNote" hidden></p>
+      <div class="wk" id="wkBox" hidden></div>
+      <dl class="stats">
+        <div><dt>Air temp</dt><dd id="statAir">—</dd></div>
+        <div><dt>Humidity</dt><dd id="statRh">—</dd></div>
+        <div><dt id="statSnowLabel">New snow, 48 h</dt><dd id="statSnow">—</dd></div>
+        <div><dt>Sky</dt><dd id="statSky">—</dd></div>
+        <div><dt>Forecast elevation</dt><dd id="statElev">—</dd></div>
+        <div><dt>Recent high</dt><dd id="statPastMax">—</dd></div>
+      </dl>
+      <details class="adjust" id="adjust">
+        <summary>Adjust conditions</summary>
+        <div class="adjust-body">
+          <div class="field">
+            <label for="airRange">Air temperature</label>
+            <div class="field-row"><input type="range" id="airRange" min="-30" max="10" step="0.5"><span class="mono" id="airRangeVal">—</span></div>
+          </div>
+          <div class="field">
+            <label for="snowSel">New snow in the last 48 hours</label>
+            <select id="snowSel"></select>
+          </div>
+          <div class="field">
+            <label for="surfSel">Snow surface</label>
+            <select id="surfSel">
+              <option value="auto">Auto (from forecast)</option>
+              <option value="new">New snow</option>
+              <option value="packed">Packed groomers</option>
+              <option value="refrozen">Refrozen / firm</option>
+              <option value="manmade">Man-made</option>
+              <option value="wet">Wet / spring</option>
+            </select>
+          </div>
+          <p class="note">Have a snow thermometer? Set the air temperature to your reading for the most accurate wax pick.</p>
+          <button type="button" class="btn-link" id="resetAdj">Reset to forecast</button>
+        </div>
+      </details>
+    </div>
+
+    <!-- Recommendation -->
+    <div class="stack">
+      <div class="card">
+        <div class="label">How do you ski?</div>
+        <div class="styles" id="styles"></div>
+      </div>
+      <div class="card" id="waxCard">
+        <div class="wax-top">
+          <div class="label">Wax</div>
+          <div class="seg" role="group" aria-label="Training or race day" id="raceSeg" hidden>
+            <button type="button" id="modeTraining" aria-pressed="false">Training day</button>
+            <button type="button" id="modeRace" aria-pressed="true">Race day</button>
+          </div>
+        </div>
+        <div class="wax-head">
+          <div class="wax-bar" id="waxBar"></div>
+          <div>
+            <div class="wax-name" id="waxName">Violet</div>
+            <div class="wax-meta"><span>Snow range <b id="waxRange">—</b></span><span>Iron <b id="waxIron">—</b></span></div>
+          </div>
+        </div>
+        <div class="strip" id="strip" aria-hidden="true">
+          <div class="strip-marker" id="stripMarker">−6°</div>
+          <div class="strip-bands" id="stripBands"></div>
+          <div class="strip-ticks" id="stripTicks"></div>
+        </div>
+        <ul class="why" id="waxWhy"></ul>
+        <ol class="race" id="raceList" hidden></ol>
+        <p class="examples" id="waxEx"></p>
+      </div>
+      <div class="card" id="edgeCard">
+        <div class="label">Edges</div>
+        <div class="edge-nums">
+          <div><span class="label">Base bevel</span><b id="eBase">1°</b></div>
+          <div><span class="label">Side bevel</span><b id="eSide">2°</b></div>
+          <div><span class="label">Edge angle</span><b id="eIncl">89°</b></div>
+        </div>
+        <p class="note" id="edgeNote"></p>
+      </div>
+    </div>
+  </div>
+
+  <section class="block" id="edges" aria-labelledby="edgesH">
+    <div class="section-head">
+      <h2 id="edgesH">What the angles do</h2>
+      <p class="muted">A cross-section of the ski's edge. Base bevel lifts the edge off the snow so the ski rolls onto it more smoothly. Side bevel makes the edge sharper so it bites harder snow. Try the numbers.</p>
+    </div>
+    <div class="diagram-wrap">
+      <div class="card diagram" id="diagram"></div>
+      <div class="card">
+        <div class="field">
+          <span class="label">Base bevel</span>
+          <div class="radio-row" id="baseRow"></div>
+        </div>
+        <div class="field">
+          <span class="label">Side bevel</span>
+          <div class="radio-row" id="sideRow"></div>
+        </div>
+        <p id="diagramText"></p>
+        <div class="legend"><i></i><span>Steel removed by the bevels. Angles drawn 5× actual size.</span></div>
+        <button type="button" class="btn-link" id="diagReset">Back to my recommendation</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="walkthrough" aria-labelledby="stepsH">
+    <div class="section-head">
+      <h2 id="stepsH">The bench walkthrough</h2>
+      <p class="muted" id="stepsIntro">Ten steps, about 90 minutes with cooling time. The settings in each step follow your resort and style above.</p>
+    </div>
+    <div class="progress"><div class="progress-bar"><span id="progBar" style="width:0%"></span></div><span class="mono" id="progText">0 of 10</span></div>
+    <ol class="steps" id="steps"></ol>
+    <button type="button" class="btn-link" id="stepsReset">Clear checkmarks</button>
+  </section>
+
+  <section class="block" id="kit" aria-labelledby="kitH">
+    <div class="section-head">
+      <h2 id="kitH">Your kit for this tune</h2>
+      <p class="muted">Everything the walkthrough uses, sized to today's settings. Shop links are placeholders for affiliate links.</p>
+    </div>
+    <div class="kit" id="kitGrid"></div>
+  </section>
+
