@@ -118,6 +118,12 @@ RESORTS = [
         "Damp snow near 32°F causes suction. Brush the structure back into the base after waxing."]),
 ]
 R_BY = {r["id"]: r for r in RESORTS}
+TZ = {"whistler": "America/Vancouver", "vail": "America/Denver", "parkcity": "America/Denver", "jackson": "America/Denver",
+      "aspen": "America/Denver", "mammoth": "America/Los_Angeles", "bigsky": "America/Denver", "telluride": "America/Denver",
+      "snowbird": "America/Denver", "killington": "America/New_York", "bogus": "America/Boise"}
+MET_CREDIT = ('Weather data from <a href="https://api.met.no/">MET Norway</a> '
+              '(<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>), adapted by us: forecasts at '
+              'mid-mountain altitude, snow estimated from precipitation and temperature. MET Norway is not responsible for our recommendations.')
 
 def ft(m): return f"{round(m*3.28084/10)*10:,} ft"
 
@@ -459,8 +465,9 @@ def footer(depth):
     <div class="foot-grid">
       <div><h3>Resorts</h3><ul>{res}</ul></div>
       <div><h3>Guides</h3><ul>{gds}</ul></div>
-      <div><h3>The Ski Advisor</h3><p>Wax and edge recommendations from the forecast at each resort's mid-mountain elevation. Weather data from Open-Meteo.</p></div>
+      <div><h3>The Ski Advisor</h3><p>Wax and edge recommendations from the forecast at each resort's mid-mountain elevation.</p></div>
     </div>
+    <p>{MET_CREDIT}</p>
     <p>Some shop links may earn us a commission. It doesn't change what we recommend. Recommendations are starting points: the temperature on your wax label wins, and a snow thermometer beats any forecast.</p>
   </div>
 </footer>"""
@@ -609,7 +616,7 @@ def resort_page(x):
     <div class="related">{rel}</div>
   </section>
   <div class="notes">
-    <p id="dataNote">Weather from the Open-Meteo forecast, downscaled to {x['name']}'s mid-mountain elevation.</p>
+    <p id="dataNote">Weather from MET Norway's forecast at {x['name']}'s mid-mountain elevation.</p>
     <p>Snow temperature is estimated from air temperature and sky cover. A snow thermometer reading is better. Wax ranges vary by brand, so the temperature on the wax label wins. All waxes suggested here are fluoro-free.</p>
     <p>Base bevels are usually set by a shop's stone grind. If your skis are new or freshly ground, ask the shop what they set before you change anything.</p>
   </div>
@@ -681,6 +688,10 @@ def main():
     write("assets/site.css", css)
     write("assets/tool.js", tool)
     write("assets/flyover.js", open(os.path.join(SRC, "flyover.js")).read())
+    # resort list for the Netlify weather functions
+    lib = os.path.join(ROOT, "netlify", "lib"); os.makedirs(lib, exist_ok=True)
+    with open(os.path.join(lib, "resorts.json"), "w") as f:
+        json.dump([{"id": x["id"], "lat": x["lat"], "lon": x["lon"], "mid": x["mid"], "tz": TZ[x["id"]]} for x in RESORTS], f, indent=1)
     for f in ("terrain.json", "terrain-height.png", "terrain-ground.webp", "terrain-ground-1k.webp", "terrain-forest.webp", "terrain-rock.webp"):
         dst = os.path.join(OUT, "assets", "terrain", f); os.makedirs(os.path.dirname(dst), exist_ok=True)
         with open(os.path.join(SRC, "terrain", f), "rb") as a, open(dst, "wb") as b: b.write(a.read())

@@ -1,0 +1,79 @@
+[
+ {
+  "id": "whistler",
+  "lat": 50.115,
+  "lon": -122.9486,
+  "mid": 1500,
+  "tz": "America/Vancouver"
+ },
+ {
+  "id": "vail",
+  "lat": 39.6061,
+  "lon": -106.355,
+  "mid": 3000,
+  "tz": "America/Denver"
+ },
+ {
+  "id": "parkcity",
+  "lat": 40.6514,
+  "lon": -111.508,
+  "mid": 2560,
+  "tz": "America/Denver"
+ },
+ {
+  "id": "jackson",
+  "lat": 43.5875,
+  "lon": -110.8279,
+  "mid": 2550,
+  "tz": "America/Denver"
+ },
+ {
+  "id": "aspen",
+  "lat": 39.2084,
+  "lon": -106.949,
+  "mid": 3100,
+  "tz": "America/Denver"
+ },
+ {
+  "id": "mammoth",
+  "lat": 37.6308,
+  "lon": -119.0326,
+  "mid": 2900,
+  "tz": "America/Los_Angeles"
+ },
+ {
+  "id": "bigsky",
+  "lat": 45.2833,
+  "lon": -111.4014,
+  "mid": 2700,
+  "tz": "America/Denver"
+ },
+ {
+  "id": "telluride",
+  "lat": 37.9375,
+  "lon": -107.8123,
+  "mid": 3300,
+  "tz": "America/Denver"
+ },
+ {
+  "id": "snowbird",
+  "lat": 40.583,
+  "lon": -111.6556,
+  "mid": 2850,
+  "tz": "America/Denver"
+ },
+ {
+  "id": "killington",
+  "lat": 43.6045,
+  "lon": -72.8201,
+  "mid": 800,
+  "tz": "America/New_York"
+ },
+ {
+  "id": "bogus",
+  "lat": 43.764,
+  "lon": -116.0975,
+  "mid": 2040,
+  "tz": "America/Boise"
+ }
+]

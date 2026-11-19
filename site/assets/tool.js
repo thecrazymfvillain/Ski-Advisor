@@ -82,7 +82,7 @@ function rawConditions(){
 }
 // A week of daily forecasts, index 0 = today. Live data supplies it; example data synthesizes one.
 function dayList(raw){
-  if(raw.days && raw.days.length >= 8) return raw.days;
+  if(raw.days && raw.days.length >= 3) return raw.days;
   const now = new Date(), out = [];
   for(let i=0;i<8;i++){
     const date = new Date(now.getFullYear(), now.getMonth(), now.getDate()+i), dow = date.getDay();
@@ -125,7 +125,7 @@ function finalize(b){
 function conditions(){
   const raw = rawConditions();
   if(state.day==="today")
-    return finalize({air:raw.air, snow48:raw.snow48, cloudy:raw.cloud>=60, pastMax:raw.pastMax, rh:raw.rh, sky:WMO(raw.code)});
+    return finalize({air:raw.air, snow48:raw.snow48, cloudy:raw.cloud>=60, pastMax:raw.pastMax, rh:raw.rh, sky:raw.sky || WMO(raw.code)});
   const days = dayList(raw);
   if(state.day==="tomorrow") return finalize(forecastDay(days, 1, raw));
   // Weekend: the next Saturday and Sunday (today and tomorrow if it's Saturday).
@@ -467,33 +467,26 @@ function render(){
 
 /* ---------- Live data ---------- */
 async function loadLive(){
-  const q = k => RESORTS.map(r=>r[k]).join(",");
-  const url = "https://api.open-meteo.com/v1/forecast?latitude="+q("lat")+"&longitude="+q("lon")+"&elevation="+q("mid")+
-    "&current=temperature_2m,relative_humidity_2m,weather_code,cloud_cover&daily=temperature_2m_max,temperature_2m_min,snowfall_sum"+
-    "&past_days=2&forecast_days=8&timezone=auto";
+  // Served by the Netlify function in netlify/functions/conditions.mts (MET Norway data, refreshed hourly).
   const ctl = new AbortController(); const timer = setTimeout(()=>ctl.abort(), 8000);
   try{
-    const res = await fetch(url, {signal:ctl.signal});
+    const res = await fetch("/api/conditions", {signal:ctl.signal});
     if(!res.ok) throw new Error("HTTP "+res.status);
-    let data = await res.json();
-    if(!Array.isArray(data)) data = [data];
+    const data = await res.json();
     const live = {};
-    data.forEach((d,i)=>{
-      const r = RESORTS[i]; if(!r || !d.current || !d.daily) return;
-      const s = d.daily.snowfall_sum.map(v=>v||0), mx = d.daily.temperature_2m_max, mn = d.daily.temperature_2m_min;
-      live[r.id] = {
-        air:d.current.temperature_2m, rh:d.current.relative_humidity_2m, cloud:d.current.cloud_cover, code:d.current.weather_code,
-        snow48:s[1]+s[2], pastMax:Math.max(mx[0],mx[1]), tmrMin:mn[3], tmrMax:mx[3], tmrSnow:s[3],
-        days: d.daily.time.slice(2).map((t,j)=>{ const [y,m,dd] = t.split("-").map(Number);
-          return {date:new Date(y,m-1,dd), min:mn[j+2], max:mx[j+2], snow:s[j+2]}; })
-      };
-    });
+    for(const r of RESORTS){
+      const d = data.resorts && data.resorts[r.id];
+      if(!d || !Array.isArray(d.days) || !d.days.length) continue;
+      live[r.id] = Object.assign({}, d, {
+        days: d.days.map(x=>{ const [y,m,dd] = x.date.split("-").map(Number); return {date:new Date(y,m-1,dd), min:x.min, max:x.max, snow:x.snow}; })
+      });
+    }
     if(!Object.keys(live).length) throw new Error("empty");
-    state.live = live; state.updatedAt = new Date();
-    setText("dataNote", "Weather from the Open-Meteo forecast, downscaled to each resort's mid-mountain elevation.");
+    state.live = live; state.updatedAt = new Date(data.updated || Date.now());
+    setText("dataNote", "Weather from MET Norway's forecast at each resort's mid-mountain elevation, updated hourly.");
   }catch(e){
     state.live = {};
-    setText("dataNote", "Live weather couldn't load here, so the page is showing example conditions. On the hosted site, conditions come from the Open-Meteo forecast at each resort's mid-mountain elevation.");
+    setText("dataNote", "Live weather couldn't load here, so the page is showing example conditions. On theskiadvisor.com, conditions come from MET Norway's forecast at each resort's mid-mountain elevation.");
   }finally{ clearTimeout(timer); (PAGE==="resort" ? render : renderHome)(); }
 }
 

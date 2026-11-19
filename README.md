@@ -29,4 +29,8 @@ cd src && npm install && node bake-terrain.js
 
 ## Data
 
-Weather: Open-Meteo forecast API (free tier is for non-commercial use; check their terms before monetizing).
+Weather: MET Norway Locationforecast 2.0 (free, including commercial use, under CC BY 4.0 with attribution).
+`netlify/functions/weather-update.mts` fetches all resorts hourly and stores them in Netlify Blobs
+(including a 72-hour record used for "new snow in the last 48 hours"); `netlify/functions/conditions.mts`
+serves the result at `/api/conditions`. The resort list for the functions is written by `src/build.py`
+to `netlify/lib/resorts.json`.

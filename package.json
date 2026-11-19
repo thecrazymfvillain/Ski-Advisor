@@ -1,0 +1,9 @@
+{
+  "name": "theskiadvisor",
+  "private": true,
+  "description": "The Ski Advisor: Netlify functions (MET Norway weather). The site itself is prebuilt into site/.",
+  "dependencies": {
+    "@netlify/blobs": "11.1.7",
+    "@netlify/functions": "6.0.3"
+  }
+}
