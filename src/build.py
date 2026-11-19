@@ -19,7 +19,7 @@ BRAND = "The Ski Advisor"
 TODAY = datetime.date.today().isoformat()
 THREE = "https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"
 # Cloudflare Web Analytics site token (cookie-free). Empty = analytics off.
-CF_ANALYTICS_TOKEN = "7effe80b68fa4bdd9944534b8a820936"
+CF_ANALYTICS_TOKEN = "d9880afd531c4f5f8cb2410a189026d0"
 FONTS = ('<link rel="preconnect" href="https://fonts.googleapis.com">\n'
          '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n'
          '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800'
