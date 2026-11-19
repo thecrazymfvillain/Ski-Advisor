@@ -66,7 +66,7 @@ RESORTS = [
   about=["Aspen Snowmass is four ski areas on one pass: Aspen Mountain, Aspen Highlands, Buttermilk and Snowmass. The forecast here uses Snowmass, the largest, whose lifts top out above 12,000 feet.",
          "Expect cold, dry snow and intense sun at altitude, with big swings between morning and afternoon."],
   tips=["Morning and afternoon can need different waxes. Pick wax for the hours you'll actually ski.",
-        "Snowmass has long, wide groomers. A carver tune (0.7° base, 3° side) pays off on firm mornings.",
+        "Snowmass has long, wide groomers that stay firm in the morning. Sharpen before a groomer day; if you mostly carve, a carver setup (0.7° base, 3° side) suits them.",
         "Dry snow rewards a clean, well-brushed base. Brush until it shines."]),
  dict(id="mammoth", name="Mammoth Mountain", region="CA", lat=37.6308, lon=-119.0326, mid=2900,
   ex=dict(air=-1,rh=45,snow48=0,pastMax=4,cloud=5,code=0,tmrMin=-4,tmrMax=3,tmrSnow=0),
@@ -641,7 +641,7 @@ def home(full):
     gcards = "".join(f'<a class="guide-card" href="guides/{g["slug"]}.html"><small>{read_minutes(guide_body(g))} min read</small><b>{g["title"]}</b><span>{g["card"]}</span></a>' for g in GUIDES)
     ld = {"@context":"https://schema.org","@type":"WebSite","name":"The Ski Advisor","url":DOMAIN+"/"}
     h = head("The Ski Advisor: Ski Wax and Edge Tuning for Today's Snow",
-             f"Wax color, iron temperature and edge angles for today's snow at {len(ALL)} ski resorts across the US, Canada and Mexico, plus step-by-step home tuning guides.",
+             f"Wax color and iron temperature for today's snow at {len(ALL)} ski resorts across the US, Canada and Mexico, edge settings for how you ski, and step-by-step home tuning guides.",
              "", 0, ld)
     body = f"""{page_info("home")}
 {rd_script({"api": "featured", "resorts": [rd_resort(x) for x in FEATURED]})}
@@ -654,7 +654,7 @@ def home(full):
     <div class="wrap">
       <span class="label">Wax &amp; edges · {len(ALL)} North American ski areas</span>
       <h1>Your Mountain<br>Your Snow<br>Your Skis</h1>
-      <p>Pick your mountain. Get the wax color, iron temperature and edge angles for today, tomorrow or this weekend, plus a step-by-step home tune to match.</p>
+      <p>Pick your mountain. Get the wax color and iron temperature for today, tomorrow or this weekend, edge settings for how you ski, and a step-by-step home tune to match.</p>
       <div class="hero-cta">
         <a class="btn" href="#resorts">Find your mountain</a>
         <a class="btn ghost" href="guides/index.html">Read the guides</a>
@@ -679,7 +679,7 @@ def home(full):
     <ol class="how">
       <li><b>Forecast at mid-mountain</b><span>We pull temperature, humidity and new snow at the elevation you'll actually ski, not at the base.</span></li>
       <li><b>Snow, not air</b><span>We estimate the snow temperature and surface: new, packed, refrozen, man-made or wet.</span></li>
-      <li><b>Wax, edges, steps</b><span>You get the wax color, iron setting and edge angles for how you ski, and a tune walkthrough set to match.</span></li>
+      <li><b>Wax, edges, steps</b><span>You get the wax color and iron setting for the snow, edge settings for how you ski, and a tune walkthrough set to match.</span></li>
     </ol>
   </section>
   <section class="home-sec" aria-labelledby="guidesH">
@@ -707,8 +707,8 @@ def resort_page(x):
     about = "".join(f"<p>{p}</p>" for p in x["about"])
     tips = "".join(f"<li>{t}</li>" for t in x["tips"])
     name = esc(x["name"])
-    title = f"{x['name']} Ski Wax & Tuning: Today's Wax and Edge Angles"
-    desc = f"Which wax and edge angles to use at {x['name']}, {x['regionName']}, today, tomorrow or this weekend, from the forecast at mid-mountain ({ft(x['mid'])}). Plus a step-by-step home tune."
+    title = f"{x['name']} Ski Wax & Tuning: Today's Wax Pick and Home Tune"
+    desc = f"Which wax to use at {x['name']}, {x['regionName']}, today, tomorrow or this weekend, from the forecast at mid-mountain ({ft(x['mid'])}). Plus edge settings for how you ski and a step-by-step home tune."
     ld = bc_ld([("Home",""),("Resorts","resorts/index.html"),(x["regionName"], f"regions/{x['region'].lower()}.html"),(x["name"],f"resorts/{x['id']}.html")])
     body = f"""{page_info("resort", x["id"])}
 {rd_script({"api": x["region"], "resorts": [rd_resort(x)]})}
@@ -718,7 +718,7 @@ def resort_page(x):
   <div class="hero">
     <span class="label" id="heroEyebrow">Today · {x['short']} · mid-mountain, {ft(x['mid'])}</span>
     <h1>Wax &amp; tune for <em>{name}</em></h1>
-    <p class="lede">{x['tag']}. Wax color, iron temperature and edge angles from the forecast at mid-mountain, with a step-by-step home tune.</p>
+    <p class="lede">{x['tag']}. Wax color and iron temperature from the forecast at mid-mountain, edge settings for how you ski, and a step-by-step home tune.</p>
     <div class="hero-sub">
       <div class="seg" role="group" aria-label="When are you skiing?">
         <button type="button" id="dayToday" aria-pressed="true">Today</button>
@@ -762,7 +762,7 @@ def region_page(g):
   <span class="wax-chip" data-home-wax="{x['id']}"><i></i><span>Loading today's wax…</span></span>
 </a>""" for x in rs)
     n = len(rs); name = esc(g["name"]); country = COUNTRY[g["country"]]
-    title = f"{g['name']} Ski Resorts: Today's Wax and Edge Angles | The Ski Advisor"
+    title = f"{g['name']} Ski Resorts: Today's Ski Wax Picks | The Ski Advisor"
     desc = f"Today's ski wax pick for all {n} ski areas in {g['name']}, {country}, from the forecast at each one's mid-mountain elevation."
     ld = bc_ld([("Home",""),("Resorts","resorts/index.html"),(g["name"], f"regions/{g['code'].lower()}.html")])
     body = f"""{page_info("region")}
@@ -773,7 +773,7 @@ def region_page(g):
   <div class="hero">
     <span class="label">{n} ski area{'s' if n != 1 else ''} · {country}</span>
     <h1>{name} ski resorts</h1>
-    <p class="lede">Today's wax pick for every ski area in {name}, from MET Norway's forecast at each one's mid-mountain elevation. Pick a resort for edge angles, the weekend forecast and a full tune.</p>
+    <p class="lede">Today's wax pick for every ski area in {name}, from MET Norway's forecast at each one's mid-mountain elevation. Pick a resort for the weekend forecast, edge settings and a full tune.</p>
   </div>
   <p class="muted" id="homeDataNote"></p>
   <div class="resort-grid">{cards}</div>
@@ -800,7 +800,7 @@ def resorts_index():
 {footer(1)}
 <script src="../assets/tool.js"></script>"""
     return doc(True, head("Ski Resorts in North America | The Ski Advisor",
-                          f"Find today's ski wax and edge angles for any of {len(ALL)} ski resorts in the US, Canada and Mexico.",
+                          f"Find today's ski wax pick and a home tune for any of {len(ALL)} ski resorts in the US, Canada and Mexico.",
                           "resorts/index.html", 1, bc_ld([("Home",""),("Resorts","resorts/index.html")])), body)
 
 def guide_page(g):
@@ -822,7 +822,7 @@ def guide_page(g):
     {gb}
     <div class="cta-box">
       <b>Get today's wax for your mountain</b>
-      <p>Wax color, iron temperature and edge angles from the forecast, for today, tomorrow or this weekend.</p>
+      <p>Wax color and iron temperature from the forecast for today, tomorrow or this weekend, plus edge settings for how you ski.</p>
       {resort_links(1)}
     </div>
   </article>

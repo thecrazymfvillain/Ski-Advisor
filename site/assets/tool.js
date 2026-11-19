@@ -158,13 +158,15 @@ function pickWax(c){
 
 function pickEdges(c){
   const s = STYLES[state.style];
-  let base = s.base, side = s.side, note = "";
+  const base = s.base, side = s.side;
   const hard = c.surface==="refrozen" || c.surface==="manmade";
-  if(hard && side<2 && state.style!=="park"){ side = 2; note = `<strong>Firm snow today.</strong> A 2° side edge holds better than your usual 1°. Go back to 1° when it softens.`; }
-  else if(hard && state.style==="park"){ note = `<strong>Firm snow today.</strong> Keep the 1° side edge. The detune keeps it from catching on features.`; }
-  else if(hard){ note = `<strong>Firm snow today.</strong> Sharpen right before you ski. The edge does most of the work on ice.`; }
-  else if(c.surface==="new" || c.surface==="wet"){ note = `<strong>Soft snow today.</strong> Edges matter less than usual. A quick deburr is enough if they're already in shape.`; }
-  else { note = `These are standard settings for ${s.label.toLowerCase()} skiing. Most skis come from the shop at 1° base and 1–2° side.`; }
+  // Angles are a one-time setup for how you ski. Today's snow only changes how much edge work is worth doing.
+  let note = `Typical settings for ${s.label.toLowerCase()} skiing. Most people set their angles once, usually at a shop, and keep them; you don't change angles for the conditions. Already have different angles? Keep yours and sharpen to match. `;
+  if(hard) note += state.style==="park"
+    ? `<strong>Firm snow today:</strong> sharpen the side edge at your current angle, and keep the tips and tails detuned so they don't catch on features.`
+    : `<strong>Firm snow today:</strong> sharpen or polish the side edge at your current angle before you ski. On firm snow a sharp edge does most of the work.`;
+  else if(c.surface==="new" || c.surface==="wet") note += `<strong>Soft snow today:</strong> edges matter less than usual. A quick deburr is enough if they're already in shape.`;
+  else note += `<strong>Today:</strong> a quick polish with a fine stone is all most edges need.`;
   if(state.style==="racer") note += state.raceMode==="race"
     ? " <strong>Race day:</strong> give the side edge a final polish with a fine stone the night before."
     : " <strong>Training:</strong> a quick polish with a fine stone every couple of days keeps the edge consistent.";
@@ -285,11 +287,11 @@ function stepsFor(c, wax, edges){
     {id:"repair", t:"Fill gouges (if any)", m:"15 min", tools:"P-tex candle, steel scraper",
      body:"Light a P-tex candle and drip it into the clean gouge, keeping the flame low so the drips stay clear, not black. Let it cool, then scrape flush with a sharp steel scraper.",
      tip:"If you can see wood or metal in the gouge, that's a core shot. Take it to a shop."},
-    {id:"base", t:`Base edge: ${edges.base}°`, m:"10 min", tools:`${edges.base}° base guide, diamond stone`,
-     body:`Base bevel is usually set by the shop's grind, so at home you only maintain it. Put a diamond stone in a ${edges.base}° base guide and make one or two light passes tip to tail to remove burrs.`,
+    {id:"base", t:"Deburr the base edge", m:"10 min", tools:`Base guide at your existing base angle (often ${edges.base}°), fine diamond stone`,
+     body:`Base bevel is set by the shop's grind, so at home you only maintain it. Put a fine diamond stone in a base guide at your skis' existing angle and make one or two light passes tip to tail to remove burrs.`,
      tip:"Taking too much off the base edge makes the ski feel vague. Less is more here."},
-    {id:"side", t:`Side edge: ${edges.side}° (${90-edges.side}°)`, m:"15 min", tools:`${edges.side}° side guide, 200/400/600 diamond stones`, flag: edges.hard ? "Priority today" : null,
-     body:`Set a ${edges.side}° side guide on the edge. Work coarse to fine: 200 grit diamond, then 400, then 600, in long overlapping strokes tip to tail. Give every edge the same number of passes. Use a file only if the edge is badly damaged or you're changing the angle.` +
+    {id:"side", t:"Sharpen the side edge", m:"15 min", tools:`Side guide at your existing angle (often ${edges.side}°, an ${90-edges.side}° edge), 200/400/600 diamond stones`, flag: edges.hard ? "Priority today" : null,
+     body:`Set a side guide at your skis' existing angle on the edge. If you don't know it, a shop can tell you, or use the setting above. Work coarse to fine: 200 grit diamond, then 400, then 600, in long overlapping strokes tip to tail. Give every edge the same number of passes. Use a file only if the edge is badly damaged or you're changing the angle.` +
        (edges.hard ? ` Snow at ${r.name} is firm right now, so the side edge is the step that matters most.` : ""),
      tip:"Wet the diamond stones with water or alcohol. They cut cleaner and last longer."},
     {id:"deburr", t:"Deburr and detune", m:"5 min", tools:"Gummy stone",
@@ -350,8 +352,8 @@ function renderKit(wax, edges){
           : {n:"Universal wax", w:"An all-temperature wax for cleaning and for weeks you don't want to think about it.", q:"universal ski wax"},
     {n:"Plexi scraper", w:"Removes excess wax without hurting the base. Keep its edge sharp.", q:"ski wax scraper"},
     {n:"Brushes", w:"Brass, nylon and horsehair cover every wax and snow type.", q:"ski wax brush"},
-    {n:`${edges.base}° base edge guide`, w:"Holds the stone at your base bevel so you only remove burrs.", q:`${edges.base} degree base bevel guide`},
-    {n:`${edges.side}° side edge guide`, w:`Sets the ${90-edges.side}° side edge from today's recommendation.`, q:`${edges.side} degree side edge guide`},
+    {n:"Base edge guide", w:`Matches your skis' base angle (often ${edges.base}°) so you only remove burrs.`, q:`${edges.base} degree base bevel guide`},
+    {n:"Side edge guide", w:`Matches your skis' side angle (often ${edges.side}°, an ${90-edges.side}° edge) so every sharpening keeps it.`, q:`${edges.side} degree side edge guide`},
     {n:"Diamond stones", w:"200, 400 and 600 grit for sharpening and polishing the edge.", q:"diamond stone ski edge"},
     {n:"Gummy stone", w:"Takes off burrs and detunes tips and tails.", q:"gummy stone ski"},
     racer ? {n:"Race top coat", w:"A fluoro-free top coat (block, powder or liquid) for race morning, in the same temperature range.", q:"fluoro free ski race top coat"}
