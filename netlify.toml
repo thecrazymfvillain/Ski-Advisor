@@ -6,3 +6,10 @@
   for = "/assets/*"
   [headers.values]
     Cache-Control = "public, max-age=86400"
+
+# One address for search engines: send the free Netlify address to the real domain.
+[[redirects]]
+  from = "https://theskiadvisor.netlify.app/*"
+  to = "https://theskiadvisor.com/:splat"
+  status = 301
+  force = true

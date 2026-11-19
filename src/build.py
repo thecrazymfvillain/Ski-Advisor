@@ -531,7 +531,7 @@ def read_minutes(h):
 # =====================================================================
 DIAMOND = '<svg width="24" height="24" viewBox="0 0 26 26" aria-hidden="true"><rect x="13" y="1.5" width="16" height="16" rx="1.5" transform="rotate(45 13 1.5)" fill="currentColor"/></svg>'
 
-def head(title, desc, path, depth, jsonld=None):
+def head(title, desc, path, depth, jsonld=None, noindex=False):
     r = "../"*depth
     url = DOMAIN + "/" + path
     out = [f"<title>{esc(title)}</title>",
@@ -543,9 +543,18 @@ def head(title, desc, path, depth, jsonld=None):
            f'<meta property="og:title" content="{esc(title)}">',
            f'<meta property="og:description" content="{esc(desc)}">',
            f'<meta property="og:url" content="{url}">',
-           '<meta name="twitter:card" content="summary">',
+           f'<meta property="og:image" content="{DOMAIN}/assets/og-image.jpg">',
+           '<meta property="og:image:width" content="1200">',
+           '<meta property="og:image:height" content="630">',
+           '<meta name="twitter:card" content="summary_large_image">',
+           '<meta name="theme-color" content="#0F1B26">',
+           '<link rel="icon" href="/favicon.svg" type="image/svg+xml">',
+           '<link rel="icon" href="/favicon-48.png" sizes="48x48" type="image/png">',
+           '<link rel="apple-touch-icon" href="/apple-touch-icon.png">',
            FONTS,
            f'<link rel="stylesheet" href="{r}assets/site.css">']
+    if noindex:
+        out.append('<meta name="robots" content="noindex">')
     if jsonld:
         out.append('<script type="application/ld+json">' + json.dumps(jsonld, ensure_ascii=False) + '</script>')
     return "\n".join(out)
@@ -574,6 +583,7 @@ def footer(depth):
       <div><h3>Guides</h3><ul>{gds}</ul></div>
       <div><h3>The Ski Advisor</h3><p>Wax and edge recommendations for {len(ALL)} ski areas in the US, Canada and Mexico, from the forecast at each one's mid-mountain elevation.</p></div>
     </div>
+    <p class="foot-links"><a href="{r}about.html">About</a> · <a href="{r}contact.html">Contact</a> · <a href="{r}privacy.html">Privacy</a></p>
     <p>{MET_CREDIT}</p>
     <p>{OSM_CREDIT}</p>
     <p>As an Amazon Associate, The Ski Advisor earns from qualifying purchases. Commissions don't change what we recommend. Recommendations are starting points: the temperature on your wax label wins, and a snow thermometer beats any forecast.</p>
@@ -712,7 +722,13 @@ def resort_page(x):
     name = esc(x["name"])
     title = f"{x['name']} Ski Wax & Tuning: Today's Wax Pick and Home Tune"
     desc = f"Which wax to use at {x['name']}, {x['regionName']}, today, tomorrow or this weekend, from the forecast at mid-mountain ({ft(x['mid'])}). Plus edge settings for how you ski and a step-by-step home tune."
-    ld = bc_ld([("Home",""),("Resorts","resorts/index.html"),(x["regionName"], f"regions/{x['region'].lower()}.html"),(x["name"],f"resorts/{x['id']}.html")])
+    place = {"@context": "https://schema.org", "@type": "SkiResort", "name": x["name"],
+             "mainEntityOfPage": f"{DOMAIN}/resorts/{x['id']}.html",
+             "geo": {"@type": "GeoCoordinates", "latitude": x["lat"], "longitude": x["lon"], "elevation": x["summit"]},
+             "address": {"@type": "PostalAddress", "addressRegion": x["regionName"], "addressCountry": x["country"],
+                         **({"addressLocality": x["locality"]} if x.get("locality") else {})}}
+    if x.get("website"): place["sameAs"] = [x["website"]]
+    ld = [bc_ld([("Home",""),("Resorts","resorts/index.html"),(x["regionName"], f"regions/{x['region'].lower()}.html"),(x["name"],f"resorts/{x['id']}.html")]), place]
     body = f"""{page_info("resort", x["id"])}
 {rd_script({"api": x["region"], "resorts": [rd_resort(x)]})}
 {header(1, "resorts", chips)}
@@ -805,6 +821,111 @@ def resorts_index():
     return doc(True, head("Ski Resorts in North America | The Ski Advisor",
                           f"Find today's ski wax pick and a home tune for any of {len(ALL)} ski resorts in the US, Canada and Mexico.",
                           "resorts/index.html", 1, bc_ld([("Home",""),("Resorts","resorts/index.html")])), body)
+
+
+EFFECTIVE = "November 19, 2026"
+AMZ_NOTE = "As an Amazon Associate, The Ski Advisor earns from qualifying purchases."
+
+def content_page(path, title, desc, h1, dek, body, current="", noindex=False, crumb=None):
+    ld = None if noindex else bc_ld([("Home",""),(crumb or h1, path)])
+    page = f"""{page_info("content")}
+{header(0, current)}
+<main class="wrap">
+  {crumbs(0, [(crumb or h1, None)])}
+  <article class="article">
+    <h1>{h1}</h1>
+    <p class="dek">{dek}</p>
+    {body}
+  </article>
+</main>
+{footer(0)}
+<script src="assets/tool.js"></script>"""
+    return doc(True, head(title, desc, path, 0, ld, noindex), page)
+
+def about_page():
+    body = f"""
+<h2>What the site does</h2>
+<p>Pick any of {len(ALL)} ski areas in the US, Canada and Mexico and you get the wax color and iron temperature for today, tomorrow or this weekend, edge settings for how you ski, and a step-by-step home tune. The <a href="guides/index.html">guides</a> cover the rest, from a first wax job to race day.</p>
+<h2>How the recommendations work</h2>
+<ul>
+<li><b>Forecast where you ski.</b> Every resort's forecast is for its mid-mountain elevation, not the base, refreshed every few hours.</li>
+<li><b>Snow, not air.</b> We estimate the snow temperature from the air temperature and sky cover, and the surface type: new, packed, refrozen, man-made or wet.</li>
+<li><b>Wax from the snow.</b> The wax color comes from the snow temperature, one step colder for sharp new snow or abrasive man-made snow, and warm with extra brushing on wet days.</li>
+<li><b>Edges from how you ski.</b> Edge angles are a one-time setup for your style of skiing. The snow only changes how much edge work is worth doing.</li>
+</ul>
+<h2>Where the data comes from</h2>
+<p>Weather comes from <a href="https://api.met.no/">MET Norway</a> under the <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> license. Resort locations, elevations, lifts and runs come from <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a> and <a href="https://openskimap.org">OpenSkiMap</a> under the <a href="https://opendatacommons.org/licenses/odbl/">Open Database License</a>. Volunteers maintain that map, so some details will be wrong. If you spot one, <a href="contact.html">tell us</a> or fix it in OpenStreetMap; the fix reaches this site at the next data refresh.</p>
+<h2>Starting points, not rules</h2>
+<p>The temperature on your wax label beats our chart, and a snow thermometer beats any forecast. Use the recommendations as a starting point and adjust from what you see on the hill.</p>
+<h2>How the site makes money</h2>
+<p>{AMZ_NOTE} When you buy through a Shop link, Amazon pays us a small commission at no extra cost to you. Commissions don't change what we recommend. We're independent and not affiliated with any resort or wax brand.</p>
+<p><a href="contact.html">Questions, corrections or ideas? Get in touch.</a></p>"""
+    return content_page("about.html", "About The Ski Advisor", f"How The Ski Advisor picks ski wax and edge settings for {len(ALL)} North American resorts, where its data comes from, and how it makes money.",
+                        "About The Ski Advisor", "Wax and tuning advice for the snow you'll actually ski.", body, crumb="About")
+
+def contact_page():
+    body = """
+<form class="contact-form" name="contact" method="POST" action="/contact-sent.html" data-netlify="true" netlify-honeypot="company">
+  <input type="hidden" name="form-name" value="contact">
+  <p class="hp" hidden><label>Leave this empty <input name="company" tabindex="-1" autocomplete="off"></label></p>
+  <div class="field"><label for="cName">Name <span class="muted">(optional)</span></label><input id="cName" name="name" autocomplete="name"></div>
+  <div class="field"><label for="cEmail">Email</label><input id="cEmail" name="email" type="email" autocomplete="email" required></div>
+  <div class="field"><label for="cTopic">Topic</label>
+    <select id="cTopic" name="topic">
+      <option>Question about wax or tuning</option>
+      <option>Correction to a resort's details</option>
+      <option>Partnership or advertising</option>
+      <option>Something else</option>
+    </select></div>
+  <div class="field"><label for="cMsg">Message</label><textarea id="cMsg" name="message" rows="6" required></textarea></div>
+  <button class="btn" type="submit">Send message</button>
+  <p class="muted small">We use your email only to reply. See our <a href="privacy.html">privacy policy</a>.</p>
+</form>
+<h2>Fixing a resort's details</h2>
+<p>Elevations, lifts, runs and locations come from OpenStreetMap. Tell us what's wrong and which resort, or fix it directly in OpenStreetMap; either way, the fix reaches this site at the next data refresh.</p>"""
+    return content_page("contact.html", "Contact The Ski Advisor", "Send The Ski Advisor a question, a correction to a resort's details, or a partnership idea.",
+                        "Contact", "Questions, corrections to a resort's details, or partnership ideas. We read every message.", body, crumb="Contact")
+
+def contact_sent_page():
+    body = """<p>We'll reply to the email you gave us. In the meantime, <a href="resorts/index.html">find today's wax for your mountain</a> or browse the <a href="guides/index.html">tuning guides</a>.</p>"""
+    return content_page("contact-sent.html", "Message sent | The Ski Advisor", "Your message to The Ski Advisor was sent.",
+                        "Message sent", "Thanks for getting in touch.", body, noindex=True, crumb="Contact")
+
+def privacy_page():
+    body = f"""
+<p class="byline">Effective {EFFECTIVE}</p>
+<p>The Ski Advisor (theskiadvisor.com) is a free website. You don't need an account, and we don't sell personal information. This policy explains what information is involved when you use the site.</p>
+<h2>Information you give us</h2>
+<p>If you use the <a href="contact.html">contact form</a>, we receive your email address, your message, the topic you chose and, if you give it, your name. We use it only to reply to you. The form is handled by our host, Netlify, which stores submissions for us. We delete messages when we no longer need them, or sooner if you ask.</p>
+<h2>Information stored in your browser</h2>
+<p>The site remembers a few choices in your own browser's local storage: your temperature units, your skiing style, training or race-day mode, and which tuning steps you've checked off. This stays on your device; it isn't sent to us. Clear your browser's site data to remove it.</p>
+<h2>Services that see your visit</h2>
+<ul>
+<li><b>Netlify</b> hosts the site. Like any web host, it processes technical information such as your IP address and browser type to deliver and protect the site. See <a href="https://www.netlify.com/privacy/">Netlify's privacy policy</a>.</li>
+<li><b>Google Fonts</b> provides the site's fonts, so your browser requests them from Google's servers. See <a href="https://policies.google.com/privacy">Google's privacy policy</a>.</li>
+<li><b>cdnjs (Cloudflare)</b> provides the 3D graphics library for the home page flyover. See <a href="https://www.cloudflare.com/privacypolicy/">Cloudflare's privacy policy</a>.</li>
+<li><b>Weather</b> comes from MET Norway, but our server requests it; your browser doesn't contact MET Norway and we don't send them anything about you.</li>
+</ul>
+<h2>Amazon links</h2>
+<p>{AMZ_NOTE} When you click a Shop link, you go to Amazon, and Amazon may use cookies to record that you came from this site so it can pay us a commission. What Amazon collects is covered by <a href="https://www.amazon.com/gp/help/customer/display.html?nodeId=GX7NJQ4ZB8MHFRNJ">Amazon's privacy notice</a>.</p>
+<h2>Analytics and advertising</h2>
+<p>We don't currently use analytics, advertising or tracking cookies. If that changes, we'll update this page first.</p>
+<h2>Children</h2>
+<p>The site isn't directed at children under 13, and we don't knowingly collect their information.</p>
+<h2>Your choices</h2>
+<p>You can ask us what information we have about you from the contact form, and ask us to correct or delete it, by <a href="contact.html">contacting us</a>.</p>
+<h2>Changes</h2>
+<p>If we change this policy, we'll update this page and its effective date.</p>"""
+    return content_page("privacy.html", "Privacy Policy | The Ski Advisor", "What information The Ski Advisor collects, how it's used, and the services involved in delivering the site.",
+                        "Privacy policy", "What happens to information when you use The Ski Advisor.", body, current="", crumb="Privacy")
+
+def not_found_page():
+    body = f"""<p>That page doesn't exist, or it has moved. Search for your resort instead:</p>
+{search_box(0, "resorts/", "nfSearch")}
+<p>Or <a href="resorts/index.html">browse all {len(ALL)} resorts</a>, read the <a href="guides/index.html">tuning guides</a>, or go to the <a href="index.html">home page</a>.</p>"""
+    html_text = content_page("404.html", "Page not found | The Ski Advisor", "Page not found.", "Page not found", "We couldn't find that page.", body, noindex=True, crumb="Not found")
+    # served at any missing path, so every link must start from the site root
+    return re.sub(r'((?:href|src|data-index|data-prefix)=")(?!https?:|/|#|mailto:)', r'\1/', html_text)
 
 def guide_page(g):
     gb = guide_body(g)
@@ -907,8 +1028,18 @@ def main():
     for g in REGIONS.values(): write(f"regions/{g['code'].lower()}.html", region_page(g))
     for g in GUIDES: write(f"guides/{g['slug']}.html", guide_page(g))
     write("guides/index.html", guides_index())
+    write("about.html", about_page())
+    write("contact.html", contact_page())
+    write("contact-sent.html", contact_sent_page())
+    write("privacy.html", privacy_page())
+    write("404.html", not_found_page())
+    for f in ("favicon.svg", "favicon-48.png", "apple-touch-icon.png", "og-image.jpg"):
+        src_f = os.path.join(SRC, "brand", f)
+        if os.path.exists(src_f):
+            dst = os.path.join(OUT, "assets" if f == "og-image.jpg" else "", f); os.makedirs(os.path.dirname(dst), exist_ok=True)
+            with open(src_f, "rb") as a, open(dst, "wb") as b: b.write(a.read())
     urls = ([""] + ["resorts/index.html"] + [f"regions/{c.lower()}.html" for c in sorted(REGIONS)] + [f"resorts/{x['id']}.html" for x in ALL] +
-            ["guides/index.html"] + [f"guides/{g['slug']}.html" for g in GUIDES])
+            ["guides/index.html"] + [f"guides/{g['slug']}.html" for g in GUIDES] + ["about.html", "contact.html", "privacy.html"])
     write("sitemap.xml", '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
           "".join(f"  <url><loc>{DOMAIN}/{u}</loc><lastmod>{TODAY}</lastmod></url>\n" for u in urls) + "</urlset>\n")
     write("robots.txt", f"User-agent: *\nAllow: /\nSitemap: {DOMAIN}/sitemap.xml\n")
