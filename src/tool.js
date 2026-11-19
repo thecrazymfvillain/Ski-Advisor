@@ -340,6 +340,9 @@ function renderSteps(c, wax, edges){
   $("progBar").style.width = (n/steps.length*100)+"%";
   $("progText").textContent = `${n} of ${steps.length}`;
 }
+// Amazon Associates search link with our tracking tag (amazon.com; Amazon.ca is a separate program).
+const AMAZON_TAG = "skiadvisor-20";
+const amazonSearch = q => "https://www.amazon.com/s?k=" + encodeURIComponent(q) + "&tag=" + AMAZON_TAG;
 function renderKit(wax, edges){
   const band = wax.band, training = state.style==="racer" && state.raceMode==="training";
   const racer = state.style==="racer" && !training;
@@ -347,21 +350,21 @@ function renderKit(wax, edges){
     {n:"Ski vise or straps", w:"Holds the ski steady and base-up while you work.", q:"ski tuning vise"},
     {n:"Waxing iron", w:"A dedicated iron holds a steady temperature. Clothes irons run hot and uneven.", q:"ski waxing iron"},
     racer ? {n:`${band.name} race wax`, w:`Fluoro-free race wax for snow ${fmtRange(band)}, such as ${band.race}.`, q:`${band.race} race wax`}
-          : {n:`${band.name} ${training ? "training " : ""}wax`, w:`For snow ${fmtRange(band)}. ${band.ex}.`, q:`${band.name.toLowerCase()} ski wax`},
-    racer ? {n:"Base-layer wax", w:"A hard, cold wax ironed in under the race wax so it lasts on abrasive race snow.", q:"cold base prep ski wax"}
-          : {n:"Universal wax", w:"An all-temperature wax for cleaning and for weeks you don't want to think about it.", q:"universal ski wax"},
+          : {n:`${band.name} ${training ? "training " : ""}wax`, w:`For snow ${fmtRange(band)}. ${band.ex}.`, q:`${band.ex.split(" or ")[0]} ski wax`},
+    racer ? {n:"Base-layer wax", w:"A hard, cold wax ironed in under the race wax so it lasts on abrasive race snow.", q:"Swix cold base prep ski wax"}
+          : {n:"Universal wax", w:"An all-temperature wax for cleaning and for weeks you don't want to think about it.", q:"Swix universal ski wax"},
     {n:"Plexi scraper", w:"Removes excess wax without hurting the base. Keep its edge sharp.", q:"ski wax scraper"},
     {n:"Brushes", w:"Brass, nylon and horsehair cover every wax and snow type.", q:"ski wax brush"},
     {n:"Base edge guide", w:`Matches your skis' base angle (often ${edges.base}°) so you only remove burrs.`, q:`${edges.base} degree base bevel guide`},
     {n:"Side edge guide", w:`Matches your skis' side angle (often ${edges.side}°, an ${90-edges.side}° edge) so every sharpening keeps it.`, q:`${edges.side} degree side edge guide`},
     {n:"Diamond stones", w:"200, 400 and 600 grit for sharpening and polishing the edge.", q:"diamond stone ski edge"},
     {n:"Gummy stone", w:"Takes off burrs and detunes tips and tails.", q:"gummy stone ski"},
-    racer ? {n:"Race top coat", w:"A fluoro-free top coat (block, powder or liquid) for race morning, in the same temperature range.", q:"fluoro free ski race top coat"}
+    racer ? {n:"Race top coat", w:"A fluoro-free top coat (block, powder or liquid) for race morning, in the same temperature range.", q:"Swix fluoro free race top coat"}
           : {n:"P-tex candles", w:"Fills small base gouges at home.", q:"p-tex candle"},
     {n:"Polishing pad", w:"A Fibertex pad or cloth for the final buff.", q:"fibertex ski"}
   ];
   $("kitGrid").innerHTML = items.map(it =>
-    `<div class="kit-item"><b>${it.n}</b><p>${it.w}</p><a href="https://www.rei.com/search?q=${encodeURIComponent(it.q)}" target="_blank" rel="noopener sponsored">Shop</a></div>`).join("");
+    `<div class="kit-item"><b>${it.n}</b><p>${it.w}</p><a href="${amazonSearch(it.q)}" target="_blank" rel="noopener sponsored">Shop on Amazon</a></div>`).join("");
 }
 
 /* ---------- Main render ---------- */

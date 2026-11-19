@@ -268,7 +268,10 @@ def edge_figs():
     return '<div class="figs">' + "".join(
         f'<figure><div data-edge-diagram data-base="{b}" data-side="{s}"></div><figcaption>{c}</figcaption></figure>' for b,s,c in figs) + '</div>'
 
-def shop(q): return f'<a class="shop" href="https://www.rei.com/search?q={q.replace(" ","+")}" target="_blank" rel="noopener sponsored">Shop</a>'
+AMAZON_TAG = "skiadvisor-20"   # Amazon Associates (amazon.com)
+def shop(q):
+    from urllib.parse import quote_plus
+    return f'<a class="shop" href="https://www.amazon.com/s?k={quote_plus(q)}&amp;tag={AMAZON_TAG}" target="_blank" rel="noopener sponsored">Shop on Amazon</a>'
 
 def resort_links(depth):
     r = "../"*depth
@@ -488,11 +491,11 @@ GUIDES = [
   dek="You can start with five tools and add the rest as you go. Here's the order to buy them in.",
   related=["how-to-wax-skis","how-to-sharpen-ski-edges","ski-edge-angles"],
   body="""
-<p class="disclose">Some links on this page may earn us a commission. It doesn't change what we recommend.</p>
+<p class="disclose">As an Amazon Associate, The Ski Advisor earns from qualifying purchases. Commissions don't change what we recommend.</p>
 <h2>Start here: waxing</h2>
 <ul>
 <li><b>Waxing iron:</b> a dedicated ski iron with a steady temperature. [[SHOP:ski waxing iron]]</li>
-<li><b>Universal wax:</b> works across temperatures while you learn. [[SHOP:universal ski wax]]</li>
+<li><b>Universal wax:</b> works across temperatures while you learn. [[SHOP:Swix universal ski wax]]</li>
 <li><b>Plexi scraper:</b> removes excess wax without hurting the base. [[SHOP:ski wax scraper]]</li>
 <li><b>Nylon brush:</b> opens the base structure after scraping. [[SHOP:ski wax brush]]</li>
 <li><b>Ski straps or a vise:</b> hold the ski steady, base-up. [[SHOP:ski tuning vise]]</li>
@@ -505,7 +508,7 @@ GUIDES = [
 </ul>
 <h2>Later: the extras</h2>
 <ul>
-<li><b>Temperature-specific waxes</b> once you know your conditions. See the <a href="ski-wax-temperature-chart.html">wax chart</a>. [[SHOP:ski wax]]</li>
+<li><b>Temperature-specific waxes</b> once you know your conditions. See the <a href="ski-wax-temperature-chart.html">wax chart</a>. [[SHOP:Swix ski wax]]</li>
 <li><b>Brass and horsehair brushes</b> for cold and warm wax. [[SHOP:horsehair ski brush]]</li>
 <li><b>Base edge guide</b> for deburring the base edge. [[SHOP:base bevel guide]]</li>
 <li><b>P-tex candles</b> for small base repairs. [[SHOP:p-tex candle]]</li>
@@ -573,7 +576,7 @@ def footer(depth):
     </div>
     <p>{MET_CREDIT}</p>
     <p>{OSM_CREDIT}</p>
-    <p>Some shop links may earn us a commission. It doesn't change what we recommend. Recommendations are starting points: the temperature on your wax label wins, and a snow thermometer beats any forecast.</p>
+    <p>As an Amazon Associate, The Ski Advisor earns from qualifying purchases. Commissions don't change what we recommend. Recommendations are starting points: the temperature on your wax label wins, and a snow thermometer beats any forecast.</p>
   </div>
 </footer>"""
 
