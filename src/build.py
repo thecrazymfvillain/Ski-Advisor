@@ -19,7 +19,7 @@ BRAND = "The Ski Advisor"
 TODAY = datetime.date.today().isoformat()
 THREE = "https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"
 # Cloudflare Web Analytics site token (cookie-free). Empty = analytics off.
-CF_ANALYTICS_TOKEN = ""
+CF_ANALYTICS_TOKEN = "7effe80b68fa4bdd9944534b8a820936"
 FONTS = ('<link rel="preconnect" href="https://fonts.googleapis.com">\n'
          '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n'
          '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800'
@@ -561,7 +561,7 @@ def head(title, desc, path, depth, jsonld=None, noindex=False):
     if noindex:
         out.append('<meta name="robots" content="noindex">')
     if CF_ANALYTICS_TOKEN:
-        out.append('<script defer src="https://static.cloudflareinsights.com/beacon.min.js" '
+        out.append('<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" '
                    'data-cf-beacon=\'{"token": "' + CF_ANALYTICS_TOKEN + '"}\'></script>')
     if jsonld:
         out.append('<script type="application/ld+json">' + json.dumps(jsonld, ensure_ascii=False) + '</script>')
