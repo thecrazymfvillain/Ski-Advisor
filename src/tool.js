@@ -55,6 +55,7 @@ const state = {
   resort: PI.resort || "vail",
   unit: store.get("unit","F"),
   day: "today",
+  wkPick: null,   // weekend: 0 = Saturday, 1 = Sunday, null = the colder day
   style: store.get("style","allmtn"),
   raceMode: store.get("raceMode","race") === "training" ? "training" : "race",
   adj: {air:null, snow48:null, surface:"auto"},
@@ -139,10 +140,11 @@ function conditions(){
   const both = idxs.map(i=>finalize(forecastDay(days, i, raw)));
   const picks = both.map(pickWax);
   // One wax job for two days: take the colder wax. It lasts longer and drags less if the forecast is off.
-  let k = picks[0].idx < picks[1].idx ? 0 : picks[1].idx < picks[0].idx ? 1 : (both[0].snowTemp <= both[1].snowTemp ? 0 : 1);
+  const colder = picks[0].idx < picks[1].idx ? 0 : picks[1].idx < picks[0].idx ? 1 : (both[0].snowTemp <= both[1].snowTemp ? 0 : 1);
+  const k = state.wkPick === 0 || state.wkPick === 1 ? state.wkPick : colder;   // Saturday/Sunday toggle
   const c = both[k];
   c.weekend = {
-    daysOut: sat, chosen: k, differ: picks[0].idx!==picks[1].idx,
+    daysOut: sat, chosen: k, colder, picked: k !== colder || state.wkPick !== null, differ: picks[0].idx!==picks[1].idx,
     days: idxs.map((i,j)=>({date:days[i].date, min:days[i].min, max:days[i].max, snow:days[i].snow, band:picks[j].band}))
   };
   return c;
@@ -404,7 +406,7 @@ function render(){
   const dayName = d => d.toLocaleDateString("en-US", {weekday:"long"});
   $("condLabel").textContent = state.day==="today" ? "Estimated snow temperature"
     : state.day==="tomorrow" ? "Tomorrow's estimated snow temperature"
-    : `${dayName(wk.days[wk.chosen].date)}'s estimated snow temperature${wk.differ ? " (the colder day)" : ""}`;
+    : `${dayName(wk.days[wk.chosen].date)}'s estimated snow temperature${wk.differ && wk.chosen === wk.colder ? " (the colder day)" : ""}`;
   $("snowTemp").textContent = c.surface==="wet" && c.air>0 ? fmtT(0)+" wet" : fmtT(c.snowTemp);
   $("surfacePill").textContent = SURFACES[c.surface].label;
   $("statAir").textContent = fmtT(c.air);
@@ -417,9 +419,9 @@ function render(){
   $("wkBox").hidden = !wk; $("wkNote").hidden = !(wk && wk.daysOut>=3);
   if(wk){
     const fmtDay = d => d.toLocaleDateString("en-US", {weekday:"short", month:"short", day:"numeric"});
-    $("wkBox").innerHTML = `<span class="label">Weekend forecast · low / high · new snow</span>` +
-      wk.days.map((d,j)=>`<div class="wk-row${j===wk.chosen?" pick":""}"><b>${fmtDay(d.date)}</b><span class="wk-chip"><i style="background:${d.band.color}"></i>${d.band.name}</span><span class="mono">${fmtTshort(d.min)} / ${fmtT(d.max)} · ${fmtSnow(d.snow)}</span></div>`).join("") +
-      (wk.differ ? `<p class="note">The two days call for different waxes. For one wax job, use the colder one. It lasts longer and drags less if the forecast is off.</p>` : "");
+    $("wkBox").innerHTML = `<span class="label">Weekend forecast · low / high · new snow · tap a day</span>` +
+      wk.days.map((d,j)=>`<button type="button" class="wk-row${j===wk.chosen?" pick":""}" data-wk="${j}" aria-pressed="${j===wk.chosen}"><b>${fmtDay(d.date)}</b><span class="wk-chip"><i style="background:${d.band.color}"></i>${d.band.name}</span><span class="mono">${fmtTshort(d.min)} / ${fmtT(d.max)} · ${fmtSnow(d.snow)}</span></button>`).join("") +
+      (wk.differ ? `<p class="note">The two days call for different waxes. Waxing once for both? Use the colder day's wax; it lasts longer and drags less if the forecast is off.</p>` : "");
     if(wk.daysOut>=3) $("wkNote").innerHTML = `<strong>${dayName(wk.days[0].date)} is ${wk.daysOut} days out.</strong> Forecasts that far ahead often miss by several degrees. Wax now, check this page again the night before you leave, and switch waxes if the color changed.`;
   }
   $("statElev").textContent = fmtElev(r.mid);
@@ -624,7 +626,8 @@ if(PAGE==="resort"){
   $("dayTomorrow").onclick = ()=>{ state.day="tomorrow"; state.adj={air:null,snow48:null,surface:"auto"}; render(); };
   $("modeTraining").onclick = ()=>{ state.raceMode="training"; store.set("raceMode","training"); render(); };
   $("modeRace").onclick = ()=>{ state.raceMode="race"; store.set("raceMode","race"); render(); };
-  $("dayWeekend").onclick =()=>{ state.day="weekend"; state.adj={air:null,snow48:null,surface:"auto"}; render(); };
+  $("wkBox").addEventListener("click", e=>{ const b = e.target.closest("[data-wk]"); if(!b) return; state.wkPick = Number(b.dataset.wk); state.diag = null; render(); });
+  $("dayWeekend").onclick =()=>{ state.day="weekend"; state.wkPick=null; state.adj={air:null,snow48:null,surface:"auto"}; render(); };
   $("airRange").addEventListener("input", e=>{ state.adj.air = Number(e.target.value); state.diag=null; render(); });
   $("snowSel").addEventListener("change", e=>{ state.adj.snow48 = e.target.value==="" ? null : Number(e.target.value); render(); });
   $("surfSel").addEventListener("change", e=>{ state.adj.surface = e.target.value; state.diag=null; render(); });
