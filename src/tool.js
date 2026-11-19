@@ -388,7 +388,7 @@ function render(){
   $("condLabel").textContent = state.day==="today" ? "Estimated snow temperature"
     : state.day==="tomorrow" ? "Tomorrow's estimated snow temperature"
     : `${dayName(wk.days[wk.chosen].date)}'s estimated snow temperature${wk.differ ? " (the colder day)" : ""}`;
-  $("snowTemp").textContent = c.surface==="wet" && c.air>0 ? "0°"+state.unit+" wet" : fmtT(c.snowTemp);
+  $("snowTemp").textContent = c.surface==="wet" && c.air>0 ? fmtT(0)+" wet" : fmtT(c.snowTemp);
   $("surfacePill").textContent = SURFACES[c.surface].label;
   $("statAir").textContent = fmtT(c.air);
   $("statRh").textContent = c.rh===null ? "—" : Math.round(c.rh)+"%";
