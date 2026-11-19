@@ -1,9 +1,9 @@
 #!/usr/bin/env python3
-"""Build the Edge & Wax static site.
+"""Build The Ski Advisor static site (theskiadvisor.com).
 
 Outputs:
   site/          deployable site (Netlify, Cloudflare Pages, GitHub Pages...)
-  index.html     claude.ai preview entry (home page without the document wrapper)
+  preview/       claude.ai preview entry (home page without the document wrapper; not committed)
 
 Run:  python3 src/build.py
 """
@@ -14,8 +14,8 @@ SRC = os.path.join(ROOT, "src")
 OUT = os.path.join(ROOT, "site")
 
 # ---- Set this to the real domain before launch (used for canonical links and the sitemap). ----
-DOMAIN = "https://www.example.com"
-BRAND = "Edge &amp; Wax"
+DOMAIN = "https://theskiadvisor.com"
+BRAND = "The Ski Advisor"
 TODAY = datetime.date.today().isoformat()
 THREE = "https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"
 FONTS = ('<link rel="preconnect" href="https://fonts.googleapis.com">\n'
@@ -426,7 +426,7 @@ def head(title, desc, path, depth, jsonld=None):
            f'<meta name="description" content="{esc(desc)}">',
            f'<link rel="canonical" href="{url}">',
            '<meta property="og:type" content="website">',
-           f'<meta property="og:site_name" content="Edge &amp; Wax">',
+           f'<meta property="og:site_name" content="The Ski Advisor">',
            f'<meta property="og:title" content="{esc(title)}">',
            f'<meta property="og:description" content="{esc(desc)}">',
            f'<meta property="og:url" content="{url}">',
@@ -444,7 +444,7 @@ def header(depth, current="", chips=False):
     return f"""<header class="top">
   <div class="wrap">
     <div class="top-row">
-      <a class="brand" href="{r}index.html">{DIAMOND}<span>Edge &amp; Wax</span></a>
+      <a class="brand" href="{r}index.html">{DIAMOND}<span>The Ski Advisor</span></a>
       <nav class="nav" aria-label="Site"><a href="{r}index.html#resorts">Resorts</a><a href="{r}guides/index.html"{g_cur}>Guides</a></nav>
     </div>{chip_row}
   </div>
@@ -459,7 +459,7 @@ def footer(depth):
     <div class="foot-grid">
       <div><h3>Resorts</h3><ul>{res}</ul></div>
       <div><h3>Guides</h3><ul>{gds}</ul></div>
-      <div><h3>Edge &amp; Wax</h3><p>Wax and edge recommendations from the forecast at each resort's mid-mountain elevation. Weather data from Open-Meteo.</p></div>
+      <div><h3>The Ski Advisor</h3><p>Wax and edge recommendations from the forecast at each resort's mid-mountain elevation. Weather data from Open-Meteo.</p></div>
     </div>
     <p>Some shop links may earn us a commission. It doesn't change what we recommend. Recommendations are starting points: the temperature on your wax label wins, and a snow thermometer beats any forecast.</p>
   </div>
@@ -512,8 +512,8 @@ def home(full):
   <span class="wax-chip"><span>Open the wax chart →</span></span>
 </a>"""
     gcards = "".join(f'<a class="guide-card" href="guides/{g["slug"]}.html"><small>{read_minutes(guide_body(g))} min read</small><b>{g["title"]}</b><span>{g["card"]}</span></a>' for g in GUIDES)
-    ld = {"@context":"https://schema.org","@type":"WebSite","name":"Edge & Wax","url":DOMAIN+"/"}
-    h = head("Edge & Wax: Ski Wax and Edge Tuning for Today's Snow",
+    ld = {"@context":"https://schema.org","@type":"WebSite","name":"The Ski Advisor","url":DOMAIN+"/"}
+    h = head("The Ski Advisor: Ski Wax and Edge Tuning for Today's Snow",
              "Wax color, iron temperature and edge angles for today's snow at 11 North American ski resorts, plus step-by-step home tuning guides.",
              "", 0, ld)
     body = f"""{page_info("home")}
@@ -623,7 +623,7 @@ def guide_page(g):
     mins = read_minutes(gb)
     rel = "".join(f'<a class="guide-card" href="{s}.html"><small>{read_minutes(guide_body(G_BY[s]))} min read</small><b>{G_BY[s]["title"]}</b><span>{G_BY[s]["card"]}</span></a>' for s in g["related"])
     ld = [{"@context":"https://schema.org","@type":"Article","headline":g["title"],"description":g["desc"],
-           "datePublished":TODAY,"dateModified":TODAY,"author":{"@type":"Organization","name":"Edge & Wax"},
+           "datePublished":TODAY,"dateModified":TODAY,"author":{"@type":"Organization","name":"The Ski Advisor"},
            "mainEntityOfPage":DOMAIN+f"/guides/{g['slug']}.html"},
           bc_ld([("Home",""),("Guides","guides/index.html"),(g["title"],f"guides/{g['slug']}.html")])]
     body = f"""{page_info("guide")}
@@ -648,7 +648,7 @@ def guide_page(g):
 </main>
 {footer(1)}
 <script src="../assets/tool.js"></script>"""
-    return doc(True, head(f"{g['title']} | Edge & Wax", g["desc"], f"guides/{g['slug']}.html", 1, ld), body)
+    return doc(True, head(f"{g['title']} | The Ski Advisor", g["desc"], f"guides/{g['slug']}.html", 1, ld), body)
 
 def guides_index():
     cards = "".join(f'<a class="guide-card" href="{g["slug"]}.html"><small>{read_minutes(guide_body(g))} min read</small><b>{g["title"]}</b><span>{g["card"]}</span></a>' for g in GUIDES)
@@ -664,7 +664,7 @@ def guides_index():
   <div class="guide-grid">{cards}</div>
 </main>
 {footer(1)}"""
-    return doc(True, head("Ski Tuning Guides | Edge & Wax", "Step-by-step guides to waxing and sharpening skis at home: wax temperature chart, edge angles, race wax, spring snow and more.", "guides/index.html", 1,
+    return doc(True, head("Ski Tuning Guides | The Ski Advisor", "Step-by-step guides to waxing and sharpening skis at home: wax temperature chart, edge angles, race wax, spring snow and more.", "guides/index.html", 1,
                           bc_ld([("Home",""),("Guides","guides/index.html")])), body)
 
 # =====================================================================
@@ -681,6 +681,9 @@ def main():
     write("assets/site.css", css)
     write("assets/tool.js", tool)
     write("assets/flyover.js", open(os.path.join(SRC, "flyover.js")).read())
+    for f in ("terrain.json", "terrain-height.png", "terrain-ground.webp", "terrain-ground-1k.webp", "terrain-forest.webp", "terrain-rock.webp"):
+        dst = os.path.join(OUT, "assets", "terrain", f); os.makedirs(os.path.dirname(dst), exist_ok=True)
+        with open(os.path.join(SRC, "terrain", f), "rb") as a, open(dst, "wb") as b: b.write(a.read())
     write("index.html", home(True))
     for x in RESORTS: write(f"resorts/{x['id']}.html", resort_page(x))
     for g in GUIDES: write(f"guides/{g['slug']}.html", guide_page(g))
@@ -689,8 +692,9 @@ def main():
     write("sitemap.xml", '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
           "".join(f"  <url><loc>{DOMAIN}/{u}</loc><lastmod>{TODAY}</lastmod></url>\n" for u in urls) + "</urlset>\n")
     write("robots.txt", f"User-agent: *\nAllow: /\nSitemap: {DOMAIN}/sitemap.xml\n")
-    # claude.ai preview entry: home page without the document wrapper
-    open(os.path.join(ROOT, "index.html"), "w").write(home(False))
+    # claude.ai preview entry: home page without the document wrapper (not part of the deployable site)
+    os.makedirs(os.path.join(ROOT, "preview"), exist_ok=True)
+    open(os.path.join(ROOT, "preview", "index.html"), "w").write(home(False))
     print("built", len(urls), "pages")
 
 if __name__ == "__main__":

@@ -1,0 +1,8 @@
+# The site is prebuilt into site/ by src/build.py and committed, so Netlify only publishes it.
+[build]
+  publish = "site"
+
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=86400"

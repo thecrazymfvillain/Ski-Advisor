@@ -1,4 +1,4 @@
-# Edge & Wax
+# The Ski Advisor
 
 Ski wax and edge tuning recommendations for today's snow at 11 North American resorts, plus home tuning guides.
 
@@ -15,13 +15,17 @@ Ski wax and edge tuning recommendations for today's snow at 11 North American re
 python3 src/build.py
 ```
 
-Set `DOMAIN` at the top of `src/build.py` to the real domain before launch (canonical links + sitemap).
+`DOMAIN` at the top of `src/build.py` is the canonical domain (https://theskiadvisor.com); it drives canonical links, the sitemap and robots.txt.
 
-To re-bake the flyover terrain:
+To re-bake the flyover terrain (needs Node and Python with Pillow):
 
 ```bash
 cd src && npm install && node bake-terrain.js
 ```
+
+## Deploy (Netlify)
+
+`netlify.toml` publishes the `site/` folder as-is; there is no build command. Connect this repository in Netlify, then add `theskiadvisor.com` under Domain management and follow Netlify's DNS instructions at GoDaddy.
 
 ## Data
 
