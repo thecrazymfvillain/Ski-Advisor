@@ -3,8 +3,8 @@
 // altitude, snow estimated from precipitation and temperature, daily summaries in resort time.
 import resorts from "./resorts.json" with { type: "json" };
 
-export type Resort = { id: string; lat: number; lon: number; mid: number; tz: string };
-export type Hour = { t: number; temp: number; snow: number };          // one recorded hour: epoch ms, °C, cm
+export type Resort = { id: string; lat: number; lon: number; mid: number; tz: string; region: string };
+export type Hour = { t: number; temp: number; snow: number };          // one recorded window: start (epoch ms), max °C, snow cm
 export type Day = { date: string; min: number; max: number; snow: number };
 export type Conditions = {
   air: number; rh: number; cloud: number; sky: string;
@@ -50,15 +50,36 @@ export async function fetchForecast(r: Resort): Promise<any> {
 const localDate = (t: number, tz: string) =>
   new Intl.DateTimeFormat("en-CA", { timeZone: tz, year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date(t));
 
-// The hour we record for history: current temperature and the snow expected over the next hour.
-export function currentHour(forecast: any): Hour | null {
-  const first = forecast?.properties?.timeseries?.[0];
-  if (!first) return null;
-  const temp = first.data?.instant?.details?.air_temperature;
-  const mm = first.data?.next_1_hours?.details?.precipitation_amount ?? 0;
-  if (typeof temp !== "number") return null;
-  const t = Math.floor(Date.parse(first.time) / HOUR) * HOUR;
-  return { t, temp, snow: snowFrom(mm, temp) };
+// What we record each time a resort is refreshed: the warmest temperature and the snow expected
+// over the next `hours` (the gap until its next refresh), so recent snowfall adds up without gaps.
+export function recordWindow(forecast: any, hours = 6): Hour | null {
+  const ts: any[] = forecast?.properties?.timeseries || [];
+  if (!ts.length) return null;
+  const t0 = Date.parse(ts[0].time);
+  let temp = -Infinity, snow = 0;
+  for (const e of ts) {
+    if (Date.parse(e.time) >= t0 + hours * HOUR) break;
+    const det = e.data?.instant?.details || {};
+    if (typeof det.air_temperature === "number") temp = Math.max(temp, det.air_temperature);
+    const mm = e.data?.next_1_hours?.details?.precipitation_amount;
+    if (typeof mm === "number") snow += snowFrom(mm, det.air_temperature ?? 0);
+  }
+  return Number.isFinite(temp) ? { t: Math.floor(t0 / HOUR) * HOUR, temp, snow } : null;
+}
+
+// Run fn over items with limited concurrency and at most one start every gapMs (MET allows 20 requests/second).
+export async function pool<T>(items: T[], concurrency: number, gapMs: number, fn: (item: T) => Promise<void>) {
+  let i = 0, last = 0;
+  const worker = async () => {
+    while (i < items.length) {
+      const item = items[i++];
+      const now = Date.now(), slot = Math.max(now, last + gapMs);
+      last = slot;
+      if (slot > now) await new Promise(r => setTimeout(r, slot - now));
+      await fn(item);
+    }
+  };
+  await Promise.all(Array.from({ length: concurrency }, worker));
 }
 
 // Turn one forecast plus our recorded hours into what the resort page needs.
@@ -88,7 +109,8 @@ export function summarize(r: Resort, forecast: any, history: Hour[], now = Date.
     .map(d => ({ date: d.date, min: round1(d.min), max: round1(d.max), snow: round1(d.snow) }));
 
   // Recent snow and recent high come from the hours we have recorded (MET only forecasts forward).
-  const recent = history.filter(h => h.t > now - 48 * HOUR && h.t <= now);
+  // windows that started in the last 48 hours and are already over (the newest one is still in the future)
+  const recent = history.filter(h => h.t > now - 49 * HOUR && h.t <= now - HOUR);
   const snow48 = recent.reduce((a, h) => a + h.snow, 0);
   const today = days[0];
   const pastMax = recent.length ? Math.max(...recent.map(h => h.temp)) : (today ? today.max : d0.air_temperature);

@@ -3,7 +3,9 @@
 const PI = (document.getElementById("pageInfo") || document.body).dataset;
 
 /* ---------- Data ---------- */
-const RESORTS = /*RESORTS*/[];
+// Each page carries the resorts it shows (and which weather group to load) in #resortData.
+const RD = (()=>{ try{ return JSON.parse((document.getElementById("resortData")||{}).textContent || "{}"); }catch(e){ return {}; } })();
+const RESORTS = RD.resorts || [];
 
 const STYLES = {
   cruiser:{label:"Cruiser", sub:"Groomers, relaxed pace", sym:"circle", base:1, side:1,
@@ -182,11 +184,6 @@ function symSVG(kind){
   }
 }
 
-function buildResortChips(){
-  const el = $("resortChips"); if(!el) return;
-  el.innerHTML = RESORTS.map(r => `<a class="chip" href="${r.id}.html"${r.id===state.resort?' aria-current="page"':''}>${r.name}<small>${r.region}</small></a>`).join("");
-  const cur = el.querySelector("[aria-current]"); if(cur) el.scrollLeft = Math.max(0, cur.offsetLeft - 16);
-}
 function buildStyles(){
   $("styles").innerHTML = Object.entries(STYLES).map(([k,s]) =>
     `<button type="button" class="style-btn" data-k="${k}" aria-pressed="${k===state.style}"><span class="sym">${symSVG(s.sym)}</span><span><b>${s.label}</b><span class="s">${s.sub}</span></span></button>`).join("");
@@ -470,7 +467,7 @@ async function loadLive(){
   // Served by the Netlify function in netlify/functions/conditions.mts (MET Norway data, refreshed hourly).
   const ctl = new AbortController(); const timer = setTimeout(()=>ctl.abort(), 8000);
   try{
-    const res = await fetch("/api/conditions", {signal:ctl.signal});
+    const res = await fetch("/api/conditions/" + encodeURIComponent(RD.api || "featured"), {signal:ctl.signal});
     if(!res.ok) throw new Error("HTTP "+res.status);
     const data = await res.json();
     const live = {};
@@ -505,11 +502,39 @@ function renderHome(){
     : "These wax picks use example conditions. Live forecasts load on the hosted site.");
 }
 
+/* ---------- Search ---------- */
+const escH = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const fold = s => String(s).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+function initSearch(){
+  document.querySelectorAll("[data-search]").forEach(form=>{
+    const input = form.querySelector("input"), list = form.querySelector("ul");
+    let idx = null, loading = null;
+    const load = () => loading || (loading = fetch(form.dataset.index).then(r=>r.json()).then(d=>{ idx = d.map(e=>({e, hay: fold(e.slice(1).join(" "))})); }).catch(()=>{ idx = []; }));
+    function show(){
+      const q = fold(input.value.trim());
+      if(!q || !idx){ list.hidden = true; list.innerHTML = ""; return; }
+      const terms = q.split(/\s+/);
+      const hits = idx.filter(x => terms.every(t => x.hay.includes(t)))
+        .sort((a,b) => (fold(a.e[1]).startsWith(terms[0]) ? 0 : 1) - (fold(b.e[1]).startsWith(terms[0]) ? 0 : 1)).slice(0, 8);
+      list.innerHTML = hits.length
+        ? hits.map(({e}) => `<li><a href="${form.dataset.prefix}${encodeURIComponent(e[0])}.html"><b>${escH(e[1])}</b><span>${escH(e[4] ? e[4] + ", " : "")}${escH(e[3])}</span></a></li>`).join("")
+        : `<li class="none">No ski resort matches “${escH(input.value.trim())}”.</li>`;
+      list.hidden = false;
+    }
+    input.addEventListener("focus", load);
+    input.addEventListener("input", () => load().then(show));
+    input.addEventListener("keydown", e => { if(e.key === "Escape"){ list.hidden = true; } });
+    form.addEventListener("submit", e => { e.preventDefault(); const a = list.querySelector("a"); if(a) location.href = a.href; });
+    document.addEventListener("click", e => { if(!form.contains(e.target)) list.hidden = true; });
+  });
+}
+
 /* ---------- Wire up ---------- */
 const PAGE = PI.page;
+initSearch();
 document.querySelectorAll("[data-edge-diagram]").forEach(el=>{ el.innerHTML = edgeSVG(Number(el.dataset.base), Number(el.dataset.side)); });
 if(PAGE==="resort"){
-  buildResortChips(); buildStyles(); buildStripBands();
+  buildStyles(); buildStripBands();
   buildRadio("baseRow", [0.5,0.7,1], v=>v+"°", "base");
   buildRadio("sideRow", [1,2,3,4], v=>`${v}° (${90-v}°)`, "side");
   $("unitF").onclick = ()=>{ state.unit="F"; store.set("unit","F"); render(); };

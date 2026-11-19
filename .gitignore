@@ -3,3 +3,4 @@ src/node_modules/
 .DS_Store
 preview/
 src/terrain-raw/
+data-raw/

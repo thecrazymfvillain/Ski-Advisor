@@ -3,7 +3,9 @@
 const PI = (document.getElementById("pageInfo") || document.body).dataset;
 
 /* ---------- Data ---------- */
-const RESORTS = [{"id": "whistler", "name": "Whistler Blackcomb", "region": "BC", "lat": 50.115, "lon": -122.9486, "mid": 1500, "ex": {"air": -2, "rh": 88, "snow48": 12, "pastMax": 1, "cloud": 90, "code": 73, "tmrMin": -5, "tmrMax": -1, "tmrSnow": 6}}, {"id": "vail", "name": "Vail", "region": "CO", "lat": 39.6061, "lon": -106.355, "mid": 3000, "ex": {"air": -8, "rh": 55, "snow48": 3, "pastMax": -2, "cloud": 20, "code": 1, "tmrMin": -13, "tmrMax": -4, "tmrSnow": 0}}, {"id": "parkcity", "name": "Park City", "region": "UT", "lat": 40.6514, "lon": -111.508, "mid": 2560, "ex": {"air": -5, "rh": 60, "snow48": 0, "pastMax": 2, "cloud": 10, "code": 0, "tmrMin": -9, "tmrMax": -1, "tmrSnow": 0}}, {"id": "jackson", "name": "Jackson Hole", "region": "WY", "lat": 43.5875, "lon": -110.8279, "mid": 2550, "ex": {"air": -11, "rh": 72, "snow48": 18, "pastMax": -6, "cloud": 95, "code": 75, "tmrMin": -15, "tmrMax": -8, "tmrSnow": 9}}, {"id": "aspen", "name": "Aspen Snowmass", "region": "CO", "lat": 39.2084, "lon": -106.949, "mid": 3100, "ex": {"air": -7, "rh": 50, "snow48": 2, "pastMax": -1, "cloud": 30, "code": 2, "tmrMin": -12, "tmrMax": -3, "tmrSnow": 0}}, {"id": "mammoth", "name": "Mammoth Mountain", "region": "CA", "lat": 37.6308, "lon": -119.0326, "mid": 2900, "ex": {"air": -1, "rh": 45, "snow48": 0, "pastMax": 4, "cloud": 5, "code": 0, "tmrMin": -4, "tmrMax": 3, "tmrSnow": 0}}, {"id": "bigsky", "name": "Big Sky", "region": "MT", "lat": 45.2833, "lon": -111.4014, "mid": 2700, "ex": {"air": -14, "rh": 75, "snow48": 8, "pastMax": -9, "cloud": 70, "code": 71, "tmrMin": -19, "tmrMax": -10, "tmrSnow": 3}}, {"id": "telluride", "name": "Telluride", "region": "CO", "lat": 37.9375, "lon": -107.8123, "mid": 3300, "ex": {"air": -9, "rh": 50, "snow48": 5, "pastMax": -3, "cloud": 40, "code": 2, "tmrMin": -14, "tmrMax": -4, "tmrSnow": 2}}, {"id": "snowbird", "name": "Snowbird", "region": "UT", "lat": 40.583, "lon": -111.6556, "mid": 2850, "ex": {"air": -6, "rh": 82, "snow48": 22, "pastMax": -4, "cloud": 100, "code": 75, "tmrMin": -9, "tmrMax": -5, "tmrSnow": 15}}, {"id": "killington", "name": "Killington", "region": "VT", "lat": 43.6045, "lon": -72.8201, "mid": 800, "ex": {"air": -3, "rh": 82, "snow48": 1, "pastMax": 3, "cloud": 80, "code": 3, "tmrMin": -6, "tmrMax": 0, "tmrSnow": 1}}, {"id": "bogus", "name": "Bogus Basin", "region": "ID", "lat": 43.764, "lon": -116.0975, "mid": 2040, "ex": {"air": -2, "rh": 84, "snow48": 4, "pastMax": 2, "cloud": 75, "code": 3, "tmrMin": -5, "tmrMax": 0, "tmrSnow": 3}}];
+// Each page carries the resorts it shows (and which weather group to load) in #resortData.
+const RD = (()=>{ try{ return JSON.parse((document.getElementById("resortData")||{}).textContent || "{}"); }catch(e){ return {}; } })();
+const RESORTS = RD.resorts || [];
 
 const STYLES = {
   cruiser:{label:"Cruiser", sub:"Groomers, relaxed pace", sym:"circle", base:1, side:1,
@@ -182,11 +184,6 @@ function symSVG(kind){
   }
 }
 
-function buildResortChips(){
-  const el = $("resortChips"); if(!el) return;
-  el.innerHTML = RESORTS.map(r => `<a class="chip" href="${r.id}.html"${r.id===state.resort?' aria-current="page"':''}>${r.name}<small>${r.region}</small></a>`).join("");
-  const cur = el.querySelector("[aria-current]"); if(cur) el.scrollLeft = Math.max(0, cur.offsetLeft - 16);
-}
 function buildStyles(){
   $("styles").innerHTML = Object.entries(STYLES).map(([k,s]) =>
     `<button type="button" class="style-btn" data-k="${k}" aria-pressed="${k===state.style}"><span class="sym">${symSVG(s.sym)}</span><span><b>${s.label}</b><span class="s">${s.sub}</span></span></button>`).join("");
@@ -470,7 +467,7 @@ async function loadLive(){
   // Served by the Netlify function in netlify/functions/conditions.mts (MET Norway data, refreshed hourly).
   const ctl = new AbortController(); const timer = setTimeout(()=>ctl.abort(), 8000);
   try{
-    const res = await fetch("/api/conditions", {signal:ctl.signal});
+    const res = await fetch("/api/conditions/" + encodeURIComponent(RD.api || "featured"), {signal:ctl.signal});
     if(!res.ok) throw new Error("HTTP "+res.status);
     const data = await res.json();
     const live = {};
@@ -505,11 +502,39 @@ function renderHome(){
     : "These wax picks use example conditions. Live forecasts load on the hosted site.");
 }
 
+/* ---------- Search ---------- */
+const escH = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const fold = s => String(s).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+function initSearch(){
+  document.querySelectorAll("[data-search]").forEach(form=>{
+    const input = form.querySelector("input"), list = form.querySelector("ul");
+    let idx = null, loading = null;
+    const load = () => loading || (loading = fetch(form.dataset.index).then(r=>r.json()).then(d=>{ idx = d.map(e=>({e, hay: fold(e.slice(1).join(" "))})); }).catch(()=>{ idx = []; }));
+    function show(){
+      const q = fold(input.value.trim());
+      if(!q || !idx){ list.hidden = true; list.innerHTML = ""; return; }
+      const terms = q.split(/\s+/);
+      const hits = idx.filter(x => terms.every(t => x.hay.includes(t)))
+        .sort((a,b) => (fold(a.e[1]).startsWith(terms[0]) ? 0 : 1) - (fold(b.e[1]).startsWith(terms[0]) ? 0 : 1)).slice(0, 8);
+      list.innerHTML = hits.length
+        ? hits.map(({e}) => `<li><a href="${form.dataset.prefix}${encodeURIComponent(e[0])}.html"><b>${escH(e[1])}</b><span>${escH(e[4] ? e[4] + ", " : "")}${escH(e[3])}</span></a></li>`).join("")
+        : `<li class="none">No ski resort matches “${escH(input.value.trim())}”.</li>`;
+      list.hidden = false;
+    }
+    input.addEventListener("focus", load);
+    input.addEventListener("input", () => load().then(show));
+    input.addEventListener("keydown", e => { if(e.key === "Escape"){ list.hidden = true; } });
+    form.addEventListener("submit", e => { e.preventDefault(); const a = list.querySelector("a"); if(a) location.href = a.href; });
+    document.addEventListener("click", e => { if(!form.contains(e.target)) list.hidden = true; });
+  });
+}
+
 /* ---------- Wire up ---------- */
 const PAGE = PI.page;
+initSearch();
 document.querySelectorAll("[data-edge-diagram]").forEach(el=>{ el.innerHTML = edgeSVG(Number(el.dataset.base), Number(el.dataset.side)); });
 if(PAGE==="resort"){
-  buildResortChips(); buildStyles(); buildStripBands();
+  buildStyles(); buildStripBands();
   buildRadio("baseRow", [0.5,0.7,1], v=>v+"°", "base");
   buildRadio("sideRow", [1,2,3,4], v=>`${v}° (${90-v}°)`, "side");
   $("unitF").onclick = ()=>{ state.unit="F"; store.set("unit","F"); render(); };

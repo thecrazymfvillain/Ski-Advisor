@@ -1,0 +1,112 @@
+{
+ "shards": [
+  [
+   "CA-QC",
+   "US-MN",
+   "US-WY",
+   "US-NC",
+   "CA-NL",
+   "US-ND",
+   "MX-COA",
+   "US-TN"
+  ],
+  [
+   "US-NY",
+   "US-PA",
+   "US-WA",
+   "US-NM",
+   "CA-SK",
+   "US-IL",
+   "US-NJ",
+   "US-AL"
+  ],
+  [
+   "CA-ON",
+   "US-NH",
+   "US-UT",
+   "US-AK",
+   "US-OH",
+   "US-NV",
+   "CA-YT",
+   "US-IN"
+  ],
+  [
+   "US-MI",
+   "US-WI",
+   "US-ME",
+   "US-MA",
+   "CA-MB",
+   "CA-NS",
+   "US-AZ",
+   "US-MO"
+  ],
+  [
+   "CA-BC",
+   "US-VT",
+   "US-ID",
+   "US-MT",
+   "US-CT",
+   "US-VA",
+   "US-SD",
+   "CA-NT",
+   "US-MD"
+  ],
+  [
+   "US-CO",
+   "CA-AB",
+   "US-CA",
+   "US-OR",
+   "US-WV",
+   "CA-NB",
+   "US-IA",
+   "CA-PE",
+   "US-RI"
+  ]
+ ],
+ "featured": [
+  {
+   "id": "whistler",
+   "region": "CA-BC"
+  },
+  {
+   "id": "vail",
+   "region": "US-CO"
+  },
+  {
+   "id": "parkcity",
+   "region": "US-UT"
+  },
+  {
+   "id": "jackson",
+   "region": "US-WY"
+  },
+  {
+   "id": "aspen",
+   "region": "US-CO"
+  },
+  {
+   "id": "mammoth",
+   "region": "US-CA"
+  },
+  {
+   "id": "bigsky",
+   "region": "US-MT"
+  },
+  {
+   "id": "telluride",
+   "region": "US-CO"
+  },
+  {
+   "id": "snowbird",
+   "region": "US-UT"
+  },
+  {
+   "id": "killington",
+   "region": "US-VT"
+  },
+  {
+   "id": "bogus",
+   "region": "US-ID"
+  }
+ ]
+}

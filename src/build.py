@@ -118,12 +118,115 @@ RESORTS = [
         "Damp snow near 32°F causes suction. Brush the structure back into the base after waxing."]),
 ]
 R_BY = {r["id"]: r for r in RESORTS}
-TZ = {"whistler": "America/Vancouver", "vail": "America/Denver", "parkcity": "America/Denver", "jackson": "America/Denver",
-      "aspen": "America/Denver", "mammoth": "America/Los_Angeles", "bigsky": "America/Denver", "telluride": "America/Denver",
-      "snowbird": "America/Denver", "killington": "America/New_York", "bogus": "America/Boise"}
 MET_CREDIT = ('Weather data from <a href="https://api.met.no/">MET Norway</a> '
               '(<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>), adapted by us: forecasts at '
               'mid-mountain altitude, snow estimated from precipitation and temperature. MET Norway is not responsible for our recommendations.')
+
+OSM_CREDIT = ('Resort data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a> and '
+              '<a href="https://openskimap.org">OpenSkiMap</a>, available under the '
+              '<a href="https://opendatacommons.org/licenses/odbl/">Open Database License</a>.')
+def ft(m): return f"{round(m*3.28084/10)*10:,} ft"
+COUNTRY = {"US": "United States", "CA": "Canada", "MX": "Mexico"}
+
+def ftm(m): return f"{ft(m)} ({m:,} m)"
+
+COASTAL = {"US-WA", "US-OR", "US-CA", "US-AK"}
+INTERIOR = {"US-ID", "US-UT", "US-NV", "US-MT", "US-WY", "CA-YT"}
+ROCKIES = {"US-CO", "US-NM", "US-AZ", "CA-AB"}
+EAST = {"US-VT", "US-NH", "US-ME", "US-NY", "US-MA", "US-CT", "US-RI", "US-PA", "US-NJ", "US-MD", "US-VA", "US-WV",
+        "US-NC", "US-TN", "US-GA", "US-AL", "CA-QC", "CA-ON", "CA-NB", "CA-NS", "CA-NL", "CA-PE"}
+def climate(x):
+    r = x["region"]
+    if r == "CA-BC": return "coastal" if x["lon"] < -121.2 else "interior"
+    if r in COASTAL: return "coastal"
+    if r in INTERIOR: return "interior"
+    if r in ROCKIES: return "rockies"
+    if r in EAST: return "east"
+    if x["country"] == "MX": return "south"
+    return "midwest"
+
+CLIMATE = {
+ "coastal": ("coastal snow", "Storms off the Pacific bring heavy, wet snow, and temperatures often hover near freezing, especially low on the mountain.",
+   ["Humidity is usually high here. When you're between two waxes, take the warmer one for the lower mountain.",
+    "Wet snow causes suction. Brushing the structure back into the base matters as much as the wax color."]),
+ "interior": ("dry inland snow", "It sits far enough inland that storms drop lighter, drier snow, with cold nights and milder, sunny afternoons between storms.",
+   ["After a storm, dry new snow calls for a colder wax than the temperature alone suggests.",
+    "Clear nights make first-chair snow colder than the air. Plan for the colder end of the wax range in the morning."]),
+ "rockies": ("high, dry Rockies snow", "High elevation and dry air mean cold, abrasive snow, strong sun, and big swings between morning and afternoon.",
+   ["Cold, dry snow is abrasive. A harder, colder wax lasts longer here than a soft one.",
+    "Morning groomers are firm. Keep the side edge sharp; a 2° (88°) side edge suits most skiers."]),
+ "east": ("eastern snow and ice", "Frequent freeze-thaw cycles and a lot of machine-made snow make firm, icy conditions common, especially in the morning.",
+   ["Edges matter more than wax on firm snow. Sharpen often; many skiers here run a 2° or 3° side edge.",
+    "Machine-made snow is abrasive. Use a harder, colder wax than the temperature alone suggests."]),
+ "midwest": ("cold, mostly machine-made snow", "Cold winters, modest natural snowfall and a lot of snowmaking mean firm, dry, abrasive snow on most days.",
+   ["Machine-made snow wears wax quickly. Re-wax every few ski days, and pick the colder wax when you're unsure.",
+    "Short runs on firm snow reward sharp edges. A quick polish with a fine stone before each day keeps them biting."]),
+ "south": ("thin, sunny snow", "It's high but far south, so the snowpack is thin, the sun is strong and the snow softens quickly by afternoon.",
+   ["Warm afternoons call for warm wax and extra brushing.", "Keep edges sharp for firm mornings."]),
+}
+
+def describe(x):
+    """Resort-specific page text built from the resort's own numbers and its snow climate."""
+    c = climate(x); label, ctext, ctips = CLIMATE[c]
+    where = ", ".join(v for v in [x.get("locality"), x["regionName"]] if v)
+    if x["country"] != "US": where += f", {COUNTRY[x['country']]}"
+    rn = x["runs"]; n = sum(rn.values())
+    lifts = f"{x['lifts']} lift" + ("s" if x["lifts"] != 1 else "")
+    p1 = (f"{esc(x['name'])} is a ski area in {esc(where)} with {lifts}" + (f" and {n} mapped runs" if n else "") +
+          f". Its lifts reach from about {ftm(x['base'])} to {ftm(x['summit'])}, {ft(x['vertical'])} of vertical.")
+    mix = ""
+    if n >= 5:
+        easy, mid_, hard = rn["easy"] / n, rn["intermediate"] / n, (rn["advanced"] + rn["expert"]) / n
+        if hard >= 0.4: mix = " A large share of the mapped runs are advanced or expert terrain, where sharp edges pay off."
+        elif easy + mid_ >= 0.8: mix = " Most of the mapped runs are beginner and intermediate terrain."
+        else: mix = " The mapped runs mix beginner, intermediate and advanced terrain."
+    p2 = ctext + mix
+    p3 = f"The forecast on this page is for {ftm(x['mid'])}, halfway up the mountain."
+    tips = list(ctips)
+    v = x["vertical"]
+    if v >= 900: tips.append(f"With {ft(v)} of vertical, the top and bottom can need different waxes. Set a colder temperature under Adjust conditions for days spent up high.")
+    elif v < 250: tips.append(f"With {ft(v)} of vertical, conditions are similar top to bottom, so this forecast covers the whole hill.")
+    else: tips.append(f"The mid-mountain forecast here, at {ft(x['mid'])}, covers most of the terrain.")
+    if x["runKm"] and x["snowmakingKm"] / x["runKm"] > 0.4:
+        tips[1] = "Snowmaking covers much of the mapped terrain, so expect firm, abrasive machine-made snow, especially early season. Go one wax color colder."
+    tag = f"{ft(v)} of vertical, {lifts}, {label}"
+    return tag[0].upper() + tag[1:], [p1, p2, p3], tips
+
+def example(x):
+    """Plausible stand-in conditions, shown only when live weather can't load (e.g. in previews)."""
+    c = climate(x)
+    t0 = {"coastal": 1, "interior": -3, "rockies": -5, "east": -3, "midwest": -6, "south": 2}[c]
+    air = round(t0 - 0.0055 * (x["mid"] - 1000) - max(0, x["lat"] - 45) * 0.3, 1)
+    rh = {"coastal": 86, "east": 80, "midwest": 75}.get(c, 60)
+    return dict(air=air, rh=rh, snow48=3, pastMax=round(air + 3, 1), cloud=50, code=2, tmrMin=round(air - 4, 1), tmrMax=round(air + 2, 1), tmrSnow=1)
+
+RAW = json.load(open(os.path.join(SRC, "resorts-data.json"), encoding="utf-8"))
+FLAG = {r["id"]: r for r in RESORTS}            # hand-written text for the 11 original resorts
+ALL = []
+for d in RAW:
+    x = dict(d); x["short"] = d["region"].split("-", 1)[-1]
+    if d["id"] in FLAG:
+        f = FLAG[d["id"]]; x.update(tag=f["tag"], about=f["about"], tips=f["tips"], ex=f["ex"], flagship=True)
+    else:
+        x["tag"], x["about"], x["tips"] = describe(x); x["ex"] = example(x); x["flagship"] = False
+    ALL.append(x)
+A_BY = {x["id"]: x for x in ALL}
+FEATURED = [A_BY[r["id"]] for r in RESORTS]
+REGIONS = {}
+for x in ALL:
+    REGIONS.setdefault(x["region"], {"code": x["region"], "name": x["regionName"], "country": x["country"], "resorts": []})["resorts"].append(x)
+def region_href(code, depth): return "../" * depth + f"regions/{code.lower()}.html"
+
+def km_between(a, b):
+    la1, la2 = math.radians(a["lat"]), math.radians(b["lat"]); dl = math.radians(b["lon"] - a["lon"])
+    return 6371 * math.acos(min(1, math.sin(la1) * math.sin(la2) + math.cos(la1) * math.cos(la2) * math.cos(dl)))
+def nearby(x, k=8):
+    return sorted((y for y in ALL if y["id"] != x["id"]), key=lambda y: km_between(x, y))[:k]
+
+def rd_script(data):
+    return '<script type="application/json" id="resortData">' + json.dumps(data, ensure_ascii=False).replace("</", "<\\/") + '</script>'
+def rd_resort(x):
+    return {"id": x["id"], "name": x["name"], "region": x["short"], "lat": x["lat"], "lon": x["lon"], "mid": x["mid"], "ex": x["ex"]}
 
 def ft(m): return f"{round(m*3.28084/10)*10:,} ft"
 
@@ -169,7 +272,8 @@ def shop(q): return f'<a class="shop" href="https://www.rei.com/search?q={q.repl
 
 def resort_links(depth):
     r = "../"*depth
-    return '<div class="related">' + "".join(f'<a href="{r}resorts/{x["id"]}.html">{x["name"]}</a>' for x in RESORTS) + '</div>'
+    return ('<div class="related">' + "".join(f'<a href="{r}resorts/{x["id"]}.html">{x["name"]}</a>' for x in RESORTS) +
+            f'<a href="{r}resorts/index.html">All {len(ALL)} resorts →</a></div>')
 
 # =====================================================================
 # Guides
@@ -443,34 +547,51 @@ def head(title, desc, path, depth, jsonld=None):
         out.append('<script type="application/ld+json">' + json.dumps(jsonld, ensure_ascii=False) + '</script>')
     return "\n".join(out)
 
-def header(depth, current="", chips=False):
+def header(depth, current="", chips=""):
     r = "../"*depth
-    g_cur = ' aria-current="page"' if current == "guides" else ""
-    chip_row = '\n    <nav class="chips" id="resortChips" aria-label="Choose a resort"></nav>' if chips else ""
+    cur = lambda k: ' aria-current="page"' if current == k else ""
     return f"""<header class="top">
   <div class="wrap">
     <div class="top-row">
       <a class="brand" href="{r}index.html">{DIAMOND}<span>The Ski Advisor</span></a>
-      <nav class="nav" aria-label="Site"><a href="{r}index.html#resorts">Resorts</a><a href="{r}guides/index.html"{g_cur}>Guides</a></nav>
-    </div>{chip_row}
+      <nav class="nav" aria-label="Site"><a href="{r}resorts/index.html"{cur("resorts")}>Resorts</a><a href="{r}guides/index.html"{cur("guides")}>Guides</a></nav>
+    </div>{chips}
   </div>
 </header>"""
 
 def footer(depth):
     r = "../"*depth
     res = "".join(f'<li><a href="{r}resorts/{x["id"]}.html">{x["name"]}</a></li>' for x in RESORTS)
+    res += f'<li><a href="{r}resorts/index.html"><b>All {len(ALL)} resorts</b></a></li>'
     gds = "".join(f'<li><a href="{r}guides/{g["slug"]}.html">{g["title"]}</a></li>' for g in GUIDES)
     return f"""<footer class="site-foot">
   <div class="wrap" style="display:grid;gap:22px">
     <div class="foot-grid">
-      <div><h3>Resorts</h3><ul>{res}</ul></div>
+      <div><h3>Popular resorts</h3><ul>{res}</ul></div>
       <div><h3>Guides</h3><ul>{gds}</ul></div>
-      <div><h3>The Ski Advisor</h3><p>Wax and edge recommendations from the forecast at each resort's mid-mountain elevation.</p></div>
+      <div><h3>The Ski Advisor</h3><p>Wax and edge recommendations for {len(ALL)} ski areas in the US, Canada and Mexico, from the forecast at each one's mid-mountain elevation.</p></div>
     </div>
     <p>{MET_CREDIT}</p>
+    <p>{OSM_CREDIT}</p>
     <p>Some shop links may earn us a commission. It doesn't change what we recommend. Recommendations are starting points: the temperature on your wax label wins, and a snow thermometer beats any forecast.</p>
   </div>
 </footer>"""
+
+def search_box(depth, prefix, sid):
+    return f"""<form class="search" data-search data-index="{"../"*depth}assets/resort-index.json" data-prefix="{prefix}" role="search">
+      <label class="sr" for="{sid}">Find a ski resort</label>
+      <input id="{sid}" type="search" autocomplete="off" placeholder="Search {len(ALL)} ski resorts by name, town or state">
+      <ul hidden></ul>
+    </form>"""
+
+def region_grid(depth):
+    out = []
+    for cc in ("US", "CA", "MX"):
+        regs = sorted((g for g in REGIONS.values() if g["country"] == cc), key=lambda g: g["name"])
+        if not regs: continue
+        items = "".join(f'<a href="{region_href(g["code"], depth)}">{esc(g["name"])}<small>{len(g["resorts"])}</small></a>' for g in regs)
+        out.append(f'<h3>{COUNTRY[cc]}</h3><div class="region-list">{items}</div>')
+    return "\n".join(out)
 
 def page_info(page, resort=""):
     return f'<div id="pageInfo" data-page="{page}" data-resort="{resort}" hidden></div>'
@@ -505,25 +626,25 @@ SIL = """<svg class="sil" viewBox="0 0 1200 600" preserveAspectRatio="xMidYMax s
 </svg>"""
 
 def home(full):
-    opts = "".join(f'<option value="{x["id"]}"{" selected" if x["id"]=="vail" else ""}>{x["name"]}, {x["region"]}</option>' for x in RESORTS)
     cards = "".join(f"""<a class="resort-card" href="resorts/{x['id']}.html">
-  <span class="meta">{x['region']} · mid-mountain {ft(x['mid'])}</span>
+  <span class="meta">{x['short']} · mid-mountain {ft(x['mid'])}</span>
   <h3>{x['name']}</h3>
   <p>{x['tag']}.</p>
   <span class="wax-chip" data-home-wax="{x['id']}"><i></i><span>Loading today's wax…</span></span>
-</a>""" for x in RESORTS)
-    cards += """<a class="resort-card alt" href="guides/ski-wax-temperature-chart.html">
-  <span class="meta">Any mountain</span>
-  <h3>Not on the list?</h3>
-  <p>Use the wax temperature chart with your local forecast or a snow thermometer.</p>
-  <span class="wax-chip"><span>Open the wax chart →</span></span>
+</a>""" for x in FEATURED)
+    cards += f"""<a class="resort-card alt" href="resorts/index.html">
+  <span class="meta">US · Canada · Mexico</span>
+  <h3>All {len(ALL)} resorts</h3>
+  <p>Every operating ski area with a lift, from the biggest destinations to small local hills.</p>
+  <span class="wax-chip"><span>Browse by state or province →</span></span>
 </a>"""
     gcards = "".join(f'<a class="guide-card" href="guides/{g["slug"]}.html"><small>{read_minutes(guide_body(g))} min read</small><b>{g["title"]}</b><span>{g["card"]}</span></a>' for g in GUIDES)
     ld = {"@context":"https://schema.org","@type":"WebSite","name":"The Ski Advisor","url":DOMAIN+"/"}
     h = head("The Ski Advisor: Ski Wax and Edge Tuning for Today's Snow",
-             "Wax color, iron temperature and edge angles for today's snow at 11 North American ski resorts, plus step-by-step home tuning guides.",
+             f"Wax color, iron temperature and edge angles for today's snow at {len(ALL)} ski resorts across the US, Canada and Mexico, plus step-by-step home tuning guides.",
              "", 0, ld)
     body = f"""{page_info("home")}
+{rd_script({"api": "featured", "resorts": [rd_resort(x) for x in FEATURED]})}
 {header(0)}
 <section class="hero-fly" id="flyHero" aria-label="Flyover of a snowy ski mountain">
   {SIL}
@@ -531,13 +652,11 @@ def home(full):
   <button class="fly-ctrl" id="flyPause" type="button" aria-pressed="false">Pause flyover</button>
   <div class="hero-copy">
     <div class="wrap">
-      <span class="label">Wax &amp; edges · 11 North American resorts</span>
+      <span class="label">Wax &amp; edges · {len(ALL)} North American ski areas</span>
       <h1>Your Mountain<br>Your Snow<br>Your Skis</h1>
       <p>Pick your mountain. Get the wax color, iron temperature and edge angles for today, tomorrow or this weekend, plus a step-by-step home tune to match.</p>
       <div class="hero-cta">
-        <label class="sr" for="heroResort">Your mountain</label>
-        <select id="heroResort">{opts}</select>
-        <a class="btn" id="heroGo" href="resorts/vail.html">Show my tune</a>
+        <a class="btn" href="#resorts">Find your mountain</a>
         <a class="btn ghost" href="guides/index.html">Read the guides</a>
       </div>
     </div>
@@ -545,8 +664,15 @@ def home(full):
 </section>
 <main class="wrap">
   <section class="home-sec" id="resorts" aria-labelledby="resortsH">
-    <div class="section-head"><h2 id="resortsH">Pick your mountain</h2><p class="muted" id="homeDataNote">Today's wax pick for each resort, from the forecast at mid-mountain.</p></div>
+    <div class="section-head"><h2 id="resortsH">Find your mountain</h2><p class="muted">{len(ALL)} ski areas across the US, Canada and Mexico.</p></div>
+    {search_box(0, "resorts/", "homeSearch")}
+    <h3 class="sub-h">Popular resorts</h3>
+    <p class="muted" id="homeDataNote">Today's wax pick for each resort, from the forecast at mid-mountain.</p>
     <div class="resort-grid">{cards}</div>
+  </section>
+  <section class="home-sec" aria-labelledby="browseH">
+    <div class="section-head"><h2 id="browseH">Browse by state or province</h2></div>
+    {region_grid(0)}
   </section>
   <section class="home-sec" aria-labelledby="howH">
     <div class="section-head"><h2 id="howH">How it works</h2></div>
@@ -564,32 +690,34 @@ def home(full):
 {footer(0)}
 <script src="assets/tool.js"></script>
 <script src="{THREE}"></script>
-<script src="assets/flyover.js"></script>
-<script>
-(function(){{
-  var s = document.getElementById("heroResort"), go = document.getElementById("heroGo");
-  if(s && go) s.addEventListener("change", function(){{ go.href = "resorts/" + s.value + ".html"; }});
-}})();
-</script>"""
+<script src="assets/flyover.js"></script>"""
     return doc(full, h, body)
 
 TOOL_FRAG = open(os.path.join(SRC, "tool-fragment.html")).read()
 
 def resort_page(x):
-    others = [g for g in ["ski-wax-temperature-chart","ski-edge-angles","how-to-wax-skis","icy-and-man-made-snow" if x["id"] in ("killington","vail","jackson","bigsky","parkcity") else "waxing-for-spring-snow","race-wax-vs-training-wax"]]
+    firm = climate(x) in ("east", "midwest", "rockies")
+    others = ["ski-wax-temperature-chart", "ski-edge-angles", "how-to-wax-skis", "icy-and-man-made-snow" if firm else "waxing-for-spring-snow", "race-wax-vs-training-wax"]
+    near = nearby(x, 8)
+    chips = ('\n    <nav class="chips" aria-label="Nearby resorts">' +
+             f'<a class="chip" href="{x["id"]}.html" aria-current="page">{esc(x["name"])}<small>{x["short"]}</small></a>' +
+             "".join(f'<a class="chip" href="{n["id"]}.html">{esc(n["name"])}<small>{n["short"]}</small></a>' for n in near) +
+             f'<a class="chip" href="{region_href(x["region"], 1)}">All {esc(x["regionName"])} →</a></nav>')
     rel = "".join(f'<a href="../guides/{s}.html">{G_BY[s]["title"]}</a>' for s in others)
     about = "".join(f"<p>{p}</p>" for p in x["about"])
     tips = "".join(f"<li>{t}</li>" for t in x["tips"])
+    name = esc(x["name"])
     title = f"{x['name']} Ski Wax & Tuning: Today's Wax and Edge Angles"
-    desc = f"Which wax and edge angles to use at {x['name']} today, tomorrow or this weekend, from the forecast at mid-mountain ({ft(x['mid'])}). Plus a step-by-step home tune."
-    ld = bc_ld([("Home",""),("Resorts","index.html#resorts"),(x["name"],f"resorts/{x['id']}.html")])
+    desc = f"Which wax and edge angles to use at {x['name']}, {x['regionName']}, today, tomorrow or this weekend, from the forecast at mid-mountain ({ft(x['mid'])}). Plus a step-by-step home tune."
+    ld = bc_ld([("Home",""),("Resorts","resorts/index.html"),(x["regionName"], f"regions/{x['region'].lower()}.html"),(x["name"],f"resorts/{x['id']}.html")])
     body = f"""{page_info("resort", x["id"])}
-{header(1, chips=True)}
+{rd_script({"api": x["region"], "resorts": [rd_resort(x)]})}
+{header(1, "resorts", chips)}
 <main class="wrap">
-  {crumbs(1, [("Resorts","../index.html#resorts"),(x["name"],None)])}
+  {crumbs(1, [("Resorts","index.html"),(esc(x["regionName"]), region_href(x["region"], 1)),(name,None)])}
   <div class="hero">
-    <span class="label" id="heroEyebrow">Today · {x['region']} · mid-mountain, {ft(x['mid'])}</span>
-    <h1>Wax &amp; tune for <em>{x['name']}</em></h1>
+    <span class="label" id="heroEyebrow">Today · {x['short']} · mid-mountain, {ft(x['mid'])}</span>
+    <h1>Wax &amp; tune for <em>{name}</em></h1>
     <p class="lede">{x['tag']}. Wax color, iron temperature and edge angles from the forecast at mid-mountain, with a step-by-step home tune.</p>
     <div class="hero-sub">
       <div class="seg" role="group" aria-label="When are you skiing?">
@@ -607,8 +735,8 @@ def resort_page(x):
 {TOOL_FRAG}
   <section class="block" aria-labelledby="aboutH">
     <div class="about">
-      <div class="prose"><h2 id="aboutH">Skiing {x['name']}'s snow</h2>{about}</div>
-      <div class="card"><h3>Tuning tips for {x['name']}</h3><ul class="tips">{tips}</ul></div>
+      <div class="prose"><h2 id="aboutH">Skiing {name}'s snow</h2>{about}</div>
+      <div class="card"><h3>Tuning tips for {name}</h3><ul class="tips">{tips}</ul></div>
     </div>
   </section>
   <section class="block" aria-labelledby="relH">
@@ -616,7 +744,7 @@ def resort_page(x):
     <div class="related">{rel}</div>
   </section>
   <div class="notes">
-    <p id="dataNote">Weather from MET Norway's forecast at {x['name']}'s mid-mountain elevation.</p>
+    <p id="dataNote">Weather from MET Norway's forecast at {name}'s mid-mountain elevation.</p>
     <p>Snow temperature is estimated from air temperature and sky cover. A snow thermometer reading is better. Wax ranges vary by brand, so the temperature on the wax label wins. All waxes suggested here are fluoro-free.</p>
     <p>Base bevels are usually set by a shop's stone grind. If your skis are new or freshly ground, ask the shop what they set before you change anything.</p>
   </div>
@@ -624,6 +752,56 @@ def resort_page(x):
 {footer(1)}
 <script src="../assets/tool.js"></script>"""
     return doc(True, head(title, desc, f"resorts/{x['id']}.html", 1, ld), body)
+
+def region_page(g):
+    rs = sorted(g["resorts"], key=lambda x: -x["vertical"])
+    cards = "".join(f"""<a class="resort-card" href="../resorts/{x['id']}.html">
+  <span class="meta">{esc(x.get('locality') or g['name'])} · {x['lifts']} lift{'s' if x['lifts'] != 1 else ''}</span>
+  <h3>{esc(x['name'])}</h3>
+  <p>{ft(x['vertical'])} of vertical, {ft(x['base'])} to {ft(x['summit'])}.</p>
+  <span class="wax-chip" data-home-wax="{x['id']}"><i></i><span>Loading today's wax…</span></span>
+</a>""" for x in rs)
+    n = len(rs); name = esc(g["name"]); country = COUNTRY[g["country"]]
+    title = f"{g['name']} Ski Resorts: Today's Wax and Edge Angles | The Ski Advisor"
+    desc = f"Today's ski wax pick for all {n} ski areas in {g['name']}, {country}, from the forecast at each one's mid-mountain elevation."
+    ld = bc_ld([("Home",""),("Resorts","resorts/index.html"),(g["name"], f"regions/{g['code'].lower()}.html")])
+    body = f"""{page_info("region")}
+{rd_script({"api": g["code"], "resorts": [rd_resort(x) for x in rs]})}
+{header(1, "resorts")}
+<main class="wrap">
+  {crumbs(1, [("Resorts","../resorts/index.html"),(name,None)])}
+  <div class="hero">
+    <span class="label">{n} ski area{'s' if n != 1 else ''} · {country}</span>
+    <h1>{name} ski resorts</h1>
+    <p class="lede">Today's wax pick for every ski area in {name}, from MET Norway's forecast at each one's mid-mountain elevation. Pick a resort for edge angles, the weekend forecast and a full tune.</p>
+  </div>
+  <p class="muted" id="homeDataNote"></p>
+  <div class="resort-grid">{cards}</div>
+  <div class="notes"><p>Biggest vertical first. {OSM_CREDIT}</p></div>
+</main>
+{footer(1)}
+<script src="../assets/tool.js"></script>"""
+    return doc(True, head(title, desc, f"regions/{g['code'].lower()}.html", 1, ld), body)
+
+def resorts_index():
+    body = f"""{page_info("resorts")}
+{header(1, "resorts")}
+<main class="wrap">
+  {crumbs(1, [("Resorts",None)])}
+  <div class="hero">
+    <span class="label">US · Canada · Mexico</span>
+    <h1>Ski resorts in North America</h1>
+    <p class="lede">{len(ALL)} operating ski areas with lifts. Search for yours, or browse by state or province.</p>
+  </div>
+  {search_box(1, "", "allSearch")}
+  <section class="home-sec" aria-label="Browse by state or province">{region_grid(1)}</section>
+  <div class="notes"><p>{OSM_CREDIT} Missing a ski area, or see a mistake? It comes from OpenStreetMap, which anyone can correct.</p></div>
+</main>
+{footer(1)}
+<script src="../assets/tool.js"></script>"""
+    return doc(True, head("Ski Resorts in North America | The Ski Advisor",
+                          f"Find today's ski wax and edge angles for any of {len(ALL)} ski resorts in the US, Canada and Mexico.",
+                          "resorts/index.html", 1, bc_ld([("Home",""),("Resorts","resorts/index.html")])), body)
 
 def guide_page(g):
     gb = guide_body(g)
@@ -681,32 +859,48 @@ def write(rel, text):
     p = os.path.join(OUT, rel); os.makedirs(os.path.dirname(p), exist_ok=True)
     open(p, "w").write(text)
 
+def shards(n=6):
+    """Split regions into n groups of similar size; the weather job refreshes one group per hour."""
+    groups = [[] for _ in range(n)]; load = [0] * n
+    for g in sorted(REGIONS.values(), key=lambda g: -len(g["resorts"])):
+        i = load.index(min(load)); groups[i].append(g["code"]); load[i] += len(g["resorts"])
+    return groups, load
+
 def main():
     css = open(os.path.join(SRC, "base.css")).read() + open(os.path.join(SRC, "extra.css")).read()
-    js_res = [{k: x[k] for k in ("id","name","region","lat","lon","mid","ex")} for x in RESORTS]
-    tool = open(os.path.join(SRC, "tool.js")).read().replace("/*RESORTS*/[]", json.dumps(js_res))
     write("assets/site.css", css)
-    write("assets/tool.js", tool)
+    write("assets/tool.js", open(os.path.join(SRC, "tool.js")).read())
     write("assets/flyover.js", open(os.path.join(SRC, "flyover.js")).read())
-    # resort list for the Netlify weather functions
+    write("assets/resort-index.json", json.dumps([[x["id"], x["name"], x["short"], x["regionName"], x.get("locality") or ""] for x in ALL], ensure_ascii=False, separators=(",", ":")))
+    # resort list, shard plan and featured resorts for the Netlify weather functions
     lib = os.path.join(ROOT, "netlify", "lib"); os.makedirs(lib, exist_ok=True)
     with open(os.path.join(lib, "resorts.json"), "w") as f:
-        json.dump([{"id": x["id"], "lat": x["lat"], "lon": x["lon"], "mid": x["mid"], "tz": TZ[x["id"]]} for x in RESORTS], f, indent=1)
+        json.dump([{"id": x["id"], "lat": x["lat"], "lon": x["lon"], "mid": x["mid"], "tz": x["tz"], "region": x["region"]} for x in ALL], f, separators=(",", ":"))
+    groups, load = shards()
+    with open(os.path.join(lib, "meta.json"), "w") as f:
+        json.dump({"shards": groups, "featured": [{"id": x["id"], "region": x["region"]} for x in FEATURED]}, f, indent=1)
     for f in ("terrain.json", "terrain-height.png", "terrain-ground.webp", "terrain-ground-1k.webp", "terrain-forest.webp", "terrain-rock.webp"):
         dst = os.path.join(OUT, "assets", "terrain", f); os.makedirs(os.path.dirname(dst), exist_ok=True)
         with open(os.path.join(SRC, "terrain", f), "rb") as a, open(dst, "wb") as b: b.write(a.read())
+    # remove pages for resorts that are no longer in the data
+    for d in ("resorts", "regions"):
+        p = os.path.join(OUT, d)
+        if os.path.isdir(p):
+            for fn in os.listdir(p): os.remove(os.path.join(p, fn))
     write("index.html", home(True))
-    for x in RESORTS: write(f"resorts/{x['id']}.html", resort_page(x))
+    write("resorts/index.html", resorts_index())
+    for x in ALL: write(f"resorts/{x['id']}.html", resort_page(x))
+    for g in REGIONS.values(): write(f"regions/{g['code'].lower()}.html", region_page(g))
     for g in GUIDES: write(f"guides/{g['slug']}.html", guide_page(g))
     write("guides/index.html", guides_index())
-    urls = [""] + [f"resorts/{x['id']}.html" for x in RESORTS] + ["guides/index.html"] + [f"guides/{g['slug']}.html" for g in GUIDES]
+    urls = ([""] + ["resorts/index.html"] + [f"regions/{c.lower()}.html" for c in sorted(REGIONS)] + [f"resorts/{x['id']}.html" for x in ALL] +
+            ["guides/index.html"] + [f"guides/{g['slug']}.html" for g in GUIDES])
     write("sitemap.xml", '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
           "".join(f"  <url><loc>{DOMAIN}/{u}</loc><lastmod>{TODAY}</lastmod></url>\n" for u in urls) + "</urlset>\n")
     write("robots.txt", f"User-agent: *\nAllow: /\nSitemap: {DOMAIN}/sitemap.xml\n")
-    # claude.ai preview entry: home page without the document wrapper (not part of the deployable site)
     os.makedirs(os.path.join(ROOT, "preview"), exist_ok=True)
     open(os.path.join(ROOT, "preview", "index.html"), "w").write(home(False))
-    print("built", len(urls), "pages")
+    print("built", len(urls), "pages;", len(ALL), "resorts in", len(REGIONS), "regions; weather shards:", load)
 
 if __name__ == "__main__":
     main()
