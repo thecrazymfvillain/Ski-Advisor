@@ -324,3 +324,28 @@ td:last-child{white-space:normal;min-width:200px}
 .contact-form .btn{justify-self:start;cursor:pointer}
 .small{font-size:13px}
 .foot-links a{color:var(--ink);font-weight:600}
+
+/* Brand: navy header with the logo */
+:root{--brand-navy:#00174B;--brand-red:#FB1A31}
+.top{background:var(--brand-navy);border-bottom-color:rgba(255,255,255,.08)}
+body::before{background:var(--brand-navy)}
+.brand img{display:block;height:54px;width:auto}
+@media (max-width:600px){.brand img{height:44px}}
+.top-row{padding-block:8px}
+.top .nav a{color:#FFFFFF}
+.top .nav a:hover,.top .nav a[aria-current="page"]{color:#FFFFFF;text-decoration:underline;text-decoration-color:var(--brand-red);text-decoration-thickness:3px;text-underline-offset:7px}
+.top .chip{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.22);color:#FFFFFF}
+.top .chip small{color:rgba(255,255,255,.72)}
+.top .chip:hover{border-color:#FFFFFF}
+.top .chip[aria-current="page"]{background:#FFFFFF;color:var(--brand-navy);border-color:#FFFFFF}
+.top .chip[aria-current="page"] small{color:var(--brand-navy);opacity:.7}
+
+/* Near me and My mountains */
+.search-row{display:flex;gap:8px}
+.search-row input{flex:1;min-width:0}
+.near-btn{flex:none;font:inherit;font-weight:600;font-size:15px;padding:0 14px;border-radius:10px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.near-btn:hover{border-color:var(--ink)}
+.near-msg{margin:8px 0 0;font-size:14px}
+.fav-btn{display:inline-flex;align-items:center;gap:6px;font:inherit;font-size:13px;font-weight:600;padding:4px 12px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.fav-btn:hover{border-color:var(--ink)}
+.fav-btn[aria-pressed="true"]{background:var(--brand-red);border-color:var(--brand-red);color:#FFFFFF}

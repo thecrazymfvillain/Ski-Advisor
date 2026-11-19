@@ -18,6 +18,8 @@ DOMAIN = "https://theskiadvisor.com"
 BRAND = "The Ski Advisor"
 TODAY = datetime.date.today().isoformat()
 THREE = "https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"
+# Cloudflare Web Analytics site token (cookie-free). Empty = analytics off.
+CF_ANALYTICS_TOKEN = ""
 FONTS = ('<link rel="preconnect" href="https://fonts.googleapis.com">\n'
          '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n'
          '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800'
@@ -226,7 +228,7 @@ def nearby(x, k=8):
 def rd_script(data):
     return '<script type="application/json" id="resortData">' + json.dumps(data, ensure_ascii=False).replace("</", "<\\/") + '</script>'
 def rd_resort(x):
-    return {"id": x["id"], "name": x["name"], "region": x["short"], "lat": x["lat"], "lon": x["lon"], "mid": x["mid"], "ex": x["ex"]}
+    return {"id": x["id"], "name": x["name"], "region": x["short"], "api": x["region"], "lat": x["lat"], "lon": x["lon"], "mid": x["mid"], "ex": x["ex"]}
 
 def ft(m): return f"{round(m*3.28084/10)*10:,} ft"
 
@@ -516,6 +518,9 @@ GUIDES = [
 </ul>
 """),
 ]
+from guides_extra import EXTRA, SNOWBOARD_GUIDE   # longer guide sections + the snowboard guide
+for _g in GUIDES: _g["body"] += EXTRA.get(_g["slug"], "")
+GUIDES.insert(1, SNOWBOARD_GUIDE)
 G_BY = {g["slug"]: g for g in GUIDES}
 
 def guide_body(g):
@@ -547,7 +552,7 @@ def head(title, desc, path, depth, jsonld=None, noindex=False):
            '<meta property="og:image:width" content="1200">',
            '<meta property="og:image:height" content="630">',
            '<meta name="twitter:card" content="summary_large_image">',
-           '<meta name="theme-color" content="#0F1B26">',
+           '<meta name="theme-color" content="#00174B">',
            '<link rel="icon" href="/favicon.svg" type="image/svg+xml">',
            '<link rel="icon" href="/favicon-48.png" sizes="48x48" type="image/png">',
            '<link rel="apple-touch-icon" href="/apple-touch-icon.png">',
@@ -555,6 +560,9 @@ def head(title, desc, path, depth, jsonld=None, noindex=False):
            f'<link rel="stylesheet" href="{r}assets/site.css">']
     if noindex:
         out.append('<meta name="robots" content="noindex">')
+    if CF_ANALYTICS_TOKEN:
+        out.append('<script defer src="https://static.cloudflareinsights.com/beacon.min.js" '
+                   'data-cf-beacon=\'{"token": "' + CF_ANALYTICS_TOKEN + '"}\'></script>')
     if jsonld:
         out.append('<script type="application/ld+json">' + json.dumps(jsonld, ensure_ascii=False) + '</script>')
     return "\n".join(out)
@@ -565,7 +573,7 @@ def header(depth, current="", chips=""):
     return f"""<header class="top">
   <div class="wrap">
     <div class="top-row">
-      <a class="brand" href="{r}index.html">{DIAMOND}<span>The Ski Advisor</span></a>
+      <a class="brand" href="{r}index.html"><img src="{r}assets/logo-header.webp" alt="The Ski Advisor" width="100" height="54"></a>
       <nav class="nav" aria-label="Site"><a href="{r}resorts/index.html"{cur("resorts")}>Resorts</a><a href="{r}guides/index.html"{cur("guides")}>Guides</a></nav>
     </div>{chips}
   </div>
@@ -593,8 +601,12 @@ def footer(depth):
 def search_box(depth, prefix, sid):
     return f"""<form class="search" data-search data-index="{"../"*depth}assets/resort-index.json" data-prefix="{prefix}" role="search">
       <label class="sr" for="{sid}">Find a ski resort</label>
-      <input id="{sid}" type="search" autocomplete="off" placeholder="Search {len(ALL)} ski resorts by name, town or state">
+      <div class="search-row">
+        <input id="{sid}" type="search" autocomplete="off" placeholder="Search {len(ALL)} ski resorts by name, town or state">
+        <button type="button" class="near-btn" data-near>Near me</button>
+      </div>
       <ul hidden></ul>
+      <p class="near-msg muted" hidden></p>
     </form>"""
 
 def region_grid(depth):
@@ -653,8 +665,8 @@ def home(full):
 </a>"""
     gcards = "".join(f'<a class="guide-card" href="guides/{g["slug"]}.html"><small>{read_minutes(guide_body(g))} min read</small><b>{g["title"]}</b><span>{g["card"]}</span></a>' for g in GUIDES)
     ld = {"@context":"https://schema.org","@type":"WebSite","name":"The Ski Advisor","url":DOMAIN+"/"}
-    h = head("The Ski Advisor: Ski Wax and Edge Tuning for Today's Snow",
-             f"Wax color and iron temperature for today's snow at {len(ALL)} ski resorts across the US, Canada and Mexico, edge settings for how you ski, and step-by-step home tuning guides.",
+    h = head("The Ski Advisor: Ski and Snowboard Wax for Today's Snow",
+             f"Ski and snowboard wax color and iron temperature for today's snow at {len(ALL)} resorts across the US, Canada and Mexico, edge settings for how you ski or ride, and step-by-step home tuning guides.",
              "", 0, ld)
     body = f"""{page_info("home")}
 {rd_script({"api": "featured", "resorts": [rd_resort(x) for x in FEATURED]})}
@@ -667,7 +679,7 @@ def home(full):
     <div class="wrap">
       <span class="label">Wax &amp; edges · {len(ALL)} North American ski areas</span>
       <h1>Your Mountain<br>Your Snow<br>Your Skis</h1>
-      <p>Pick your mountain. Get the wax color and iron temperature for today, tomorrow or this weekend, edge settings for how you ski, and a step-by-step home tune to match.</p>
+      <p>Pick your mountain. Get the wax color and iron temperature for today, tomorrow or this weekend, edge settings for how you ski or ride, and a step-by-step home tune to match.</p>
       <div class="hero-cta">
         <a class="btn" href="#resorts">Find your mountain</a>
         <a class="btn ghost" href="guides/index.html">Read the guides</a>
@@ -679,6 +691,11 @@ def home(full):
   <section class="home-sec" id="resorts" aria-labelledby="resortsH">
     <div class="section-head"><h2 id="resortsH">Find your mountain</h2><p class="muted">{len(ALL)} ski areas across the US, Canada and Mexico.</p></div>
     {search_box(0, "resorts/", "homeSearch")}
+    <div id="myMtns" hidden>
+      <h3 class="sub-h">My mountains</h3>
+      <p class="muted">Saved on this device. Save or remove a resort from its page.</p>
+      <div class="resort-grid" id="myMtnsGrid"></div>
+    </div>
     <h3 class="sub-h">Popular resorts</h3>
     <p class="muted" id="homeDataNote">Today's wax pick for each resort, from the forecast at mid-mountain.</p>
     <div class="resort-grid">{cards}</div>
@@ -692,11 +709,11 @@ def home(full):
     <ol class="how">
       <li><b>Forecast at mid-mountain</b><span>We pull temperature, humidity and new snow at the elevation you'll actually ski, not at the base.</span></li>
       <li><b>Snow, not air</b><span>We estimate the snow temperature and surface: new, packed, refrozen, man-made or wet.</span></li>
-      <li><b>Wax, edges, steps</b><span>You get the wax color and iron setting for the snow, edge settings for how you ski, and a tune walkthrough set to match.</span></li>
+      <li><b>Wax, edges, steps</b><span>You get the wax color and iron setting for the snow, edge settings for how you ski or ride, and a tune walkthrough set to match.</span></li>
     </ol>
   </section>
   <section class="home-sec" aria-labelledby="guidesH">
-    <div class="section-head"><h2 id="guidesH">Tuning guides</h2><p class="muted">Everything you need to tune at home, from your first wax job to race day.</p></div>
+    <div class="section-head"><h2 id="guidesH">Tuning guides</h2><p class="muted">Everything you need to tune skis or a snowboard at home, from your first wax job to race day.</p></div>
     <div class="guide-grid">{gcards}</div>
   </section>
 </main>
@@ -720,8 +737,8 @@ def resort_page(x):
     about = "".join(f"<p>{p}</p>" for p in x["about"])
     tips = "".join(f"<li>{t}</li>" for t in x["tips"])
     name = esc(x["name"])
-    title = f"{x['name']} Ski Wax & Tuning: Today's Wax Pick and Home Tune"
-    desc = f"Which wax to use at {x['name']}, {x['regionName']}, today, tomorrow or this weekend, from the forecast at mid-mountain ({ft(x['mid'])}). Plus edge settings for how you ski and a step-by-step home tune."
+    title = f"{x['name']} Ski & Snowboard Wax: Today's Pick and Home Tune"
+    desc = f"Which ski or snowboard wax to use at {x['name']}, {x['regionName']}, today, tomorrow or this weekend, from the forecast at mid-mountain ({ft(x['mid'])}). Plus edge settings and a step-by-step home tune."
     place = {"@context": "https://schema.org", "@type": "SkiResort", "name": x["name"],
              "mainEntityOfPage": f"{DOMAIN}/resorts/{x['id']}.html",
              "geo": {"@type": "GeoCoordinates", "latitude": x["lat"], "longitude": x["lon"], "elevation": x["summit"]},
@@ -737,7 +754,7 @@ def resort_page(x):
   <div class="hero">
     <span class="label" id="heroEyebrow">Today · {x['short']} · mid-mountain, {ft(x['mid'])}</span>
     <h1>Wax &amp; tune for <em>{name}</em></h1>
-    <p class="lede">{x['tag']}. Wax color and iron temperature from the forecast at mid-mountain, edge settings for how you ski, and a step-by-step home tune.</p>
+    <p class="lede">{x['tag']}. Wax color and iron temperature from the forecast at mid-mountain, edge settings for how you ski or ride, and a step-by-step home tune.</p>
     <div class="hero-sub">
       <div class="seg" role="group" aria-label="When are you skiing?">
         <button type="button" id="dayToday" aria-pressed="true">Today</button>
@@ -749,6 +766,7 @@ def resort_page(x):
         <button type="button" id="unitC" aria-pressed="false">°C / cm</button>
       </div>
       <span class="badge" id="sourceBadge"><i></i><span id="sourceText">Loading conditions…</span></span>
+      <button type="button" class="fav-btn" id="favBtn" aria-pressed="false" hidden><svg width="15" height="15" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4L2.8 9.5l6.4-.8z" fill="currentColor"/></svg><span>Save to My mountains</span></button>
     </div>
   </div>
 {TOOL_FRAG}
@@ -819,7 +837,7 @@ def resorts_index():
 {footer(1)}
 <script src="../assets/tool.js"></script>"""
     return doc(True, head("Ski Resorts in North America | The Ski Advisor",
-                          f"Find today's ski wax pick and a home tune for any of {len(ALL)} ski resorts in the US, Canada and Mexico.",
+                          f"Find today's ski or snowboard wax pick and a home tune for any of {len(ALL)} ski resorts in the US, Canada and Mexico.",
                           "resorts/index.html", 1, bc_ld([("Home",""),("Resorts","resorts/index.html")])), body)
 
 
@@ -892,13 +910,19 @@ def contact_sent_page():
                         "Message sent", "Thanks for getting in touch.", body, noindex=True, crumb="Contact")
 
 def privacy_page():
+    analytics_text = ('<p>We use <a href="https://www.cloudflare.com/web-analytics/">Cloudflare Web Analytics</a> to count visits and see which pages are useful. '
+                      "It doesn't use cookies or track you across sites. See <a href=\"https://www.cloudflare.com/privacypolicy/\">Cloudflare's privacy policy</a>. "
+                      "We don't use advertising or tracking cookies; if that changes, we'll update this page first.</p>") if CF_ANALYTICS_TOKEN else \
+                     "<p>We don't currently use analytics, advertising or tracking cookies. If that changes, we'll update this page first.</p>"
     body = f"""
 <p class="byline">Effective {EFFECTIVE}</p>
 <p>The Ski Advisor (theskiadvisor.com) is a free website. You don't need an account, and we don't sell personal information. This policy explains what information is involved when you use the site.</p>
 <h2>Information you give us</h2>
 <p>If you use the <a href="contact.html">contact form</a>, we receive your email address, your message, the topic you chose and, if you give it, your name. We use it only to reply to you. The form is handled by our host, Netlify, which stores submissions for us. We delete messages when we no longer need them, or sooner if you ask.</p>
 <h2>Information stored in your browser</h2>
-<p>The site remembers a few choices in your own browser's local storage: your temperature units, your skiing style, training or race-day mode, and which tuning steps you've checked off. This stays on your device; it isn't sent to us. Clear your browser's site data to remove it.</p>
+<p>The site remembers a few choices in your own browser's local storage: your temperature units, how you ski or ride, training or race-day mode, the mountains you save to My mountains, and which tuning steps you've checked off. This stays on your device; it isn't sent to us. Clear your browser's site data to remove it.</p>
+<h2>Your location</h2>
+<p>If you press Near me, your browser asks for permission to share your location. If you allow it, the site uses it only inside your browser to sort resorts by distance. Your location isn't sent to us or stored.</p>
 <h2>Services that see your visit</h2>
 <ul>
 <li><b>Netlify</b> hosts the site. Like any web host, it processes technical information such as your IP address and browser type to deliver and protect the site. See <a href="https://www.netlify.com/privacy/">Netlify's privacy policy</a>.</li>
@@ -909,7 +933,7 @@ def privacy_page():
 <h2>Amazon links</h2>
 <p>{AMZ_NOTE} When you click a Shop link, you go to Amazon, and Amazon may use cookies to record that you came from this site so it can pay us a commission. What Amazon collects is covered by <a href="https://www.amazon.com/gp/help/customer/display.html?nodeId=GX7NJQ4ZB8MHFRNJ">Amazon's privacy notice</a>.</p>
 <h2>Analytics and advertising</h2>
-<p>We don't currently use analytics, advertising or tracking cookies. If that changes, we'll update this page first.</p>
+{analytics_text}
 <h2>Children</h2>
 <p>The site isn't directed at children under 13, and we don't knowingly collect their information.</p>
 <h2>Your choices</h2>
@@ -1006,7 +1030,7 @@ def main():
     write("assets/site.css", css)
     write("assets/tool.js", open(os.path.join(SRC, "tool.js")).read())
     write("assets/flyover.js", open(os.path.join(SRC, "flyover.js")).read())
-    write("assets/resort-index.json", json.dumps([[x["id"], x["name"], x["short"], x["regionName"], x.get("locality") or ""] for x in ALL], ensure_ascii=False, separators=(",", ":")))
+    write("assets/resort-index.json", json.dumps([[x["id"], x["name"], x["short"], x["regionName"], x.get("locality") or "", x["lat"], x["lon"]] for x in ALL], ensure_ascii=False, separators=(",", ":")))
     # resort list, shard plan and featured resorts for the Netlify weather functions
     lib = os.path.join(ROOT, "netlify", "lib"); os.makedirs(lib, exist_ok=True)
     with open(os.path.join(lib, "resorts.json"), "w") as f:
@@ -1033,10 +1057,10 @@ def main():
     write("contact-sent.html", contact_sent_page())
     write("privacy.html", privacy_page())
     write("404.html", not_found_page())
-    for f in ("favicon.svg", "favicon-48.png", "apple-touch-icon.png", "og-image.jpg"):
+    for f in ("favicon.svg", "favicon-48.png", "apple-touch-icon.png", "og-image.jpg", "logo-header.webp"):
         src_f = os.path.join(SRC, "brand", f)
         if os.path.exists(src_f):
-            dst = os.path.join(OUT, "assets" if f == "og-image.jpg" else "", f); os.makedirs(os.path.dirname(dst), exist_ok=True)
+            dst = os.path.join(OUT, "assets" if f in ("og-image.jpg", "logo-header.webp") else "", f); os.makedirs(os.path.dirname(dst), exist_ok=True)
             with open(src_f, "rb") as a, open(dst, "wb") as b: b.write(a.read())
     urls = ([""] + ["resorts/index.html"] + [f"regions/{c.lower()}.html" for c in sorted(REGIONS)] + [f"resorts/{x['id']}.html" for x in ALL] +
             ["guides/index.html"] + [f"guides/{g['slug']}.html" for g in GUIDES] + ["about.html", "contact.html", "privacy.html"])

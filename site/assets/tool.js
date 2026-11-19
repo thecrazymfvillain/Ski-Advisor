@@ -19,7 +19,9 @@ const STYLES = {
   park:{label:"Park", sub:"Rails, boxes, jumps", sym:"park", base:1, side:1,
     detune:"Detune tip and tail firmly, and lightly underfoot, so the edges don't catch on rails and boxes."},
   powder:{label:"Powder", sub:"Off-piste, soft snow", sym:"pow", base:1, side:1,
-    detune:"Light detune at tip and tail. Soft snow doesn't need a razor edge."}
+    detune:"Light detune at tip and tail. Soft snow doesn't need a razor edge."},
+  snowboard:{label:"Snowboard", sub:"Any board, any terrain", sym:"board", base:1, side:1,
+    detune:"Lightly dull the edge at the nose and tail contact points so the board doesn't catch. Park riders detune more; carvers barely at all."}
 };
 
 // Coldest → warmest. lo/hi = snow-temperature range in °C as printed on typical wax labels.
@@ -161,7 +163,7 @@ function pickEdges(c){
   const base = s.base, side = s.side;
   const hard = c.surface==="refrozen" || c.surface==="manmade";
   // Angles are a one-time setup for how you ski. Today's snow only changes how much edge work is worth doing.
-  let note = `Typical settings for ${s.label.toLowerCase()} skiing. Most people set their angles once, usually at a shop, and keep them; you don't change angles for the conditions. Already have different angles? Keep yours and sharpen to match. `;
+  let note = `Typical settings for ${state.style==="snowboard" ? "snowboarding; riders who carve firm snow often use a 2° side edge" : s.label.toLowerCase()+" skiing"}. Most people set their angles once, usually at a shop, and keep them; you don't change angles for the conditions. Already have different angles? Keep yours and sharpen to match. `;
   if(hard) note += state.style==="park"
     ? `<strong>Firm snow today:</strong> sharpen the side edge at your current angle, and keep the tips and tails detuned so they don't catch on features.`
     : `<strong>Firm snow today:</strong> sharpen or polish the side edge at your current angle before you ski. On firm snow a sharp edge does most of the work.`;
@@ -181,6 +183,7 @@ function symSVG(kind){
     case "square": return `<svg ${s}><rect x="2" y="2" width="16" height="16" fill="#1F5FD1"/></svg>`;
     case "diamond": return `<svg ${s}><rect x="10" y="1.5" width="12" height="12" transform="rotate(45 10 1.5)" fill="currentColor"/></svg>`;
     case "double": return `<svg width="26" height="20" viewBox="0 0 26 20" aria-hidden="true"><rect x="7" y="3" width="9" height="9" transform="rotate(45 7 3)" fill="currentColor"/><rect x="19" y="3" width="9" height="9" transform="rotate(45 19 3)" fill="currentColor"/></svg>`;
+    case "board": return `<svg ${s}><rect x="7.2" y="0.8" width="5.6" height="18.4" rx="2.8" transform="rotate(35 10 10)" fill="currentColor"/></svg>`;
     case "park": return `<svg ${s}><rect x="1" y="4" width="18" height="12" rx="6" fill="var(--sym-park)"/></svg>`;
     default: return `<svg ${s}><g stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M10 2v16M3 6l14 8M17 6L3 14"/></g></svg>`;
   }
@@ -274,10 +277,20 @@ function renderDiagram(rec){
 }
 
 /* ---------- Steps + kit ---------- */
+// Snowboard wording for the same tune: nose and tail, one wide base, no brakes.
+const boardText = t => t.replace(/tip to tail/g, "nose to tail").replace(/\bthe ski\b/g, "the board").replace(/tips and tails/g, "nose and tail").replace(/tip and tail/g, "nose and tail");
+function boardify(step){
+  const o = Object.assign({}, step);
+  if(o.id==="setup"){ o.tools = "Snowboard vise or padded bench supports"; o.body = "Lay the board base-up on padded supports or a snowboard vise, one under each binding so the base sits flat. The bindings can stay on."; }
+  if(o.id==="wax") o.body = o.body.replace("drip a line down each side of the base", "drip it in a zigzag across the whole base");
+  if(o.id==="deburr") o.tip = "The contact points are where the base starts to lift off a flat surface near the nose and tail.";
+  for(const k of ["t", "body", "tip", "tools"]) if(o[k]) o[k] = boardText(o[k]);
+  return o;
+}
 function stepsFor(c, wax, edges){
   const r = resort(), st = STYLES[state.style], band = wax.band;
   const coldBand = wax.idx <= 2, racer = state.style==="racer", raceDay = racer && state.raceMode==="race";
-  return [
+  const list = [
     {id:"setup", t:"Set up the bench", m:"5 min", tools:"Vise or straps, rubber bands",
      body:"Clamp the ski base-up in a vise, or strap it flat to a table. Loop a thick rubber band over the brake arms to hold them up out of the way.",
      tip:"Run a fingernail across the edge in a few spots. If it catches or feels rough, give the edge steps extra time."},
@@ -323,6 +336,7 @@ function stepsFor(c, wax, edges){
        (raceDay ? " Race morning: apply a fluoro-free top coat in the same temperature range, following its instructions, then cork or brush it in." : ""),
      tip:"Brush in one direction only, tip to tail."}
   ];
+  return state.style==="snowboard" ? list.map(boardify) : list;
 }
 function renderSteps(c, wax, edges){
   const steps = stepsFor(c, wax, edges);
@@ -347,7 +361,8 @@ function renderKit(wax, edges){
   const band = wax.band, training = state.style==="racer" && state.raceMode==="training";
   const racer = state.style==="racer" && !training;
   const items = [
-    {n:"Ski vise or straps", w:"Holds the ski steady and base-up while you work.", q:"ski tuning vise"},
+    state.style==="snowboard" ? {n:"Snowboard vise or bench supports", w:"Holds the board flat and base-up while you work.", q:"snowboard tuning vise"}
+      : {n:"Ski vise or straps", w:"Holds the ski steady and base-up while you work.", q:"ski tuning vise"},
     {n:"Waxing iron", w:"A dedicated iron holds a steady temperature. Clothes irons run hot and uneven.", q:"ski waxing iron"},
     racer ? {n:`${band.name} race wax`, w:`Fluoro-free race wax for snow ${fmtRange(band)}, such as ${band.race}.`, q:`${band.race} race wax`}
           : {n:`${band.name} ${training ? "training " : ""}wax`, w:`For snow ${fmtRange(band)}. ${band.ex}.`, q:`${band.ex.split(" or ")[0]} ski wax`},
@@ -468,6 +483,9 @@ function render(){
 }
 
 /* ---------- Live data ---------- */
+function toLive(d){
+  return Object.assign({}, d, { days: d.days.map(x=>{ const [y,m,dd] = x.date.split("-").map(Number); return {date:new Date(y,m-1,dd), min:x.min, max:x.max, snow:x.snow}; }) });
+}
 async function loadLive(){
   // Served by the Netlify function in netlify/functions/conditions.mts (MET Norway data, refreshed hourly).
   const ctl = new AbortController(); const timer = setTimeout(()=>ctl.abort(), 8000);
@@ -479,15 +497,13 @@ async function loadLive(){
     for(const r of RESORTS){
       const d = data.resorts && data.resorts[r.id];
       if(!d || !Array.isArray(d.days) || !d.days.length) continue;
-      live[r.id] = Object.assign({}, d, {
-        days: d.days.map(x=>{ const [y,m,dd] = x.date.split("-").map(Number); return {date:new Date(y,m-1,dd), min:x.min, max:x.max, snow:x.snow}; })
-      });
+      live[r.id] = toLive(d);
     }
     if(!Object.keys(live).length) throw new Error("empty");
-    state.live = live; state.updatedAt = new Date(data.updated || Date.now());
+    state.live = Object.assign(state.live || {}, live); state.updatedAt = new Date(data.updated || Date.now());
     setText("dataNote", "Weather from MET Norway's forecast at each resort's mid-mountain elevation, updated hourly.");
   }catch(e){
-    state.live = {};
+    state.live = state.live || {};
     setText("dataNote", "Live weather couldn't load here, so the page is showing example conditions. On theskiadvisor.com, conditions come from MET Norway's forecast at each resort's mid-mountain elevation.");
   }finally{ clearTimeout(timer); (PAGE==="resort" ? render : renderHome)(); }
 }
@@ -510,11 +526,70 @@ function renderHome(){
 /* ---------- Search ---------- */
 const escH = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const fold = s => String(s).normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+const indexCache = {};
+function loadIndex(url){ return indexCache[url] || (indexCache[url] = fetch(url).then(r=>r.json()).catch(()=>[])); }
+function kmBetween(la1, lo1, la2, lo2){
+  const r = Math.PI/180, a = Math.sin((la2-la1)*r/2)**2 + Math.cos(la1*r)*Math.cos(la2*r)*Math.sin((lo2-lo1)*r/2)**2;
+  return 12742 * Math.asin(Math.sqrt(a));
+}
+// "Near me": the browser's location stays in the browser; it only sorts the resort list.
+function initNearMe(){
+  document.querySelectorAll("[data-search]").forEach(form=>{
+    const btn = form.querySelector("[data-near]"), list = form.querySelector("ul"), msg = form.querySelector(".near-msg");
+    if(!btn) return;
+    if(!("geolocation" in navigator)){ btn.hidden = true; return; }
+    btn.addEventListener("click", ()=>{
+      msg.hidden = false; msg.textContent = "Finding resorts near you…";
+      navigator.geolocation.getCurrentPosition(async pos=>{
+        const idx = await loadIndex(form.dataset.index);
+        const { latitude: la, longitude: lo } = pos.coords;
+        const near = idx.map(e=>({e, km: kmBetween(la, lo, e[5], e[6])})).sort((a,b)=>a.km-b.km).slice(0, 8);
+        const dist = km => state.unit==="F" ? Math.round(km*0.621371) + " mi" : Math.round(km) + " km";
+        list.innerHTML = near.map(({e, km}) => `<li><a href="${form.dataset.prefix}${encodeURIComponent(e[0])}.html"><b>${escH(e[1])}</b><span>${dist(km)} away · ${escH(e[4] ? e[4] + ", " : "")}${escH(e[3])}</span></a></li>`).join("");
+        list.hidden = false; msg.hidden = true;
+      }, err=>{
+        msg.textContent = err.code === 1 ? "Location is off for this site. Search by name instead." : "Couldn't get your location. Search by name instead.";
+      }, { timeout: 10000, maximumAge: 600000 });
+    });
+  });
+}
+// "My mountains": saved on this device only.
+const favs = () => { const v = store.get("fav", []); return Array.isArray(v) ? v : []; };
+function initFavButton(){
+  const btn = $("favBtn"), me = RESORTS[0];
+  if(!btn || !me) return;
+  const sync = () => {
+    const on = favs().some(f=>f.id===me.id);
+    btn.setAttribute("aria-pressed", String(on));
+    btn.querySelector("span").textContent = on ? "Saved to My mountains" : "Save to My mountains";
+  };
+  btn.hidden = false; sync();
+  btn.addEventListener("click", ()=>{
+    const list = favs(), i = list.findIndex(f=>f.id===me.id);
+    if(i >= 0) list.splice(i, 1); else list.push(Object.assign({}, me));
+    store.set("fav", list.slice(-24)); sync();
+  });
+}
+async function initMyMountains(){
+  const box = $("myMtns"), grid = $("myMtnsGrid"), list = favs();
+  if(!box || !grid || !list.length) return;
+  box.hidden = false;
+  grid.innerHTML = list.map(f=>`<a class="resort-card" href="resorts/${encodeURIComponent(f.id)}.html"><span class="meta">${escH(f.region)} · mid-mountain ${fmtElev(f.mid)}</span><h3>${escH(f.name)}</h3><span class="wax-chip" data-home-wax="${escH(f.id)}"><i></i><span>Loading today's wax…</span></span></a>`).join("");
+  for(const f of list) if(!RESORTS.some(r=>r.id===f.id)) RESORTS.push(f);
+  renderHome();
+  const keys = [...new Set(list.map(f=>f.api).filter(Boolean))];
+  await Promise.all(keys.map(k => fetch("/api/conditions/" + encodeURIComponent(k)).then(r => r.ok ? r.json() : null).then(d=>{
+    if(!d || !d.resorts) return;
+    state.live = state.live || {};
+    for(const f of list){ const x = d.resorts[f.id]; if(x && Array.isArray(x.days) && x.days.length) state.live[f.id] = toLive(x); }
+  }).catch(()=>{})));
+  renderHome();
+}
 function initSearch(){
   document.querySelectorAll("[data-search]").forEach(form=>{
     const input = form.querySelector("input"), list = form.querySelector("ul");
     let idx = null, loading = null;
-    const load = () => loading || (loading = fetch(form.dataset.index).then(r=>r.json()).then(d=>{ idx = d.map(e=>({e, hay: fold(e.slice(1).join(" "))})); }).catch(()=>{ idx = []; }));
+    const load = () => loading || (loading = loadIndex(form.dataset.index).then(d=>{ idx = d.map(e=>({e, hay: fold(e.slice(1, 5).join(" "))})); }));
     function show(){
       const q = fold(input.value.trim());
       if(!q || !idx){ list.hidden = true; list.innerHTML = ""; return; }
@@ -537,6 +612,7 @@ function initSearch(){
 /* ---------- Wire up ---------- */
 const PAGE = PI.page;
 initSearch();
+initNearMe();
 document.querySelectorAll("[data-edge-diagram]").forEach(el=>{ el.innerHTML = edgeSVG(Number(el.dataset.base), Number(el.dataset.side)); });
 if(PAGE==="resort"){
   buildStyles(); buildStripBands();
@@ -558,10 +634,12 @@ if(PAGE==="resort"){
     if(e.target.matches("input[type=checkbox]")){ state.done[e.target.dataset.id] = e.target.checked; store.set("done", state.done); render(); }
   });
   $("stepsReset").onclick = ()=>{ state.done={}; store.set("done",{}); render(); };
+  initFavButton();
   render();
   loadLive();
 } else if(document.querySelector("[data-home-wax]")){
   renderHome();
   loadLive();
+  initMyMountains();
 }
 })();
