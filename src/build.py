@@ -855,9 +855,20 @@ def guides_index():
 # =====================================================================
 # Write
 # =====================================================================
+import hashlib
+ASSET_V = {}   # file name -> short content hash, so a changed stylesheet or script gets a new URL
+
 def write(rel, text):
     p = os.path.join(OUT, rel); os.makedirs(os.path.dirname(p), exist_ok=True)
+    if rel.startswith("assets/") and rel.endswith((".css", ".js")):
+        ASSET_V[os.path.basename(rel)] = hashlib.sha1(text.encode()).hexdigest()[:10]
+    if rel.endswith(".html"): text = version_assets(text)
     open(p, "w").write(text)
+
+def version_assets(html_text):
+    for name, v in ASSET_V.items():
+        html_text = html_text.replace(f'assets/{name}"', f'assets/{name}?v={v}"')
+    return html_text
 
 def shards(n=6):
     """Split regions into n groups of similar size; the weather job refreshes one group per hour."""
@@ -899,7 +910,7 @@ def main():
           "".join(f"  <url><loc>{DOMAIN}/{u}</loc><lastmod>{TODAY}</lastmod></url>\n" for u in urls) + "</urlset>\n")
     write("robots.txt", f"User-agent: *\nAllow: /\nSitemap: {DOMAIN}/sitemap.xml\n")
     os.makedirs(os.path.join(ROOT, "preview"), exist_ok=True)
-    open(os.path.join(ROOT, "preview", "index.html"), "w").write(home(False))
+    open(os.path.join(ROOT, "preview", "index.html"), "w").write(version_assets(home(False)))
     print("built", len(urls), "pages;", len(ALL), "resorts in", len(REGIONS), "regions; weather shards:", load)
 
 if __name__ == "__main__":
