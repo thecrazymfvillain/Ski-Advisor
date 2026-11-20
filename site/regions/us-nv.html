@@ -23,13 +23,13 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
-<link rel="stylesheet" href="../assets/site.css?v=cfed38770b">
+<link rel="stylesheet" href="../assets/site.css?v=d493e2dd4c">
 <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "7effe80b68fa4bdd9944534b8a820936"}'></script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://theskiadvisor.com/"}, {"@type": "ListItem", "position": 2, "name": "Resorts", "item": "https://theskiadvisor.com/resorts/index.html"}, {"@type": "ListItem", "position": 3, "name": "Nevada", "item": "https://theskiadvisor.com/regions/us-nv.html"}]}</script>
 </head>
 <body>
 <div id="pageInfo" data-page="region" data-resort="" hidden></div>
-<script type="application/json" id="resortData">{"api": "US-NV", "resorts": [{"id": "heavenly", "name": "Heavenly Mountain Resort", "region": "NV", "api": "US-NV", "lat": 38.9375, "lon": -119.9108, "mid": 2531, "ex": {"air": -11.4, "rh": 60, "snow48": 3, "pastMax": -8.4, "cloud": 50, "code": 2, "tmrMin": -15.4, "tmrMax": -9.4, "tmrSnow": 1}}, {"id": "mount-rose-ski-tahoe", "name": "Mount Rose Ski Tahoe", "region": "NV", "api": "US-NV", "lat": 39.3207, "lon": -119.8844, "mid": 2613, "ex": {"air": -11.9, "rh": 60, "snow48": 3, "pastMax": -8.9, "cloud": 50, "code": 2, "tmrMin": -15.9, "tmrMax": -9.9, "tmrSnow": 1}}, {"id": "diamond-peak", "name": "Diamond Peak", "region": "NV", "api": "US-NV", "lat": 39.2536, "lon": -119.9161, "mid": 2325, "ex": {"air": -10.3, "rh": 60, "snow48": 3, "pastMax": -7.3, "cloud": 50, "code": 2, "tmrMin": -14.3, "tmrMax": -8.3, "tmrSnow": 1}}, {"id": "lee-canyon", "name": "Lee Canyon", "region": "NV", "api": "US-NV", "lat": 36.3014, "lon": -115.6779, "mid": 2733, "ex": {"air": -12.5, "rh": 60, "snow48": 3, "pastMax": -9.5, "cloud": 50, "code": 2, "tmrMin": -16.5, "tmrMax": -10.5, "tmrSnow": 1}}, {"id": "snobowl-bike", "name": "Snobowl Bike and Ski area", "region": "NV", "api": "US-NV", "lat": 40.9084, "lon": -115.8598, "mid": 2031, "ex": {"air": -8.7, "rh": 60, "snow48": 3, "pastMax": -5.7, "cloud": 50, "code": 2, "tmrMin": -12.7, "tmrMax": -6.7, "tmrSnow": 1}}]}</script>
+<script type="application/json" id="resortData">{"api": "US-NV", "resorts": [{"id": "heavenly", "name": "Heavenly Mountain Resort", "region": "NV", "api": "US-NV", "lat": 38.9375, "lon": -119.9108, "mid": 2531, "ex": {"air": -11.4, "rh": 60, "snow48": 3, "pastMax": -8.4, "cloud": 50, "code": 2, "tmrMin": -15.4, "tmrMax": -9.4, "tmrSnow": 1}, "pass": "epic"}, {"id": "mount-rose-ski-tahoe", "name": "Mount Rose Ski Tahoe", "region": "NV", "api": "US-NV", "lat": 39.3207, "lon": -119.8844, "mid": 2613, "ex": {"air": -11.9, "rh": 60, "snow48": 3, "pastMax": -8.9, "cloud": 50, "code": 2, "tmrMin": -15.9, "tmrMax": -9.9, "tmrSnow": 1}, "pass": ""}, {"id": "diamond-peak", "name": "Diamond Peak", "region": "NV", "api": "US-NV", "lat": 39.2536, "lon": -119.9161, "mid": 2325, "ex": {"air": -10.3, "rh": 60, "snow48": 3, "pastMax": -7.3, "cloud": 50, "code": 2, "tmrMin": -14.3, "tmrMax": -8.3, "tmrSnow": 1}, "pass": ""}, {"id": "lee-canyon", "name": "Lee Canyon", "region": "NV", "api": "US-NV", "lat": 36.3014, "lon": -115.6779, "mid": 2733, "ex": {"air": -12.5, "rh": 60, "snow48": 3, "pastMax": -9.5, "cloud": 50, "code": 2, "tmrMin": -16.5, "tmrMax": -10.5, "tmrSnow": 1}, "pass": ""}, {"id": "snobowl-bike", "name": "Snobowl Bike and Ski area", "region": "NV", "api": "US-NV", "lat": 40.9084, "lon": -115.8598, "mid": 2031, "ex": {"air": -8.7, "rh": 60, "snow48": 3, "pastMax": -5.7, "cloud": 50, "code": 2, "tmrMin": -12.7, "tmrMax": -6.7, "tmrSnow": 1}, "pass": ""}]}</script>
 <header class="top">
   <div class="wrap">
     <div class="top-row">
@@ -46,27 +46,28 @@
     <p class="lede">Today's wax pick for every ski area in Nevada, from MET Norway's forecast at each one's mid-mountain elevation. Pick a resort for the weekend forecast, edge settings and a full tune.</p>
   </div>
   <p class="muted" id="homeDataNote"></p>
-  <div class="resort-grid"><a class="resort-card" href="../resorts/heavenly.html">
-  <span class="meta">Kingsbury · 27 lifts</span>
+  <div class="pass-row pass-filter" role="group" aria-label="Filter by season pass" data-pass-filter><span>Pass</span><button type="button" class="chip" data-passpick="" aria-pressed="true">All<small>5</small></button><button type="button" class="chip" data-passpick="epic" aria-pressed="false">Epic<small>1</small></button></div>
+  <div class="resort-grid" id="regionGrid"><a class="resort-card" href="../resorts/heavenly.html" data-pass="epic">
+  <span class="meta">Kingsbury · 27 lifts<span class="pass-tag epic">Epic</span></span>
   <h3>Heavenly Mountain Resort</h3>
   <p>3,320 ft of vertical, 6,640 ft to 9,960 ft.</p>
   <span class="wax-chip" data-home-wax="heavenly"><i></i><span>Loading today's wax…</span></span>
-</a><a class="resort-card" href="../resorts/mount-rose-ski-tahoe.html">
+</a><a class="resort-card" href="../resorts/mount-rose-ski-tahoe.html" data-pass="">
   <span class="meta">Nevada · 12 lifts</span>
   <h3>Mount Rose Ski Tahoe</h3>
   <p>1,990 ft of vertical, 7,580 ft to 9,570 ft.</p>
   <span class="wax-chip" data-home-wax="mount-rose-ski-tahoe"><i></i><span>Loading today's wax…</span></span>
-</a><a class="resort-card" href="../resorts/diamond-peak.html">
+</a><a class="resort-card" href="../resorts/diamond-peak.html" data-pass="">
   <span class="meta">Incline Village · 6 lifts</span>
   <h3>Diamond Peak</h3>
   <p>1,790 ft of vertical, 6,730 ft to 8,520 ft.</p>
   <span class="wax-chip" data-home-wax="diamond-peak"><i></i><span>Loading today's wax…</span></span>
-</a><a class="resort-card" href="../resorts/lee-canyon.html">
+</a><a class="resort-card" href="../resorts/lee-canyon.html" data-pass="">
   <span class="meta">Nevada · 6 lifts</span>
   <h3>Lee Canyon</h3>
   <p>760 ft of vertical, 8,590 ft to 9,350 ft.</p>
   <span class="wax-chip" data-home-wax="lee-canyon"><i></i><span>Loading today's wax…</span></span>
-</a><a class="resort-card" href="../resorts/snobowl-bike.html">
+</a><a class="resort-card" href="../resorts/snobowl-bike.html" data-pass="">
   <span class="meta">Nevada · 2 lifts</span>
   <h3>Snobowl Bike and Ski area</h3>
   <p>650 ft of vertical, 6,340 ft to 6,980 ft.</p>
@@ -77,8 +78,8 @@
 <footer class="site-foot">
   <div class="wrap" style="display:grid;gap:22px">
     <div class="foot-grid">
-      <div><h3>Popular resorts</h3><ul><li><a href="../resorts/whistler.html">Whistler Blackcomb</a></li><li><a href="../resorts/vail.html">Vail</a></li><li><a href="../resorts/parkcity.html">Park City</a></li><li><a href="../resorts/jackson.html">Jackson Hole</a></li><li><a href="../resorts/aspen.html">Aspen Snowmass</a></li><li><a href="../resorts/mammoth.html">Mammoth Mountain</a></li><li><a href="../resorts/bigsky.html">Big Sky</a></li><li><a href="../resorts/telluride.html">Telluride</a></li><li><a href="../resorts/snowbird.html">Snowbird</a></li><li><a href="../resorts/killington.html">Killington</a></li><li><a href="../resorts/bogus.html">Bogus Basin</a></li><li><a href="../resorts/index.html"><b>All 745 resorts</b></a></li></ul></div>
-      <div><h3>Guides</h3><ul><li><a href="../guides/how-to-wax-skis.html">How to Wax Skis at Home</a></li><li><a href="../guides/how-to-wax-a-snowboard.html">How to Wax a Snowboard at Home</a></li><li><a href="../guides/ski-wax-temperature-chart.html">Ski Wax Temperature Chart</a></li><li><a href="../guides/ski-edge-angles.html">Ski Edge Angles Explained: 89°, 88° and 87°</a></li><li><a href="../guides/how-to-sharpen-ski-edges.html">How to Sharpen Ski Edges at Home</a></li><li><a href="../guides/race-wax-vs-training-wax.html">Race Wax vs Training Wax</a></li><li><a href="../guides/waxing-for-spring-snow.html">Waxing for Wet Spring Snow</a></li><li><a href="../guides/icy-and-man-made-snow.html">Tuning for Ice and Man-Made Snow</a></li><li><a href="../guides/how-often-to-wax-skis.html">How Often Should You Wax Your Skis?</a></li><li><a href="../guides/ski-tuning-kit.html">Home Ski Tuning Kit: What to Buy First</a></li></ul></div>
+      <div><h3>Popular resorts</h3><ul><li><a href="../resorts/whistler.html">Whistler Blackcomb</a></li><li><a href="../resorts/vail.html">Vail</a></li><li><a href="../resorts/parkcity.html">Park City</a></li><li><a href="../resorts/jackson.html">Jackson Hole</a></li><li><a href="../resorts/aspen.html">Aspen Snowmass</a></li><li><a href="../resorts/mammoth.html">Mammoth Mountain</a></li><li><a href="../resorts/bigsky.html">Big Sky</a></li><li><a href="../resorts/telluride.html">Telluride</a></li><li><a href="../resorts/snowbird.html">Snowbird</a></li><li><a href="../resorts/killington.html">Killington</a></li><li><a href="../resorts/bogus.html">Bogus Basin</a></li><li><a href="../resorts/index.html"><b>All 745 resorts</b></a></li><li><a href="../passes/epic.html">Epic Pass mountains</a></li><li><a href="../passes/ikon.html">Ikon Pass mountains</a></li></ul></div>
+      <div><h3>Guides</h3><ul><li><a href="../guides/how-to-wax-skis.html">How to Wax Skis at Home</a></li><li><a href="../guides/how-to-wax-a-snowboard.html">How to Wax a Snowboard at Home</a></li><li><a href="../guides/ski-wax-temperature-chart.html">Ski Wax Temperature Chart</a></li><li><a href="../guides/ski-edge-angles.html">Ski Edge Angles Explained: 89°, 88° and 87°</a></li><li><a href="../guides/how-to-sharpen-ski-edges.html">How to Sharpen Ski Edges at Home</a></li><li><a href="../guides/race-wax-vs-training-wax.html">Race Wax vs Training Wax</a></li><li><a href="../guides/waxing-for-spring-snow.html">Waxing for Wet Spring Snow</a></li><li><a href="../guides/icy-and-man-made-snow.html">Tuning for Ice and Man-Made Snow</a></li><li><a href="../guides/how-often-to-wax-skis.html">How Often Should You Wax Your Skis?</a></li><li><a href="../guides/ski-tuning-kit.html">Home Ski Tuning Kit: What to Buy First</a></li><li><a href="../guides/best-ski-wax-iron.html">Best Ski Wax Iron: What to Buy and What to Skip</a></li><li><a href="../guides/ski-tuning-kit-under-100.html">Ski Tuning Kit Under $100: A Starter Setup That Works</a></li><li><a href="../guides/best-race-wax.html">Best Race Wax: Fluoro-Free Picks for Ski Racers</a></li></ul></div>
       <div><h3>The Ski Advisor</h3><p>Wax and edge recommendations for 745 ski areas in the US, Canada and Mexico, from the forecast at each one's mid-mountain elevation.</p></div>
     </div>
     <p class="foot-links"><a href="../about.html">About</a> · <a href="../contact.html">Contact</a> · <a href="../privacy.html">Privacy</a></p>
@@ -87,6 +88,6 @@
     <p>As an Amazon Associate, The Ski Advisor earns from qualifying purchases. Commissions don't change what we recommend. Recommendations are starting points: the temperature on your wax label wins, and a snow thermometer beats any forecast.</p>
   </div>
 </footer>
-<script src="../assets/tool.js?v=3c884eee06"></script>
+<script src="../assets/tool.js?v=9f2c7d113f"></script>
 </body>
 </html>

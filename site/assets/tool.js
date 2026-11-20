@@ -482,6 +482,7 @@ function render(){
   renderDiagram(edges);
   renderSteps(c, wax, edges);
   renderKit(wax, edges);
+  renderWaxLog(c, wax);
 }
 
 /* ---------- Live data ---------- */
@@ -540,15 +541,21 @@ function initNearMe(){
     const btn = form.querySelector("[data-near]"), list = form.querySelector("ul"), msg = form.querySelector(".near-msg");
     if(!btn) return;
     if(!("geolocation" in navigator)){ btn.hidden = true; return; }
+    let here = null;
+    const showNear = async () => {
+      const idx = await loadIndex(form.dataset.index);
+      const [la, lo] = here, pv = passPref();
+      const near = idx.filter(e=>passMatch(e, pv)).map(e=>({e, km: kmBetween(la, lo, e[5], e[6])})).sort((a,b)=>a.km-b.km).slice(0, 8);
+      const dist = km => state.unit==="F" ? Math.round(km*0.621371) + " mi" : Math.round(km) + " km";
+      list.innerHTML = near.map(({e, km}) => `<li><a href="${form.dataset.prefix}${encodeURIComponent(e[0])}.html"><b>${escH(e[1])}${passBadge(e)}</b><span>${dist(km)} away · ${escH(e[4] ? e[4] + ", " : "")}${escH(e[3])}</span></a></li>`).join("");
+      list.hidden = false; msg.hidden = true; form.dataset.mode = "near";
+    };
+    passListeners.push(()=>{ if(here && form.dataset.mode==="near" && !list.hidden) showNear(); });
     btn.addEventListener("click", ()=>{
       msg.hidden = false; msg.textContent = "Finding resorts near you…";
-      navigator.geolocation.getCurrentPosition(async pos=>{
-        const idx = await loadIndex(form.dataset.index);
-        const { latitude: la, longitude: lo } = pos.coords;
-        const near = idx.map(e=>({e, km: kmBetween(la, lo, e[5], e[6])})).sort((a,b)=>a.km-b.km).slice(0, 8);
-        const dist = km => state.unit==="F" ? Math.round(km*0.621371) + " mi" : Math.round(km) + " km";
-        list.innerHTML = near.map(({e, km}) => `<li><a href="${form.dataset.prefix}${encodeURIComponent(e[0])}.html"><b>${escH(e[1])}</b><span>${dist(km)} away · ${escH(e[4] ? e[4] + ", " : "")}${escH(e[3])}</span></a></li>`).join("");
-        list.hidden = false; msg.hidden = true;
+      navigator.geolocation.getCurrentPosition(pos=>{
+        here = [pos.coords.latitude, pos.coords.longitude];
+        showNear();
       }, err=>{
         msg.textContent = err.code === 1 ? "Location is off for this site. Search by name instead." : "Couldn't get your location. Search by name instead.";
       }, { timeout: 10000, maximumAge: 600000 });
@@ -595,14 +602,15 @@ function initSearch(){
     function show(){
       const q = fold(input.value.trim());
       if(!q || !idx){ list.hidden = true; list.innerHTML = ""; return; }
-      const terms = q.split(/\s+/);
-      const hits = idx.filter(x => terms.every(t => x.hay.includes(t)))
+      const terms = q.split(/\s+/), pv = passPref();
+      const hits = idx.filter(x => passMatch(x.e, pv) && terms.every(t => x.hay.includes(t)))
         .sort((a,b) => (fold(a.e[1]).startsWith(terms[0]) ? 0 : 1) - (fold(b.e[1]).startsWith(terms[0]) ? 0 : 1)).slice(0, 8);
       list.innerHTML = hits.length
-        ? hits.map(({e}) => `<li><a href="${form.dataset.prefix}${encodeURIComponent(e[0])}.html"><b>${escH(e[1])}</b><span>${escH(e[4] ? e[4] + ", " : "")}${escH(e[3])}</span></a></li>`).join("")
-        : `<li class="none">No ski resort matches “${escH(input.value.trim())}”.</li>`;
-      list.hidden = false;
+        ? hits.map(({e}) => `<li><a href="${form.dataset.prefix}${encodeURIComponent(e[0])}.html"><b>${escH(e[1])}${passBadge(e)}</b><span>${escH(e[4] ? e[4] + ", " : "")}${escH(e[3])}</span></a></li>`).join("")
+        : `<li class="none">No ${pv ? PASS_NAME[pv] + " " : ""}ski resort matches “${escH(input.value.trim())}”.</li>`;
+      list.hidden = false; form.dataset.mode = "search";
     }
+    passListeners.push(()=>{ if(input.value.trim()) load().then(show); });
     input.addEventListener("focus", load);
     input.addEventListener("input", () => load().then(show));
     input.addEventListener("keydown", e => { if(e.key === "Escape"){ list.hidden = true; } });
@@ -611,10 +619,245 @@ function initSearch(){
   });
 }
 
+/* ---------- Season pass filter (Epic / Ikon), saved on this device ---------- */
+const PASS_NAME = {epic:"Epic", ikon:"Ikon"};
+const passPref = () => { const v = store.get("pass", ""); return v==="epic" || v==="ikon" ? v : ""; };
+const passMatch = (e, pv) => !pv || String(e[7] || "").charAt(0) === pv.charAt(0);
+const passBadge = e => e[7] ? ` <span class="pass-tag ${e[7][0]==="e" ? "epic" : "ikon"}">${e[7][0]==="e" ? "Epic" : "Ikon"}</span>` : "";
+const passListeners = [];
+function syncPassButtons(){
+  const v = passPref();
+  document.querySelectorAll("[data-passpick]").forEach(b=>{ if(!b.closest("[data-pass-filter]")) b.setAttribute("aria-pressed", String(b.dataset.passpick===v)); });
+}
+function initPassFilter(){
+  document.addEventListener("click", e=>{
+    const b = e.target.closest("[data-passpick]"); if(!b) return;
+    e.preventDefault(); store.set("pass", b.dataset.passpick); syncPassButtons(); passListeners.forEach(f=>f());
+  });
+  // Region pages: hide resorts that aren't on the chosen pass. The row only offers passes that exist in the region.
+  const f = document.querySelector("[data-pass-filter]"), grid = $("regionGrid");
+  if(f && grid){
+    const apply = () => {
+      let v = passPref();
+      if(v && !f.querySelector(`[data-passpick="${v}"]`)) v = "";
+      f.querySelectorAll("[data-passpick]").forEach(b=>b.setAttribute("aria-pressed", String(b.dataset.passpick===v)));
+      grid.querySelectorAll(".resort-card").forEach(c=>{ c.hidden = !!v && c.dataset.pass !== v; });
+    };
+    passListeners.push(apply); apply();
+  }
+  syncPassButtons();
+}
+
+/* ---------- Wax log: when you last waxed, ski days since, when to wax again ---------- */
+const isoDay = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+const fromIso = t => { const [y,m,d] = t.split("-").map(Number); return new Date(y, m-1, d); };
+function waxLog(){
+  const v = store.get("waxlog", null);
+  if(!v || typeof v.waxed !== "string" || !/^\d{4}-\d\d-\d\d$/.test(v.waxed)) return null;
+  return {waxed:v.waxed, days:Math.max(0, Math.min(99, Number(v.days)||0)), last: typeof v.last === "string" ? v.last : null};
+}
+// Rule of thumb from the "how often to wax" guide: every 3–5 ski days, sooner on abrasive or very cold snow.
+function rewaxAfter(c, wax){
+  if(state.style==="racer") return 2;
+  if(c.surface==="manmade" || c.surface==="refrozen" || wax.idx<=1) return 3;
+  if(c.surface==="new") return 5;
+  return 4;
+}
+function renderWaxLog(c, wax){
+  const box = $("waxLog"); if(!box) return;
+  box.hidden = false;
+  const log = waxLog(), today = isoDay(new Date()), ski = state.style==="snowboard" ? "ride" : "ski";
+  const plural = (n, w) => `${n} ${w} day${n===1 ? "" : "s"}`;
+  if(!log){
+    $("waxLogBody").innerHTML = `<p>Log when you wax and tap once per ${ski} day. We'll tell you when to wax again for the snow you're on.</p>
+      <div class="log-actions"><button type="button" class="btn sm" data-log="waxed">I waxed today</button><label class="log-date">or on <input type="date" id="logDate" max="${today}"></label></div>`;
+    return;
+  }
+  const thr = rewaxAfter(c, wax), left = thr - log.days;
+  const why = state.style==="racer" ? "for training and racing" : (c.surface==="manmade" || c.surface==="refrozen") ? "on firm, abrasive snow"
+            : wax.idx<=1 ? "in very cold snow" : c.surface==="new" ? "in soft new snow" : "for this snow";
+  const wk = c.weekend, planned = state.day==="weekend" && state.wkPick===null ? 2 : 1;
+  const when = state.day==="today" ? "today" : state.day==="tomorrow" ? "tomorrow"
+             : state.wkPick===null ? "the weekend" : wk.days[wk.chosen].date.toLocaleDateString("en-US", {weekday:"long"});
+  let cls, msg;
+  if(left <= 0){ cls = "due"; msg = `<b>Time to wax.</b> ${plural(log.days, ski)} on this coat, and about ${thr} is the limit ${why}.`; }
+  else if(left < planned){ cls = "soon"; msg = `<b>Wax before ${when}.</b> About ${plural(left, ski)} left on this coat ${why}, and you're planning ${planned}.`; }
+  else { cls = "ok"; msg = `<b>Good for ${when}.</b> About ${plural(left, ski)} left on this coat ${why}.`; }
+  const fmt = t => fromIso(t).toLocaleDateString("en-US", {month:"short", day:"numeric"});
+  const skied = log.last===today
+    ? `<button type="button" class="btn sm ghost" data-log="undo">Logged today · undo</button>`
+    : `<button type="button" class="btn sm" data-log="skied">I ${ski === "ride" ? "rode" : "skied"} today</button>`;
+  $("waxLogBody").innerHTML = `<p class="log-line">Last waxed <b>${log.waxed===today ? "today" : fmt(log.waxed)}</b> · ${plural(log.days, ski)} since</p>
+    <p class="log-status ${cls}">${msg}</p>
+    <div class="log-actions">${skied}
+      <span class="log-step"><button type="button" data-log="minus" aria-label="One less ${ski} day">−</button><button type="button" data-log="plus" aria-label="One more ${ski} day">+</button></span>
+      <button type="button" class="btn sm ghost" data-log="waxed">I just waxed</button>
+      <button type="button" class="btn-link" data-log="clear">Clear</button></div>
+    <p class="note">Saved on this device, for one pair of skis or one board.${log.days===0 && log.waxed!==today ? ` ${ski === "ride" ? "Rode" : "Skied"} since then? Use + to add days.` : ""} <a href="../guides/how-often-to-wax-skis.html">How often to wax</a></p>`;
+}
+function initWaxLog(){
+  const box = $("waxLog"); if(!box) return;
+  const save = v => { store.set("waxlog", v); render(); };
+  box.addEventListener("click", e=>{
+    const b = e.target.closest("[data-log]"); if(!b) return;
+    const log = waxLog(), today = isoDay(new Date()), a = b.dataset.log;
+    if(a==="waxed") save({waxed:today, days:0, last:null});
+    else if(a==="clear") save(null);
+    else if(!log) return;
+    else if(a==="skied") save(Object.assign(log, {days:log.days+1, last:today}));
+    else if(a==="undo") save(Object.assign(log, {days:Math.max(0, log.days-1), last:null}));
+    else if(a==="plus") save(Object.assign(log, {days:Math.min(99, log.days+1)}));
+    else if(a==="minus") save(Object.assign(log, {days:Math.max(0, log.days-1)}));
+  });
+  box.addEventListener("change", e=>{
+    if(e.target.id!=="logDate" || !/^\d{4}-\d\d-\d\d$/.test(e.target.value)) return;
+    const today = isoDay(new Date()), d = e.target.value > today ? today : e.target.value;
+    save({waxed:d, days:0, last:null});
+  });
+}
+
+/* ---------- Share card: an image of today's wax for the group chat, drawn in the browser ---------- */
+function cssColor(v){
+  const m = /var\((--[\w-]+)\)/.exec(v);
+  return m ? (getComputedStyle(document.documentElement).getPropertyValue(m[1]).trim() || "#888") : v;
+}
+function shareInfo(){
+  const r = resort(), c = conditions(), wax = pickWax(c), edges = pickEdges(c), band = wax.band, wk = c.weekend;
+  const md = d => d.toLocaleDateString("en-US", {weekday:"long", month:"short", day:"numeric"});
+  const day = state.day==="today" ? "Today · " + md(new Date())
+            : state.day==="tomorrow" ? "Tomorrow · " + md(c.date)
+            : "This weekend · " + md(wk.days[wk.chosen].date) + (wk.differ && state.wkPick===null ? " (the colder day)" : "");
+  const canon = (document.querySelector('link[rel="canonical"]') || {}).href || location.href.split(/[?#]/)[0];
+  const url = canon.replace(/\.html$/, "");
+  const snow = c.surface==="wet" && c.air>0 ? fmtT(0) + ", wet" : "about " + fmtT(c.snowTemp);
+  const raceDay = state.style==="racer" && state.raceMode==="race";
+  const st = STYLES[state.style];
+  return {r, c, band, edges, day, url, snow, raceDay, styleLabel: st.label,
+    text: `${r.name}, ${day.replace(" · ", ", ")}: ${band.name} wax, iron ${fmtIron(band.iron)}. Snow ${snow}. ${url}`};
+}
+function wrapLines(ctx, text, maxW, maxLines){
+  const words = text.split(" "), lines = []; let cur = "";
+  for(const w of words){
+    const t = cur ? cur + " " + w : w;
+    if(ctx.measureText(t).width <= maxW || !cur) cur = t; else { lines.push(cur); cur = w; }
+  }
+  if(cur) lines.push(cur);
+  if(lines.length > maxLines){ lines.length = maxLines; lines[maxLines-1] = lines[maxLines-1].replace(/\s*\S*$/, "") + "…"; }
+  return lines;
+}
+async function drawShareCard(info){
+  const W = 1080, H = 1080, M = 64;
+  const cv = document.createElement("canvas"); cv.width = W; cv.height = H;
+  const ctx = cv.getContext("2d");
+  const D = '"Barlow Condensed","Arial Narrow",sans-serif', B = '"Barlow",system-ui,sans-serif';
+  try{ await Promise.all(["800 90px", "700 40px"].map(f=>document.fonts.load(f + " " + D)).concat(["600 32px", "500 26px"].map(f=>document.fonts.load(f + " " + B)))); }catch(e){}
+  const navy = "#00174B", red = "#FB1A31", ink = "#0F1B26", muted = "#56687A", line = "#D3DCE4";
+  ctx.fillStyle = "#FFFFFF"; ctx.fillRect(0, 0, W, H);
+  ctx.fillStyle = navy; ctx.fillRect(0, 0, W, 176);
+  const logo = document.querySelector(".brand img");
+  try{
+    const img = new Image(); img.src = logo.currentSrc || logo.src; await img.decode();
+    const h = 124, w = img.naturalWidth * h / img.naturalHeight; ctx.drawImage(img, M - 8, 26, w, h);
+  }catch(e){ ctx.fillStyle = "#FFFFFF"; ctx.font = `800 54px ${D}`; ctx.textBaseline = "middle"; ctx.fillText("THE SKI ADVISOR", M, 88); }
+  ctx.textBaseline = "alphabetic";
+  ctx.fillStyle = "#FFFFFF"; ctx.font = `600 30px ${B}`; ctx.textAlign = "right"; ctx.fillText("theskiadvisor.com", W - M, 100); ctx.textAlign = "left";
+  let y = 244;
+  ctx.fillStyle = red; ctx.font = `700 32px ${D}`; ctx.fillText(info.day.toUpperCase(), M, y);
+  ctx.fillStyle = ink; ctx.font = `800 88px ${D}`;
+  for(const l of wrapLines(ctx, info.r.name.toUpperCase(), W - 2*M, 2)){ y += 86; ctx.fillText(l, M, y); }
+  y += 48; ctx.fillStyle = muted; ctx.font = `500 30px ${B}`; ctx.fillText(`${info.r.region} · forecast at mid-mountain, ${fmtElev(info.r.mid)}`, M, y);
+  // wax block
+  y += 44; const top = y, S = 236;
+  ctx.fillStyle = cssColor(info.band.color);
+  ctx.beginPath(); (ctx.roundRect ? ctx.roundRect(M, top, S, S, 20) : ctx.rect(M, top, S, S)); ctx.fill();
+  const x2 = M + S + 40;
+  ctx.fillStyle = muted; ctx.font = `700 28px ${D}`; ctx.fillText(info.raceDay ? "RACE WAX" : "WAX", x2, top + 34);
+  ctx.fillStyle = ink; ctx.font = `800 104px ${D}`; ctx.fillText(info.band.name.toUpperCase(), x2, top + 128);
+  ctx.font = `600 38px ${B}`; ctx.fillText(`Iron ${fmtIron(info.band.iron)}`, x2, top + 184);
+  ctx.fillStyle = muted; ctx.font = `500 30px ${B}`;
+  ctx.fillText(`Snow ${info.snow} · ${SURFACES[info.c.surface].label.toLowerCase()}`, x2, top + 228);
+  y = top + S + 64;
+  if(info.raceDay){
+    ctx.fillStyle = ink; ctx.font = `500 30px ${B}`;
+    for(const l of wrapLines(ctx, `Race day: base layer, then ${info.band.race} or equivalent, then a fluoro-free top coat.`, W - 2*M, 2)){ ctx.fillText(l, M, y); y += 40; }
+    y += 12;
+  }
+  ctx.strokeStyle = line; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(M, y - 20); ctx.lineTo(W - M, y - 20); ctx.stroke();
+  y += 26;
+  ctx.fillStyle = muted; ctx.font = `700 28px ${D}`; ctx.fillText(`EDGES · ${info.styleLabel.toUpperCase()}`, M, y);
+  y += 50; ctx.fillStyle = ink; ctx.font = `600 38px ${B}`;
+  ctx.fillText(`${info.edges.base}° base · ${info.edges.side}° side (${90 - info.edges.side}° edge)`, M, y);
+  // footer
+  ctx.fillStyle = muted; ctx.font = `500 24px ${B}`;
+  ctx.fillText("Estimated from the MET Norway forecast. The temperature on your wax label wins.", M, H - 96);
+  ctx.fillStyle = "#1D54C2"; ctx.font = `600 30px ${B}`; ctx.fillText(info.url.replace(/^https?:\/\//, ""), M, H - 52);
+  return cv;
+}
+function shareDialog(){
+  let d = $("shareDlg"); if(d) return d;
+  d = document.createElement("dialog"); d.id = "shareDlg"; d.className = "share-dlg"; d.setAttribute("aria-labelledby", "shareH");
+  d.innerHTML = `<div class="share-head"><b id="shareH">Share this wax</b><button type="button" class="btn-link" data-close>Close</button></div>
+    <img id="shareImg" alt="" width="1080" height="1080">
+    <div class="share-actions"><button type="button" class="btn" id="shareNative" hidden>Share image</button><a class="btn ghost" id="shareSave" download>Save image</a><button type="button" class="btn ghost" id="shareCopy">Copy text and link</button></div>
+    <p class="muted small" id="shareMsg" role="status"></p>`;
+  document.body.appendChild(d);
+  d.addEventListener("click", e=>{ if(e.target === d || e.target.closest("[data-close]")) d.close(); });
+  return d;
+}
+function initShare(){
+  const btn = $("shareBtn");
+  if(!btn || !document.createElement("canvas").getContext || typeof HTMLDialogElement !== "function") return;
+  btn.hidden = false;
+  let url = null;
+  btn.addEventListener("click", async ()=>{
+    const info = shareInfo(), d = shareDialog();
+    const cv = await drawShareCard(info);
+    const blob = await new Promise(res => cv.toBlob(res, "image/png"));
+    if(url) URL.revokeObjectURL(url);
+    url = URL.createObjectURL(blob);
+    const name = `ski-wax-${info.r.id}-${state.day}.png`, file = new File([blob], name, {type:"image/png"});
+    $("shareImg").src = url; $("shareImg").alt = info.text;
+    $("shareSave").href = url; $("shareSave").download = name;
+    $("shareMsg").textContent = "";
+    const canFiles = !!(navigator.canShare && navigator.canShare({files:[file]}));
+    $("shareNative").hidden = !canFiles;
+    $("shareNative").onclick = async ()=>{ try{ await navigator.share({files:[file], text:info.text}); }catch(e){ if(e.name !== "AbortError") $("shareMsg").textContent = "Sharing didn't work here. Save the image instead."; } };
+    $("shareCopy").onclick = async ()=>{
+      try{ await navigator.clipboard.writeText(info.text); $("shareMsg").textContent = "Copied. Paste it into your group chat."; }
+      catch(e){ $("shareMsg").textContent = info.text; }
+    };
+    if(!d.open) d.showModal();
+  });
+}
+
+/* ---------- Weekend Wax Report signup (Netlify Forms) ---------- */
+function initReport(){
+  document.querySelectorAll("form[data-report]").forEach(form=>{
+    const msg = form.querySelector(".report-msg"), row = form.querySelector(".report-row");
+    const done = t => { row.hidden = true; msg.hidden = false; msg.textContent = t; };
+    if(store.get("reportSignedUp", false)) done("You're signed up for the Weekend Wax Report on this device. Save more mountains and they'll be in your report.");
+    form.addEventListener("submit", async e=>{
+      // the mountains saved on this device, so the report can cover them
+      form.elements.mountains.value = [...new Set([form.elements.resort.value, ...favs().map(f=>f.id)].filter(Boolean))].join(",");
+      if(!window.fetch || !window.URLSearchParams || !window.FormData) return;   // plain post to the thank-you page
+      e.preventDefault();
+      const b = form.querySelector('button[type="submit"]'); b.disabled = true;
+      try{
+        const res = await fetch("/", {method:"POST", headers:{"Content-Type":"application/x-www-form-urlencoded"}, body:new URLSearchParams(new FormData(form)).toString()});
+        if(!res.ok) throw new Error("HTTP " + res.status);
+        store.set("reportSignedUp", true);
+        done(`You're on the list. The first Weekend Wax Report will go to ${form.elements.email.value}.`);
+      }catch(err){ form.submit(); }
+    });
+  });
+}
+
 /* ---------- Wire up ---------- */
 const PAGE = PI.page;
 initSearch();
 initNearMe();
+initPassFilter();
+initReport();
 document.querySelectorAll("[data-edge-diagram]").forEach(el=>{ el.innerHTML = edgeSVG(Number(el.dataset.base), Number(el.dataset.side)); });
 if(PAGE==="resort"){
   buildStyles(); buildStripBands();
@@ -638,6 +881,8 @@ if(PAGE==="resort"){
   });
   $("stepsReset").onclick = ()=>{ state.done={}; store.set("done",{}); render(); };
   initFavButton();
+  initWaxLog();
+  initShare();
   render();
   loadLive();
 } else if(document.querySelector("[data-home-wax]")){

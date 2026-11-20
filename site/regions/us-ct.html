@@ -23,13 +23,13 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
-<link rel="stylesheet" href="../assets/site.css?v=cfed38770b">
+<link rel="stylesheet" href="../assets/site.css?v=d493e2dd4c">
 <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "7effe80b68fa4bdd9944534b8a820936"}'></script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://theskiadvisor.com/"}, {"@type": "ListItem", "position": 2, "name": "Resorts", "item": "https://theskiadvisor.com/resorts/index.html"}, {"@type": "ListItem", "position": 3, "name": "Connecticut", "item": "https://theskiadvisor.com/regions/us-ct.html"}]}</script>
 </head>
 <body>
 <div id="pageInfo" data-page="region" data-resort="" hidden></div>
-<script type="application/json" id="resortData">{"api": "US-CT", "resorts": [{"id": "mohawk-mountain", "name": "Mohawk Mountain Ski Area", "region": "CT", "api": "US-CT", "lat": 41.8361, "lon": -73.3079, "mid": 368, "ex": {"air": 0.5, "rh": 80, "snow48": 3, "pastMax": 3.5, "cloud": 50, "code": 2, "tmrMin": -3.5, "tmrMax": 2.5, "tmrSnow": 1}}, {"id": "ski-sundown", "name": "Ski Sundown", "region": "CT", "api": "US-CT", "lat": 41.8829, "lon": -72.9467, "mid": 237, "ex": {"air": 1.2, "rh": 80, "snow48": 3, "pastMax": 4.2, "cloud": 50, "code": 2, "tmrMin": -2.8, "tmrMax": 3.2, "tmrSnow": 1}}, {"id": "powder-ridge-us-ct", "name": "Powder Ridge Ski Area", "region": "CT", "api": "US-CT", "lat": 41.502, "lon": -72.7383, "mid": 180, "ex": {"air": 1.5, "rh": 80, "snow48": 3, "pastMax": 4.5, "cloud": 50, "code": 2, "tmrMin": -2.5, "tmrMax": 3.5, "tmrSnow": 1}}, {"id": "mount-southington", "name": "Mount Southington Ski Area", "region": "CT", "api": "US-CT", "lat": 41.5813, "lon": -72.9278, "mid": 116, "ex": {"air": 1.9, "rh": 80, "snow48": 3, "pastMax": 4.9, "cloud": 50, "code": 2, "tmrMin": -2.1, "tmrMax": 3.9, "tmrSnow": 1}}, {"id": "lakeridge", "name": "Lakeridge", "region": "CT", "api": "US-CT", "lat": 41.8739, "lon": -73.1008, "mid": 339, "ex": {"air": 0.6, "rh": 80, "snow48": 3, "pastMax": 3.6, "cloud": 50, "code": 2, "tmrMin": -3.4, "tmrMax": 2.6, "tmrSnow": 1}}]}</script>
+<script type="application/json" id="resortData">{"api": "US-CT", "resorts": [{"id": "mohawk-mountain", "name": "Mohawk Mountain Ski Area", "region": "CT", "api": "US-CT", "lat": 41.8361, "lon": -73.3079, "mid": 368, "ex": {"air": 0.5, "rh": 80, "snow48": 3, "pastMax": 3.5, "cloud": 50, "code": 2, "tmrMin": -3.5, "tmrMax": 2.5, "tmrSnow": 1}, "pass": ""}, {"id": "ski-sundown", "name": "Ski Sundown", "region": "CT", "api": "US-CT", "lat": 41.8829, "lon": -72.9467, "mid": 237, "ex": {"air": 1.2, "rh": 80, "snow48": 3, "pastMax": 4.2, "cloud": 50, "code": 2, "tmrMin": -2.8, "tmrMax": 3.2, "tmrSnow": 1}, "pass": ""}, {"id": "powder-ridge-us-ct", "name": "Powder Ridge Ski Area", "region": "CT", "api": "US-CT", "lat": 41.502, "lon": -72.7383, "mid": 180, "ex": {"air": 1.5, "rh": 80, "snow48": 3, "pastMax": 4.5, "cloud": 50, "code": 2, "tmrMin": -2.5, "tmrMax": 3.5, "tmrSnow": 1}, "pass": ""}, {"id": "mount-southington", "name": "Mount Southington Ski Area", "region": "CT", "api": "US-CT", "lat": 41.5813, "lon": -72.9278, "mid": 116, "ex": {"air": 1.9, "rh": 80, "snow48": 3, "pastMax": 4.9, "cloud": 50, "code": 2, "tmrMin": -2.1, "tmrMax": 3.9, "tmrSnow": 1}, "pass": ""}, {"id": "lakeridge", "name": "Lakeridge", "region": "CT", "api": "US-CT", "lat": 41.8739, "lon": -73.1008, "mid": 339, "ex": {"air": 0.6, "rh": 80, "snow48": 3, "pastMax": 3.6, "cloud": 50, "code": 2, "tmrMin": -3.4, "tmrMax": 2.6, "tmrSnow": 1}, "pass": ""}]}</script>
 <header class="top">
   <div class="wrap">
     <div class="top-row">
@@ -46,27 +46,28 @@
     <p class="lede">Today's wax pick for every ski area in Connecticut, from MET Norway's forecast at each one's mid-mountain elevation. Pick a resort for the weekend forecast, edge settings and a full tune.</p>
   </div>
   <p class="muted" id="homeDataNote"></p>
-  <div class="resort-grid"><a class="resort-card" href="../resorts/mohawk-mountain.html">
+  
+  <div class="resort-grid" id="regionGrid"><a class="resort-card" href="../resorts/mohawk-mountain.html" data-pass="">
   <span class="meta">Connecticut · 7 lifts</span>
   <h3>Mohawk Mountain Ski Area</h3>
   <p>580 ft of vertical, 920 ft to 1,500 ft.</p>
   <span class="wax-chip" data-home-wax="mohawk-mountain"><i></i><span>Loading today's wax…</span></span>
-</a><a class="resort-card" href="../resorts/ski-sundown.html">
+</a><a class="resort-card" href="../resorts/ski-sundown.html" data-pass="">
   <span class="meta">Canton · 5 lifts</span>
   <h3>Ski Sundown</h3>
   <p>560 ft of vertical, 500 ft to 1,060 ft.</p>
   <span class="wax-chip" data-home-wax="ski-sundown"><i></i><span>Loading today's wax…</span></span>
-</a><a class="resort-card" href="../resorts/powder-ridge-us-ct.html">
+</a><a class="resort-card" href="../resorts/powder-ridge-us-ct.html" data-pass="">
   <span class="meta">Meriden · 8 lifts</span>
   <h3>Powder Ridge Ski Area</h3>
   <p>410 ft of vertical, 380 ft to 800 ft.</p>
   <span class="wax-chip" data-home-wax="powder-ridge-us-ct"><i></i><span>Loading today's wax…</span></span>
-</a><a class="resort-card" href="../resorts/mount-southington.html">
+</a><a class="resort-card" href="../resorts/mount-southington.html" data-pass="">
   <span class="meta">Connecticut · 7 lifts</span>
   <h3>Mount Southington Ski Area</h3>
   <p>360 ft of vertical, 200 ft to 560 ft.</p>
   <span class="wax-chip" data-home-wax="mount-southington"><i></i><span>Loading today's wax…</span></span>
-</a><a class="resort-card" href="../resorts/lakeridge.html">
+</a><a class="resort-card" href="../resorts/lakeridge.html" data-pass="">
   <span class="meta">Torrington · 1 lift</span>
   <h3>Lakeridge</h3>
   <p>150 ft of vertical, 1,040 ft to 1,190 ft.</p>
@@ -77,8 +78,8 @@
 <footer class="site-foot">
   <div class="wrap" style="display:grid;gap:22px">
     <div class="foot-grid">
-      <div><h3>Popular resorts</h3><ul><li><a href="../resorts/whistler.html">Whistler Blackcomb</a></li><li><a href="../resorts/vail.html">Vail</a></li><li><a href="../resorts/parkcity.html">Park City</a></li><li><a href="../resorts/jackson.html">Jackson Hole</a></li><li><a href="../resorts/aspen.html">Aspen Snowmass</a></li><li><a href="../resorts/mammoth.html">Mammoth Mountain</a></li><li><a href="../resorts/bigsky.html">Big Sky</a></li><li><a href="../resorts/telluride.html">Telluride</a></li><li><a href="../resorts/snowbird.html">Snowbird</a></li><li><a href="../resorts/killington.html">Killington</a></li><li><a href="../resorts/bogus.html">Bogus Basin</a></li><li><a href="../resorts/index.html"><b>All 745 resorts</b></a></li></ul></div>
-      <div><h3>Guides</h3><ul><li><a href="../guides/how-to-wax-skis.html">How to Wax Skis at Home</a></li><li><a href="../guides/how-to-wax-a-snowboard.html">How to Wax a Snowboard at Home</a></li><li><a href="../guides/ski-wax-temperature-chart.html">Ski Wax Temperature Chart</a></li><li><a href="../guides/ski-edge-angles.html">Ski Edge Angles Explained: 89°, 88° and 87°</a></li><li><a href="../guides/how-to-sharpen-ski-edges.html">How to Sharpen Ski Edges at Home</a></li><li><a href="../guides/race-wax-vs-training-wax.html">Race Wax vs Training Wax</a></li><li><a href="../guides/waxing-for-spring-snow.html">Waxing for Wet Spring Snow</a></li><li><a href="../guides/icy-and-man-made-snow.html">Tuning for Ice and Man-Made Snow</a></li><li><a href="../guides/how-often-to-wax-skis.html">How Often Should You Wax Your Skis?</a></li><li><a href="../guides/ski-tuning-kit.html">Home Ski Tuning Kit: What to Buy First</a></li></ul></div>
+      <div><h3>Popular resorts</h3><ul><li><a href="../resorts/whistler.html">Whistler Blackcomb</a></li><li><a href="../resorts/vail.html">Vail</a></li><li><a href="../resorts/parkcity.html">Park City</a></li><li><a href="../resorts/jackson.html">Jackson Hole</a></li><li><a href="../resorts/aspen.html">Aspen Snowmass</a></li><li><a href="../resorts/mammoth.html">Mammoth Mountain</a></li><li><a href="../resorts/bigsky.html">Big Sky</a></li><li><a href="../resorts/telluride.html">Telluride</a></li><li><a href="../resorts/snowbird.html">Snowbird</a></li><li><a href="../resorts/killington.html">Killington</a></li><li><a href="../resorts/bogus.html">Bogus Basin</a></li><li><a href="../resorts/index.html"><b>All 745 resorts</b></a></li><li><a href="../passes/epic.html">Epic Pass mountains</a></li><li><a href="../passes/ikon.html">Ikon Pass mountains</a></li></ul></div>
+      <div><h3>Guides</h3><ul><li><a href="../guides/how-to-wax-skis.html">How to Wax Skis at Home</a></li><li><a href="../guides/how-to-wax-a-snowboard.html">How to Wax a Snowboard at Home</a></li><li><a href="../guides/ski-wax-temperature-chart.html">Ski Wax Temperature Chart</a></li><li><a href="../guides/ski-edge-angles.html">Ski Edge Angles Explained: 89°, 88° and 87°</a></li><li><a href="../guides/how-to-sharpen-ski-edges.html">How to Sharpen Ski Edges at Home</a></li><li><a href="../guides/race-wax-vs-training-wax.html">Race Wax vs Training Wax</a></li><li><a href="../guides/waxing-for-spring-snow.html">Waxing for Wet Spring Snow</a></li><li><a href="../guides/icy-and-man-made-snow.html">Tuning for Ice and Man-Made Snow</a></li><li><a href="../guides/how-often-to-wax-skis.html">How Often Should You Wax Your Skis?</a></li><li><a href="../guides/ski-tuning-kit.html">Home Ski Tuning Kit: What to Buy First</a></li><li><a href="../guides/best-ski-wax-iron.html">Best Ski Wax Iron: What to Buy and What to Skip</a></li><li><a href="../guides/ski-tuning-kit-under-100.html">Ski Tuning Kit Under $100: A Starter Setup That Works</a></li><li><a href="../guides/best-race-wax.html">Best Race Wax: Fluoro-Free Picks for Ski Racers</a></li></ul></div>
       <div><h3>The Ski Advisor</h3><p>Wax and edge recommendations for 745 ski areas in the US, Canada and Mexico, from the forecast at each one's mid-mountain elevation.</p></div>
     </div>
     <p class="foot-links"><a href="../about.html">About</a> · <a href="../contact.html">Contact</a> · <a href="../privacy.html">Privacy</a></p>
@@ -87,6 +88,6 @@
     <p>As an Amazon Associate, The Ski Advisor earns from qualifying purchases. Commissions don't change what we recommend. Recommendations are starting points: the temperature on your wax label wins, and a snow thermometer beats any forecast.</p>
   </div>
 </footer>
-<script src="../assets/tool.js?v=3c884eee06"></script>
+<script src="../assets/tool.js?v=9f2c7d113f"></script>
 </body>
 </html>

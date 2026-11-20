@@ -23,13 +23,13 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
-<link rel="stylesheet" href="../assets/site.css?v=cfed38770b">
+<link rel="stylesheet" href="../assets/site.css?v=d493e2dd4c">
 <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "7effe80b68fa4bdd9944534b8a820936"}'></script>
 <script type="application/ld+json">[{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://theskiadvisor.com/"}, {"@type": "ListItem", "position": 2, "name": "Resorts", "item": "https://theskiadvisor.com/resorts/index.html"}, {"@type": "ListItem", "position": 3, "name": "Saskatchewan", "item": "https://theskiadvisor.com/regions/ca-sk.html"}, {"@type": "ListItem", "position": 4, "name": "Wapiti Valley", "item": "https://theskiadvisor.com/resorts/wapiti-valley.html"}]}, {"@context": "https://schema.org", "@type": "SkiResort", "name": "Wapiti Valley", "mainEntityOfPage": "https://theskiadvisor.com/resorts/wapiti-valley.html", "geo": {"@type": "GeoCoordinates", "latitude": 53.2345, "longitude": -104.4567, "elevation": 433}, "address": {"@type": "PostalAddress", "addressRegion": "Saskatchewan", "addressCountry": "CA", "addressLocality": "Nipawin No. 487"}, "sameAs": ["https://www.skiwapiti.com/"]}]</script>
 </head>
 <body>
 <div id="pageInfo" data-page="resort" data-resort="wapiti-valley" hidden></div>
-<script type="application/json" id="resortData">{"api": "CA-SK", "resorts": [{"id": "wapiti-valley", "name": "Wapiti Valley", "region": "SK", "api": "CA-SK", "lat": 53.2345, "lon": -104.4567, "mid": 392, "ex": {"air": -5.1, "rh": 75, "snow48": 3, "pastMax": -2.1, "cloud": 50, "code": 2, "tmrMin": -9.1, "tmrMax": -3.1, "tmrSnow": 1}}]}</script>
+<script type="application/json" id="resortData">{"api": "CA-SK", "resorts": [{"id": "wapiti-valley", "name": "Wapiti Valley", "region": "SK", "api": "CA-SK", "lat": 53.2345, "lon": -104.4567, "mid": 392, "ex": {"air": -5.1, "rh": 75, "snow48": 3, "pastMax": -2.1, "cloud": 50, "code": 2, "tmrMin": -9.1, "tmrMax": -3.1, "tmrSnow": 1}, "pass": ""}]}</script>
 <header class="top">
   <div class="wrap">
     <div class="top-row">
@@ -57,6 +57,7 @@
       </div>
       <span class="badge" id="sourceBadge"><i></i><span id="sourceText">Loading conditions…</span></span>
       <button type="button" class="fav-btn" id="favBtn" aria-pressed="false" hidden><svg width="15" height="15" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4L2.8 9.5l6.4-.8z" fill="currentColor"/></svg><span>Save to My mountains</span></button>
+      <button type="button" class="fav-btn" id="shareBtn" hidden><svg width="15" height="15" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Share this wax</span></button>
     </div>
   </div>
   <div class="today">
@@ -144,6 +145,10 @@
         </div>
         <p class="note" id="edgeNote"></p>
       </div>
+      <div class="card waxlog" id="waxLog" hidden>
+        <div class="label">Wax log</div>
+        <div id="waxLogBody"></div>
+      </div>
     </div>
   </div>
 
@@ -184,11 +189,29 @@
     <div class="section-head">
       <h2 id="kitH">Your kit for this tune</h2>
       <p class="muted">Everything the walkthrough uses, sized to today's settings. Shop links go to Amazon. As an Amazon Associate, The Ski Advisor earns from qualifying purchases.</p>
+      <p class="muted">Not sure what to buy? See <a href="../guides/best-ski-wax-iron.html">how to choose a wax iron</a>, <a href="../guides/ski-tuning-kit-under-100.html">a starter kit for under $100</a> or <a href="../guides/best-race-wax.html">fluoro-free race wax</a>.</p>
     </div>
     <div class="kit" id="kitGrid"></div>
   </section>
 
 
+  <section class="report" aria-labelledby="reportH">
+    <div class="report-copy">
+      <span class="label">Free email · launching this season</span>
+      <h2 id="reportH">The Weekend Wax Report</h2>
+      <p>Every Thursday in ski season: this weekend's wax and iron temperature for Wapiti Valley and the mountains you save, in time to wax before you leave. Sign up now and you'll get the first one.</p>
+    </div>
+    <form class="report-form" name="wax-report" method="POST" action="/report-thanks.html" data-netlify="true" netlify-honeypot="company" data-report>
+      <input type="hidden" name="form-name" value="wax-report">
+      <input type="hidden" name="resort" value="wapiti-valley">
+      <input type="hidden" name="mountains" value="">
+      <p class="hp" hidden><label>Leave this empty <input name="company" tabindex="-1" autocomplete="off"></label></p>
+      <label class="sr" for="reportEmail">Email address</label>
+      <div class="report-row"><input id="reportEmail" name="email" type="email" autocomplete="email" placeholder="you@example.com" required><button class="btn" type="submit">Sign me up</button></div>
+      <p class="muted small">From The Ski Advisor. Free; unsubscribe from any email in one click. We use your address only to send this report. See our <a href="../privacy.html">privacy policy</a>.</p>
+      <p class="report-msg" role="status" hidden></p>
+    </form>
+  </section>
   <section class="block" aria-labelledby="aboutH">
     <div class="about">
       <div class="prose"><h2 id="aboutH">Skiing Wapiti Valley's snow</h2><p>Wapiti Valley is a ski area in Nipawin No. 487, Saskatchewan, Canada with 2 lifts and 16 mapped runs. Its lifts reach from about 1,150 ft (351 m) to 1,420 ft (433 m), 270 ft of vertical.</p><p>Cold winters, modest natural snowfall and a lot of snowmaking mean firm, dry, abrasive snow on most days. The mapped runs mix beginner, intermediate and advanced terrain.</p><p>The forecast on this page is for 1,290 ft (392 m), halfway up the mountain.</p></div>
@@ -208,8 +231,8 @@
 <footer class="site-foot">
   <div class="wrap" style="display:grid;gap:22px">
     <div class="foot-grid">
-      <div><h3>Popular resorts</h3><ul><li><a href="../resorts/whistler.html">Whistler Blackcomb</a></li><li><a href="../resorts/vail.html">Vail</a></li><li><a href="../resorts/parkcity.html">Park City</a></li><li><a href="../resorts/jackson.html">Jackson Hole</a></li><li><a href="../resorts/aspen.html">Aspen Snowmass</a></li><li><a href="../resorts/mammoth.html">Mammoth Mountain</a></li><li><a href="../resorts/bigsky.html">Big Sky</a></li><li><a href="../resorts/telluride.html">Telluride</a></li><li><a href="../resorts/snowbird.html">Snowbird</a></li><li><a href="../resorts/killington.html">Killington</a></li><li><a href="../resorts/bogus.html">Bogus Basin</a></li><li><a href="../resorts/index.html"><b>All 745 resorts</b></a></li></ul></div>
-      <div><h3>Guides</h3><ul><li><a href="../guides/how-to-wax-skis.html">How to Wax Skis at Home</a></li><li><a href="../guides/how-to-wax-a-snowboard.html">How to Wax a Snowboard at Home</a></li><li><a href="../guides/ski-wax-temperature-chart.html">Ski Wax Temperature Chart</a></li><li><a href="../guides/ski-edge-angles.html">Ski Edge Angles Explained: 89°, 88° and 87°</a></li><li><a href="../guides/how-to-sharpen-ski-edges.html">How to Sharpen Ski Edges at Home</a></li><li><a href="../guides/race-wax-vs-training-wax.html">Race Wax vs Training Wax</a></li><li><a href="../guides/waxing-for-spring-snow.html">Waxing for Wet Spring Snow</a></li><li><a href="../guides/icy-and-man-made-snow.html">Tuning for Ice and Man-Made Snow</a></li><li><a href="../guides/how-often-to-wax-skis.html">How Often Should You Wax Your Skis?</a></li><li><a href="../guides/ski-tuning-kit.html">Home Ski Tuning Kit: What to Buy First</a></li></ul></div>
+      <div><h3>Popular resorts</h3><ul><li><a href="../resorts/whistler.html">Whistler Blackcomb</a></li><li><a href="../resorts/vail.html">Vail</a></li><li><a href="../resorts/parkcity.html">Park City</a></li><li><a href="../resorts/jackson.html">Jackson Hole</a></li><li><a href="../resorts/aspen.html">Aspen Snowmass</a></li><li><a href="../resorts/mammoth.html">Mammoth Mountain</a></li><li><a href="../resorts/bigsky.html">Big Sky</a></li><li><a href="../resorts/telluride.html">Telluride</a></li><li><a href="../resorts/snowbird.html">Snowbird</a></li><li><a href="../resorts/killington.html">Killington</a></li><li><a href="../resorts/bogus.html">Bogus Basin</a></li><li><a href="../resorts/index.html"><b>All 745 resorts</b></a></li><li><a href="../passes/epic.html">Epic Pass mountains</a></li><li><a href="../passes/ikon.html">Ikon Pass mountains</a></li></ul></div>
+      <div><h3>Guides</h3><ul><li><a href="../guides/how-to-wax-skis.html">How to Wax Skis at Home</a></li><li><a href="../guides/how-to-wax-a-snowboard.html">How to Wax a Snowboard at Home</a></li><li><a href="../guides/ski-wax-temperature-chart.html">Ski Wax Temperature Chart</a></li><li><a href="../guides/ski-edge-angles.html">Ski Edge Angles Explained: 89°, 88° and 87°</a></li><li><a href="../guides/how-to-sharpen-ski-edges.html">How to Sharpen Ski Edges at Home</a></li><li><a href="../guides/race-wax-vs-training-wax.html">Race Wax vs Training Wax</a></li><li><a href="../guides/waxing-for-spring-snow.html">Waxing for Wet Spring Snow</a></li><li><a href="../guides/icy-and-man-made-snow.html">Tuning for Ice and Man-Made Snow</a></li><li><a href="../guides/how-often-to-wax-skis.html">How Often Should You Wax Your Skis?</a></li><li><a href="../guides/ski-tuning-kit.html">Home Ski Tuning Kit: What to Buy First</a></li><li><a href="../guides/best-ski-wax-iron.html">Best Ski Wax Iron: What to Buy and What to Skip</a></li><li><a href="../guides/ski-tuning-kit-under-100.html">Ski Tuning Kit Under $100: A Starter Setup That Works</a></li><li><a href="../guides/best-race-wax.html">Best Race Wax: Fluoro-Free Picks for Ski Racers</a></li></ul></div>
       <div><h3>The Ski Advisor</h3><p>Wax and edge recommendations for 745 ski areas in the US, Canada and Mexico, from the forecast at each one's mid-mountain elevation.</p></div>
     </div>
     <p class="foot-links"><a href="../about.html">About</a> · <a href="../contact.html">Contact</a> · <a href="../privacy.html">Privacy</a></p>
@@ -218,6 +241,6 @@
     <p>As an Amazon Associate, The Ski Advisor earns from qualifying purchases. Commissions don't change what we recommend. Recommendations are starting points: the temperature on your wax label wins, and a snow thermometer beats any forecast.</p>
   </div>
 </footer>
-<script src="../assets/tool.js?v=3c884eee06"></script>
+<script src="../assets/tool.js?v=9f2c7d113f"></script>
 </body>
 </html>

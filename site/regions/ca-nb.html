@@ -23,13 +23,13 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
-<link rel="stylesheet" href="../assets/site.css?v=cfed38770b">
+<link rel="stylesheet" href="../assets/site.css?v=d493e2dd4c">
 <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "7effe80b68fa4bdd9944534b8a820936"}'></script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://theskiadvisor.com/"}, {"@type": "ListItem", "position": 2, "name": "Resorts", "item": "https://theskiadvisor.com/resorts/index.html"}, {"@type": "ListItem", "position": 3, "name": "New Brunswick", "item": "https://theskiadvisor.com/regions/ca-nb.html"}]}</script>
 </head>
 <body>
 <div id="pageInfo" data-page="region" data-resort="" hidden></div>
-<script type="application/json" id="resortData">{"api": "CA-NB", "resorts": [{"id": "crabbe-mountain", "name": "Crabbe Mountain", "region": "NB", "api": "CA-NB", "lat": 46.1231, "lon": -67.1068, "mid": 271, "ex": {"air": 0.7, "rh": 80, "snow48": 3, "pastMax": 3.7, "cloud": 50, "code": 2, "tmrMin": -3.3, "tmrMax": 2.7, "tmrSnow": 1}}, {"id": "poley-mountain", "name": "Poley Mountain Ski Area", "region": "NB", "api": "CA-NB", "lat": 45.6784, "lon": -65.3799, "mid": 184, "ex": {"air": 1.3, "rh": 80, "snow48": 3, "pastMax": 4.3, "cloud": 50, "code": 2, "tmrMin": -2.7, "tmrMax": 3.3, "tmrSnow": 1}}, {"id": "mont-farlagne", "name": "Mont Farlagne", "region": "NB", "api": "CA-NB", "lat": 47.4105, "lon": -68.3865, "mid": 240, "ex": {"air": 0.5, "rh": 80, "snow48": 3, "pastMax": 3.5, "cloud": 50, "code": 2, "tmrMin": -3.5, "tmrMax": 2.5, "tmrSnow": 1}}, {"id": "sugarloaf-provincial-park", "name": "Sugarloaf Provincial Park", "region": "NB", "api": "CA-NB", "lat": 47.9822, "lon": -66.6947, "mid": 122, "ex": {"air": 0.9, "rh": 80, "snow48": 3, "pastMax": 3.9, "cloud": 50, "code": 2, "tmrMin": -3.1, "tmrMax": 2.9, "tmrSnow": 1}}]}</script>
+<script type="application/json" id="resortData">{"api": "CA-NB", "resorts": [{"id": "crabbe-mountain", "name": "Crabbe Mountain", "region": "NB", "api": "CA-NB", "lat": 46.1231, "lon": -67.1068, "mid": 271, "ex": {"air": 0.7, "rh": 80, "snow48": 3, "pastMax": 3.7, "cloud": 50, "code": 2, "tmrMin": -3.3, "tmrMax": 2.7, "tmrSnow": 1}, "pass": ""}, {"id": "poley-mountain", "name": "Poley Mountain Ski Area", "region": "NB", "api": "CA-NB", "lat": 45.6784, "lon": -65.3799, "mid": 184, "ex": {"air": 1.3, "rh": 80, "snow48": 3, "pastMax": 4.3, "cloud": 50, "code": 2, "tmrMin": -2.7, "tmrMax": 3.3, "tmrSnow": 1}, "pass": ""}, {"id": "mont-farlagne", "name": "Mont Farlagne", "region": "NB", "api": "CA-NB", "lat": 47.4105, "lon": -68.3865, "mid": 240, "ex": {"air": 0.5, "rh": 80, "snow48": 3, "pastMax": 3.5, "cloud": 50, "code": 2, "tmrMin": -3.5, "tmrMax": 2.5, "tmrSnow": 1}, "pass": ""}, {"id": "sugarloaf-provincial-park", "name": "Sugarloaf Provincial Park", "region": "NB", "api": "CA-NB", "lat": 47.9822, "lon": -66.6947, "mid": 122, "ex": {"air": 0.9, "rh": 80, "snow48": 3, "pastMax": 3.9, "cloud": 50, "code": 2, "tmrMin": -3.1, "tmrMax": 2.9, "tmrSnow": 1}, "pass": ""}]}</script>
 <header class="top">
   <div class="wrap">
     <div class="top-row">
@@ -46,22 +46,23 @@
     <p class="lede">Today's wax pick for every ski area in New Brunswick, from MET Norway's forecast at each one's mid-mountain elevation. Pick a resort for the weekend forecast, edge settings and a full tune.</p>
   </div>
   <p class="muted" id="homeDataNote"></p>
-  <div class="resort-grid"><a class="resort-card" href="../resorts/crabbe-mountain.html">
+  
+  <div class="resort-grid" id="regionGrid"><a class="resort-card" href="../resorts/crabbe-mountain.html" data-pass="">
   <span class="meta">New Brunswick · 3 lifts</span>
   <h3>Crabbe Mountain</h3>
   <p>790 ft of vertical, 500 ft to 1,280 ft.</p>
   <span class="wax-chip" data-home-wax="crabbe-mountain"><i></i><span>Loading today's wax…</span></span>
-</a><a class="resort-card" href="../resorts/poley-mountain.html">
+</a><a class="resort-card" href="../resorts/poley-mountain.html" data-pass="">
   <span class="meta">New Brunswick · 5 lifts</span>
   <h3>Poley Mountain Ski Area</h3>
   <p>650 ft of vertical, 280 ft to 930 ft.</p>
   <span class="wax-chip" data-home-wax="poley-mountain"><i></i><span>Loading today's wax…</span></span>
-</a><a class="resort-card" href="../resorts/mont-farlagne.html">
+</a><a class="resort-card" href="../resorts/mont-farlagne.html" data-pass="">
   <span class="meta">Edmundston · 3 lifts</span>
   <h3>Mont Farlagne</h3>
   <p>590 ft of vertical, 500 ft to 1,080 ft.</p>
   <span class="wax-chip" data-home-wax="mont-farlagne"><i></i><span>Loading today's wax…</span></span>
-</a><a class="resort-card" href="../resorts/sugarloaf-provincial-park.html">
+</a><a class="resort-card" href="../resorts/sugarloaf-provincial-park.html" data-pass="">
   <span class="meta">Atholville · 3 lifts</span>
   <h3>Sugarloaf Provincial Park</h3>
   <p>520 ft of vertical, 140 ft to 660 ft.</p>
@@ -72,8 +73,8 @@
 <footer class="site-foot">
   <div class="wrap" style="display:grid;gap:22px">
     <div class="foot-grid">
-      <div><h3>Popular resorts</h3><ul><li><a href="../resorts/whistler.html">Whistler Blackcomb</a></li><li><a href="../resorts/vail.html">Vail</a></li><li><a href="../resorts/parkcity.html">Park City</a></li><li><a href="../resorts/jackson.html">Jackson Hole</a></li><li><a href="../resorts/aspen.html">Aspen Snowmass</a></li><li><a href="../resorts/mammoth.html">Mammoth Mountain</a></li><li><a href="../resorts/bigsky.html">Big Sky</a></li><li><a href="../resorts/telluride.html">Telluride</a></li><li><a href="../resorts/snowbird.html">Snowbird</a></li><li><a href="../resorts/killington.html">Killington</a></li><li><a href="../resorts/bogus.html">Bogus Basin</a></li><li><a href="../resorts/index.html"><b>All 745 resorts</b></a></li></ul></div>
-      <div><h3>Guides</h3><ul><li><a href="../guides/how-to-wax-skis.html">How to Wax Skis at Home</a></li><li><a href="../guides/how-to-wax-a-snowboard.html">How to Wax a Snowboard at Home</a></li><li><a href="../guides/ski-wax-temperature-chart.html">Ski Wax Temperature Chart</a></li><li><a href="../guides/ski-edge-angles.html">Ski Edge Angles Explained: 89°, 88° and 87°</a></li><li><a href="../guides/how-to-sharpen-ski-edges.html">How to Sharpen Ski Edges at Home</a></li><li><a href="../guides/race-wax-vs-training-wax.html">Race Wax vs Training Wax</a></li><li><a href="../guides/waxing-for-spring-snow.html">Waxing for Wet Spring Snow</a></li><li><a href="../guides/icy-and-man-made-snow.html">Tuning for Ice and Man-Made Snow</a></li><li><a href="../guides/how-often-to-wax-skis.html">How Often Should You Wax Your Skis?</a></li><li><a href="../guides/ski-tuning-kit.html">Home Ski Tuning Kit: What to Buy First</a></li></ul></div>
+      <div><h3>Popular resorts</h3><ul><li><a href="../resorts/whistler.html">Whistler Blackcomb</a></li><li><a href="../resorts/vail.html">Vail</a></li><li><a href="../resorts/parkcity.html">Park City</a></li><li><a href="../resorts/jackson.html">Jackson Hole</a></li><li><a href="../resorts/aspen.html">Aspen Snowmass</a></li><li><a href="../resorts/mammoth.html">Mammoth Mountain</a></li><li><a href="../resorts/bigsky.html">Big Sky</a></li><li><a href="../resorts/telluride.html">Telluride</a></li><li><a href="../resorts/snowbird.html">Snowbird</a></li><li><a href="../resorts/killington.html">Killington</a></li><li><a href="../resorts/bogus.html">Bogus Basin</a></li><li><a href="../resorts/index.html"><b>All 745 resorts</b></a></li><li><a href="../passes/epic.html">Epic Pass mountains</a></li><li><a href="../passes/ikon.html">Ikon Pass mountains</a></li></ul></div>
+      <div><h3>Guides</h3><ul><li><a href="../guides/how-to-wax-skis.html">How to Wax Skis at Home</a></li><li><a href="../guides/how-to-wax-a-snowboard.html">How to Wax a Snowboard at Home</a></li><li><a href="../guides/ski-wax-temperature-chart.html">Ski Wax Temperature Chart</a></li><li><a href="../guides/ski-edge-angles.html">Ski Edge Angles Explained: 89°, 88° and 87°</a></li><li><a href="../guides/how-to-sharpen-ski-edges.html">How to Sharpen Ski Edges at Home</a></li><li><a href="../guides/race-wax-vs-training-wax.html">Race Wax vs Training Wax</a></li><li><a href="../guides/waxing-for-spring-snow.html">Waxing for Wet Spring Snow</a></li><li><a href="../guides/icy-and-man-made-snow.html">Tuning for Ice and Man-Made Snow</a></li><li><a href="../guides/how-often-to-wax-skis.html">How Often Should You Wax Your Skis?</a></li><li><a href="../guides/ski-tuning-kit.html">Home Ski Tuning Kit: What to Buy First</a></li><li><a href="../guides/best-ski-wax-iron.html">Best Ski Wax Iron: What to Buy and What to Skip</a></li><li><a href="../guides/ski-tuning-kit-under-100.html">Ski Tuning Kit Under $100: A Starter Setup That Works</a></li><li><a href="../guides/best-race-wax.html">Best Race Wax: Fluoro-Free Picks for Ski Racers</a></li></ul></div>
       <div><h3>The Ski Advisor</h3><p>Wax and edge recommendations for 745 ski areas in the US, Canada and Mexico, from the forecast at each one's mid-mountain elevation.</p></div>
     </div>
     <p class="foot-links"><a href="../about.html">About</a> · <a href="../contact.html">Contact</a> · <a href="../privacy.html">Privacy</a></p>
@@ -82,6 +83,6 @@
     <p>As an Amazon Associate, The Ski Advisor earns from qualifying purchases. Commissions don't change what we recommend. Recommendations are starting points: the temperature on your wax label wins, and a snow thermometer beats any forecast.</p>
   </div>
 </footer>
-<script src="../assets/tool.js?v=3c884eee06"></script>
+<script src="../assets/tool.js?v=9f2c7d113f"></script>
 </body>
 </html>

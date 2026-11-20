@@ -213,6 +213,10 @@ for d in RAW:
         x["tag"], x["about"], x["tips"] = describe(x); x["ex"] = example(x); x["flagship"] = False
     ALL.append(x)
 A_BY = {x["id"]: x for x in ALL}
+from passes import EPIC, IKON, PASS_INFO, SEASON as PASS_SEASON, pass_of   # Epic / Ikon membership, updated each season
+for _id in list(EPIC) + list(IKON): assert _id in A_BY, "pass list names an unknown resort: " + _id
+for x in ALL: x["pass"], x["passAccess"] = pass_of(x["id"])
+def pass_code(x): return (x["pass"][0] + ("" if x["passAccess"] == "full" else "l")) if x["pass"] else ""
 FEATURED = [A_BY[r["id"]] for r in RESORTS]
 REGIONS = {}
 for x in ALL:
@@ -228,7 +232,7 @@ def nearby(x, k=8):
 def rd_script(data):
     return '<script type="application/json" id="resortData">' + json.dumps(data, ensure_ascii=False).replace("</", "<\\/") + '</script>'
 def rd_resort(x):
-    return {"id": x["id"], "name": x["name"], "region": x["short"], "api": x["region"], "lat": x["lat"], "lon": x["lon"], "mid": x["mid"], "ex": x["ex"]}
+    return {"id": x["id"], "name": x["name"], "region": x["short"], "api": x["region"], "lat": x["lat"], "lon": x["lon"], "mid": x["mid"], "ex": x["ex"], "pass": x["pass"] or ""}
 
 def ft(m): return f"{round(m*3.28084/10)*10:,} ft"
 
@@ -521,6 +525,8 @@ GUIDES = [
 from guides_extra import EXTRA, SNOWBOARD_GUIDE   # longer guide sections + the snowboard guide
 for _g in GUIDES: _g["body"] += EXTRA.get(_g["slug"], "")
 GUIDES.insert(1, SNOWBOARD_GUIDE)
+from guides_buy import BUY_GUIDES   # buying guides (iron, $100 kit, race wax)
+GUIDES.extend(BUY_GUIDES)
 G_BY = {g["slug"]: g for g in GUIDES}
 
 def guide_body(g):
@@ -583,6 +589,7 @@ def footer(depth):
     r = "../"*depth
     res = "".join(f'<li><a href="{r}resorts/{x["id"]}.html">{x["name"]}</a></li>' for x in RESORTS)
     res += f'<li><a href="{r}resorts/index.html"><b>All {len(ALL)} resorts</b></a></li>'
+    res += f'<li><a href="{r}passes/epic.html">Epic Pass mountains</a></li><li><a href="{r}passes/ikon.html">Ikon Pass mountains</a></li>'
     gds = "".join(f'<li><a href="{r}guides/{g["slug"]}.html">{g["title"]}</a></li>' for g in GUIDES)
     return f"""<footer class="site-foot">
   <div class="wrap" style="display:grid;gap:22px">
@@ -605,9 +612,37 @@ def search_box(depth, prefix, sid):
         <input id="{sid}" type="search" autocomplete="off" placeholder="Search {len(ALL)} ski resorts by name, town or state">
         <button type="button" class="near-btn" data-near>Near me</button>
       </div>
+      <div class="pass-row" role="group" aria-label="Filter by season pass"><span>Pass</span><button type="button" class="chip" data-passpick="" aria-pressed="true">Any</button><button type="button" class="chip" data-passpick="epic" aria-pressed="false">Epic</button><button type="button" class="chip" data-passpick="ikon" aria-pressed="false">Ikon</button></div>
       <ul hidden></ul>
       <p class="near-msg muted" hidden></p>
     </form>"""
+
+def pass_tag(x, long=False):
+    if not x["pass"]: return ""
+    name = PASS_INFO[x["pass"]]["name"] if long else x["pass"].capitalize()
+    return f'<span class="pass-tag {x["pass"]}">{name}{"" if x["passAccess"] == "full" else " · limited"}</span>'
+
+def report_box(depth, x=None):
+    """Weekend Wax Report signup (Netlify Forms). Every copy has the same fields so Netlify sees one form."""
+    r = "../"*depth
+    who = f"{esc(x['name'])} and the mountains you save" if x else "the mountains you save"
+    return f"""<section class="report" aria-labelledby="reportH">
+    <div class="report-copy">
+      <span class="label">Free email · launching this season</span>
+      <h2 id="reportH">The Weekend Wax Report</h2>
+      <p>Every Thursday in ski season: this weekend's wax and iron temperature for {who}, in time to wax before you leave. Sign up now and you'll get the first one.</p>
+    </div>
+    <form class="report-form" name="wax-report" method="POST" action="/report-thanks.html" data-netlify="true" netlify-honeypot="company" data-report>
+      <input type="hidden" name="form-name" value="wax-report">
+      <input type="hidden" name="resort" value="{x['id'] if x else ''}">
+      <input type="hidden" name="mountains" value="">
+      <p class="hp" hidden><label>Leave this empty <input name="company" tabindex="-1" autocomplete="off"></label></p>
+      <label class="sr" for="reportEmail">Email address</label>
+      <div class="report-row"><input id="reportEmail" name="email" type="email" autocomplete="email" placeholder="you@example.com" required><button class="btn" type="submit">Sign me up</button></div>
+      <p class="muted small">From The Ski Advisor. Free; unsubscribe from any email in one click. We use your address only to send this report. See our <a href="{r}privacy.html">privacy policy</a>.</p>
+      <p class="report-msg" role="status" hidden></p>
+    </form>
+  </section>"""
 
 def region_grid(depth):
     out = []
@@ -663,7 +698,7 @@ def home(full):
   <p>Every operating ski area with a lift, from the biggest destinations to small local hills.</p>
   <span class="wax-chip"><span>Browse by state or province →</span></span>
 </a>"""
-    gcards = "".join(f'<a class="guide-card" href="guides/{g["slug"]}.html"><small>{read_minutes(guide_body(g))} min read</small><b>{g["title"]}</b><span>{g["card"]}</span></a>' for g in GUIDES)
+    gcards = "".join(f'<a class="guide-card" href="guides/{g["slug"]}.html"><small>{guide_kind(g)}{read_minutes(guide_body(g))} min read</small><b>{g["title"]}</b><span>{g["card"]}</span></a>' for g in GUIDES)
     ld = {"@context":"https://schema.org","@type":"WebSite","name":"The Ski Advisor","url":DOMAIN+"/"}
     h = head("The Ski Advisor: Ski and Snowboard Wax for Today's Snow",
              f"Ski and snowboard wax color and iron temperature for today's snow at {len(ALL)} resorts across the US, Canada and Mexico, edge settings for how you ski or ride, and step-by-step home tuning guides.",
@@ -712,6 +747,7 @@ def home(full):
       <li><b>Wax, edges, steps</b><span>You get the wax color and iron setting for the snow, edge settings for how you ski or ride, and a tune walkthrough set to match.</span></li>
     </ol>
   </section>
+  {report_box(0)}
   <section class="home-sec" aria-labelledby="guidesH">
     <div class="section-head"><h2 id="guidesH">Tuning guides</h2><p class="muted">Everything you need to tune skis or a snowboard at home, from your first wax job to race day.</p></div>
     <div class="guide-grid">{gcards}</div>
@@ -737,6 +773,12 @@ def resort_page(x):
     about = "".join(f"<p>{p}</p>" for p in x["about"])
     tips = "".join(f"<li>{t}</li>" for t in x["tips"])
     name = esc(x["name"])
+    pass_line = ""
+    if x["pass"]:
+        pi = PASS_INFO[x["pass"]]
+        pass_line = (f'\n    <p class="pass-line"><span class="pass-tag {x["pass"]}">{pi["name"]}</span> On the {PASS_SEASON} pass' +
+                     ("" if x["passAccess"] == "full" else f' as a {pi["limited"]}') +
+                     f'. <a href="../passes/{x["pass"]}.html">See all {pi["name"]} mountains</a></p>')
     title = f"{x['name']} Ski & Snowboard Wax: Today's Pick and Home Tune"
     desc = f"Which ski or snowboard wax to use at {x['name']}, {x['regionName']}, today, tomorrow or this weekend, from the forecast at mid-mountain ({ft(x['mid'])}). Plus edge settings and a step-by-step home tune."
     place = {"@context": "https://schema.org", "@type": "SkiResort", "name": x["name"],
@@ -754,7 +796,7 @@ def resort_page(x):
   <div class="hero">
     <span class="label" id="heroEyebrow">Today · {x['short']} · mid-mountain, {ft(x['mid'])}</span>
     <h1>Wax &amp; tune for <em>{name}</em></h1>
-    <p class="lede">{x['tag']}. Wax color and iron temperature from the forecast at mid-mountain, edge settings for how you ski or ride, and a step-by-step home tune.</p>
+    <p class="lede">{x['tag']}. Wax color and iron temperature from the forecast at mid-mountain, edge settings for how you ski or ride, and a step-by-step home tune.</p>{pass_line}
     <div class="hero-sub">
       <div class="seg" role="group" aria-label="When are you skiing?">
         <button type="button" id="dayToday" aria-pressed="true">Today</button>
@@ -767,9 +809,11 @@ def resort_page(x):
       </div>
       <span class="badge" id="sourceBadge"><i></i><span id="sourceText">Loading conditions…</span></span>
       <button type="button" class="fav-btn" id="favBtn" aria-pressed="false" hidden><svg width="15" height="15" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.8l2.8 5.9 6.4.8-4.7 4.4 1.2 6.4L12 17.2l-5.7 3.1 1.2-6.4L2.8 9.5l6.4-.8z" fill="currentColor"/></svg><span>Save to My mountains</span></button>
+      <button type="button" class="fav-btn" id="shareBtn" hidden><svg width="15" height="15" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12M7 8l5-5 5 5M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>Share this wax</span></button>
     </div>
   </div>
 {TOOL_FRAG}
+  {report_box(1, x)}
   <section class="block" aria-labelledby="aboutH">
     <div class="about">
       <div class="prose"><h2 id="aboutH">Skiing {name}'s snow</h2>{about}</div>
@@ -790,10 +834,17 @@ def resort_page(x):
 <script src="../assets/tool.js"></script>"""
     return doc(True, head(title, desc, f"resorts/{x['id']}.html", 1, ld), body)
 
+def pass_filter(rs):
+    ne = sum(1 for x in rs if x["pass"] == "epic"); ni = sum(1 for x in rs if x["pass"] == "ikon")
+    if not ne and not ni: return ""
+    b = lambda k, label, n: f'<button type="button" class="chip" data-passpick="{k}" aria-pressed="{str(k == "").lower()}">{label}<small>{n}</small></button>'
+    return ('<div class="pass-row pass-filter" role="group" aria-label="Filter by season pass" data-pass-filter><span>Pass</span>' +
+            b("", "All", len(rs)) + (b("epic", "Epic", ne) if ne else "") + (b("ikon", "Ikon", ni) if ni else "") + '</div>')
+
 def region_page(g):
     rs = sorted(g["resorts"], key=lambda x: -x["vertical"])
-    cards = "".join(f"""<a class="resort-card" href="../resorts/{x['id']}.html">
-  <span class="meta">{esc(x.get('locality') or g['name'])} · {x['lifts']} lift{'s' if x['lifts'] != 1 else ''}</span>
+    cards = "".join(f"""<a class="resort-card" href="../resorts/{x['id']}.html" data-pass="{x['pass'] or ''}">
+  <span class="meta">{esc(x.get('locality') or g['name'])} · {x['lifts']} lift{'s' if x['lifts'] != 1 else ''}{pass_tag(x)}</span>
   <h3>{esc(x['name'])}</h3>
   <p>{ft(x['vertical'])} of vertical, {ft(x['base'])} to {ft(x['summit'])}.</p>
   <span class="wax-chip" data-home-wax="{x['id']}"><i></i><span>Loading today's wax…</span></span>
@@ -813,7 +864,8 @@ def region_page(g):
     <p class="lede">Today's wax pick for every ski area in {name}, from MET Norway's forecast at each one's mid-mountain elevation. Pick a resort for the weekend forecast, edge settings and a full tune.</p>
   </div>
   <p class="muted" id="homeDataNote"></p>
-  <div class="resort-grid">{cards}</div>
+  {pass_filter(rs)}
+  <div class="resort-grid" id="regionGrid">{cards}</div>
   <div class="notes"><p>Biggest vertical first. {OSM_CREDIT}</p></div>
 </main>
 {footer(1)}
@@ -831,6 +883,7 @@ def resorts_index():
     <p class="lede">{len(ALL)} operating ski areas with lifts. Search for yours, or browse by state or province.</p>
   </div>
   {search_box(1, "", "allSearch")}
+  <p class="pass-links">Browse by season pass: <a href="../passes/epic.html">Epic Pass mountains</a> · <a href="../passes/ikon.html">Ikon Pass mountains</a></p>
   <section class="home-sec" aria-label="Browse by state or province">{region_grid(1)}</section>
   <div class="notes"><p>{OSM_CREDIT} Missing a ski area, or see a mistake? It comes from OpenStreetMap, which anyone can correct.</p></div>
 </main>
@@ -841,7 +894,7 @@ def resorts_index():
                           "resorts/index.html", 1, bc_ld([("Home",""),("Resorts","resorts/index.html")])), body)
 
 
-EFFECTIVE = "November 19, 2026"
+EFFECTIVE = "November 20, 2026"
 AMZ_NOTE = "As an Amazon Associate, The Ski Advisor earns from qualifying purchases."
 
 def content_page(path, title, desc, h1, dek, body, current="", noindex=False, crumb=None):
@@ -909,6 +962,49 @@ def contact_sent_page():
     return content_page("contact-sent.html", "Message sent | The Ski Advisor", "Your message to The Ski Advisor was sent.",
                         "Message sent", "Thanks for getting in touch.", body, noindex=True, crumb="Contact")
 
+def pass_page(key):
+    pi = PASS_INFO[key]
+    rs = [x for x in ALL if x["pass"] == key]
+    groups = {}
+    for x in rs: groups.setdefault(x["region"], []).append(x)
+    order = sorted(groups, key=lambda c: ({"US": 0, "CA": 1, "MX": 2}[REGIONS[c]["country"]], REGIONS[c]["name"]))
+    secs = []
+    for c in order:
+        cards = "".join(f"""<a class="resort-card" href="../resorts/{x['id']}.html">
+  <span class="meta">{esc(x.get('locality') or x['regionName'])}{pass_tag(x) if x['passAccess'] != 'full' else ''}</span>
+  <h3>{esc(x['name'])}</h3>
+  <p>{ft(x['vertical'])} of vertical, {x['lifts']} lift{'s' if x['lifts'] != 1 else ''}. Today's wax, edges and a home tune.</p>
+</a>""" for x in sorted(groups[c], key=lambda x: -x["vertical"]))
+        secs.append(f'<section class="pass-sec"><h3 class="sub-h"><a href="{region_href(c, 1)}">{esc(REGIONS[c]["name"])}</a></h3><div class="resort-grid">{cards}</div></section>')
+    other = "ikon" if key == "epic" else "epic"
+    n = len(rs); limited = sum(1 for x in rs if x["passAccess"] != "full")
+    limited_txt = (f", and {limited} of these are limited-day " + ("partner resorts" if key == "epic" else "bonus mountains")) if limited else ""
+    title = f"{pi['name']} Resorts {PASS_SEASON}: Ski Wax for All {n} North American Mountains"
+    desc = f"All {n} North American ski areas on the {PASS_SEASON} {pi['name']}, by state and province, each with today's ski and snowboard wax, edge settings and a home tune."
+    body = f"""{page_info("pass")}
+{header(1, "resorts")}
+<main class="wrap">
+  {crumbs(1, [("Resorts","../resorts/index.html"),(pi["name"],None)])}
+  <div class="hero">
+    <span class="label">{PASS_SEASON} season · {n} North American ski areas</span>
+    <h1>{pi['name']} mountains</h1>
+    <p class="lede">Every North American ski area on the {PASS_SEASON} {pi['name']}. Pick one for today's wax and iron temperature, edge settings and a home tune.</p>
+  </div>
+  <p class="muted">Days and blackout dates depend on which version of the pass you hold{limited_txt}. Check <a href="{pi['site']}" rel="noopener">the {pi['name']} site</a> before you go. The Ski Advisor isn't affiliated with {pi['owner']}.</p>
+  {"".join(secs)}
+  <div class="notes"><p>Pass lists change every season; this one is for {PASS_SEASON}. Spot a mistake? <a href="../contact.html">Tell us</a>. See also the <a href="{other}.html">{PASS_INFO[other]['name']} mountains</a>.</p></div>
+</main>
+{footer(1)}
+<script src="../assets/tool.js"></script>"""
+    return doc(True, head(title, desc, f"passes/{key}.html", 1,
+                          bc_ld([("Home",""),("Resorts","resorts/index.html"),(pi["name"], f"passes/{key}.html")])), body)
+
+def report_thanks_page():
+    body = """<p>When the first Weekend Wax Report goes out, it'll come to the address you gave us. Every email has a one-click unsubscribe link.</p>
+<p>Meanwhile, <a href="resorts/index.html">find today's wax for your mountain</a>, save it to My mountains, or read the <a href="guides/index.html">tuning guides</a>.</p>"""
+    return content_page("report-thanks.html", "You're signed up | The Ski Advisor", "You're signed up for the Weekend Wax Report.",
+                        "You're signed up", "Thanks for signing up for the Weekend Wax Report.", body, noindex=True, crumb="Weekend Wax Report")
+
 def privacy_page():
     analytics_text = ('<p>We use <a href="https://www.cloudflare.com/web-analytics/">Cloudflare Web Analytics</a> to count visits and see which pages are useful. '
                       "It doesn't use cookies or track you across sites. See <a href=\"https://www.cloudflare.com/privacypolicy/\">Cloudflare's privacy policy</a>. "
@@ -919,8 +1015,10 @@ def privacy_page():
 <p>The Ski Advisor (theskiadvisor.com) is a free website. You don't need an account, and we don't sell personal information. This policy explains what information is involved when you use the site.</p>
 <h2>Information you give us</h2>
 <p>If you use the <a href="contact.html">contact form</a>, we receive your email address, your message, the topic you chose and, if you give it, your name. We use it only to reply to you. The form is handled by our host, Netlify, which stores submissions for us. We delete messages when we no longer need them, or sooner if you ask.</p>
+<p>If you sign up for the <b>Weekend Wax Report</b>, we receive your email address, the resort page you signed up on, and the mountains saved in your browser's My mountains list, so the report can cover them. We use them only to send you the report. Netlify stores signups for us; when the report launches, we'll use an email service to send it and will name it here first. Every email has a one-click unsubscribe link, and you can ask us to delete your address at any time.</p>
 <h2>Information stored in your browser</h2>
-<p>The site remembers a few choices in your own browser's local storage: your temperature units, how you ski or ride, training or race-day mode, the mountains you save to My mountains, and which tuning steps you've checked off. This stays on your device; it isn't sent to us. Clear your browser's site data to remove it.</p>
+<p>The site remembers a few choices in your own browser's local storage: your temperature units, how you ski or ride, training or race-day mode, the mountains you save to My mountains, your season-pass filter, your wax log (when you last waxed and how many ski days since), and which tuning steps you've checked off. This stays on your device; it isn't sent to us. Clear your browser's site data to remove it.</p>
+<p>When you use Share this wax, the image is drawn in your own browser. Nothing is uploaded to us; you choose where to send it.</p>
 <h2>Your location</h2>
 <p>If you press Near me, your browser asks for permission to share your location. If you allow it, the site uses it only inside your browser to sort resorts by distance. Your location isn't sent to us or stored.</p>
 <h2>Services that see your visit</h2>
@@ -951,6 +1049,8 @@ def not_found_page():
     # served at any missing path, so every link must start from the site root
     return re.sub(r'((?:href|src|data-index|data-prefix)=")(?!https?:|/|#|mailto:)', r'\1/', html_text)
 
+def guide_kind(g): return "Buying guide · " if g.get("kind") == "buy" else ""
+
 def guide_page(g):
     gb = guide_body(g)
     mins = read_minutes(gb)
@@ -964,7 +1064,7 @@ def guide_page(g):
 <main class="wrap">
   {crumbs(1, [("Guides","index.html"),(g["title"],None)])}
   <article class="article">
-    <span class="byline">Tuning guide · {mins} min read</span>
+    <span class="byline">{"Buying guide" if g.get("kind") == "buy" else "Tuning guide"} · {mins} min read</span>
     <h1>{g['title']}</h1>
     <p class="dek">{g['dek']}</p>
     {gb}
@@ -984,7 +1084,9 @@ def guide_page(g):
     return doc(True, head(f"{g['title']} | The Ski Advisor", g["desc"], f"guides/{g['slug']}.html", 1, ld), body)
 
 def guides_index():
-    cards = "".join(f'<a class="guide-card" href="{g["slug"]}.html"><small>{read_minutes(guide_body(g))} min read</small><b>{g["title"]}</b><span>{g["card"]}</span></a>' for g in GUIDES)
+    card = lambda g: f'<a class="guide-card" href="{g["slug"]}.html"><small>{read_minutes(guide_body(g))} min read</small><b>{g["title"]}</b><span>{g["card"]}</span></a>'
+    cards = "".join(card(g) for g in GUIDES if g.get("kind") != "buy")
+    buy = "".join(card(g) for g in GUIDES if g.get("kind") == "buy")
     body = f"""{page_info("guides")}
 {header(1, "guides")}
 <main class="wrap">
@@ -995,6 +1097,10 @@ def guides_index():
     <p class="lede">How to wax, sharpen and set up your skis at home, from your first wax job to race day.</p>
   </div>
   <div class="guide-grid">{cards}</div>
+  <section class="home-sec" aria-labelledby="buyH">
+    <div class="section-head"><h2 id="buyH">Buying guides</h2><p class="muted">What to buy, what to skip, and where to spend.</p></div>
+    <div class="guide-grid">{buy}</div>
+  </section>
 </main>
 {footer(1)}"""
     return doc(True, head("Ski Tuning Guides | The Ski Advisor", "Step-by-step guides to waxing and sharpening skis at home: wax temperature chart, edge angles, race wax, spring snow and more.", "guides/index.html", 1,
@@ -1030,7 +1136,7 @@ def main():
     write("assets/site.css", css)
     write("assets/tool.js", open(os.path.join(SRC, "tool.js")).read())
     write("assets/flyover.js", open(os.path.join(SRC, "flyover.js")).read())
-    write("assets/resort-index.json", json.dumps([[x["id"], x["name"], x["short"], x["regionName"], x.get("locality") or "", x["lat"], x["lon"]] for x in ALL], ensure_ascii=False, separators=(",", ":")))
+    write("assets/resort-index.json", json.dumps([[x["id"], x["name"], x["short"], x["regionName"], x.get("locality") or "", x["lat"], x["lon"], pass_code(x)] for x in ALL], ensure_ascii=False, separators=(",", ":")))
     # resort list, shard plan and featured resorts for the Netlify weather functions
     lib = os.path.join(ROOT, "netlify", "lib"); os.makedirs(lib, exist_ok=True)
     with open(os.path.join(lib, "resorts.json"), "w") as f:
@@ -1056,6 +1162,8 @@ def main():
     write("contact.html", contact_page())
     write("contact-sent.html", contact_sent_page())
     write("privacy.html", privacy_page())
+    write("report-thanks.html", report_thanks_page())
+    for k in PASS_INFO: write(f"passes/{k}.html", pass_page(k))
     write("404.html", not_found_page())
     for f in ("favicon.svg", "favicon-48.png", "apple-touch-icon.png", "og-image.jpg", "logo-header.webp"):
         src_f = os.path.join(SRC, "brand", f)
@@ -1063,7 +1171,7 @@ def main():
             dst = os.path.join(OUT, "assets" if f in ("og-image.jpg", "logo-header.webp") else "", f); os.makedirs(os.path.dirname(dst), exist_ok=True)
             with open(src_f, "rb") as a, open(dst, "wb") as b: b.write(a.read())
     urls = ([""] + ["resorts/index.html"] + [f"regions/{c.lower()}.html" for c in sorted(REGIONS)] + [f"resorts/{x['id']}.html" for x in ALL] +
-            ["guides/index.html"] + [f"guides/{g['slug']}.html" for g in GUIDES] + ["about.html", "contact.html", "privacy.html"])
+            ["passes/epic.html", "passes/ikon.html"] + ["guides/index.html"] + [f"guides/{g['slug']}.html" for g in GUIDES] + ["about.html", "contact.html", "privacy.html"])
     write("sitemap.xml", '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
           "".join(f"  <url><loc>{DOMAIN}/{u}</loc><lastmod>{TODAY}</lastmod></url>\n" for u in urls) + "</urlset>\n")
     write("robots.txt", f"User-agent: *\nAllow: /\nSitemap: {DOMAIN}/sitemap.xml\n")
