@@ -511,6 +511,61 @@ h3{font-size:19px;font-weight:800;letter-spacing:-.005em}
 .wax-chip[data-tone="dark"]{--chip-on:#0F1B26}
 .resort-card .wax-chip i{display:none}
 .resort-card.alt .wax-chip{background:transparent;font-weight:600}
+
+/* =====================================================================
+   Color pass (from the brand mockup): navy headings and footer, red
+   calls to action and accents, cool snow-blue page, white cards with a
+   soft navy shadow. The font stays the same.
+   ===================================================================== */
+:root{
+  --bg:#EEF3F9; --surface:#FFFFFF; --ink:#10213F; --muted:#51627D; --line:#D5DFEB; --soft:#E6EEF7;
+  --accent:#0E3F96; --accent-ink:#FFFFFF;
+  --navy:#00174B; --red:#E3172D; --red-dark:#C41228; --heading:var(--navy); --sel:var(--navy);
+  --shadow:0 1px 2px rgba(0,23,75,.06),0 6px 18px rgba(0,23,75,.07);
+  --hero-sky1:#2F63B5; --hero-sky2:#D3E3F4;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#050E22; --surface:#0B1A36; --ink:#E6EEF8; --muted:#9DB0CC; --line:#1C2F52; --soft:#11244A;
+    --accent:#8DB4FF; --accent-ink:#050E22; --heading:var(--ink); --sel:#2A4C8F; --shadow:none; --snow:#13284D;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#050E22; --surface:#0B1A36; --ink:#E6EEF8; --muted:#9DB0CC; --line:#1C2F52; --soft:#11244A;
+  --accent:#8DB4FF; --accent-ink:#050E22; --heading:var(--ink); --sel:#2A4C8F; --shadow:none; --snow:#13284D;
+}
+h1,h2,h3{color:var(--heading)}
+.hero-copy h1{color:var(--hero-ink)}
+.section-head h2::after{content:"";display:block;width:56px;height:4px;border-radius:2px;background:var(--red);margin-top:10px}
+.report .section-head h2::after{display:none}
+
+/* Calls to action in red */
+.btn{background:var(--red);border-color:var(--red);color:#FFFFFF;cursor:pointer}
+.btn:hover{background:var(--red-dark);border-color:var(--red-dark)}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line)}
+.btn.ghost:hover{background:transparent;border-color:var(--ink)}
+.hero-cta .btn{background:var(--red);border-color:var(--red);color:#FFFFFF}
+.hero-cta .btn:hover{background:var(--red-dark);border-color:var(--red-dark)}
+.hero-cta .btn.ghost{background:transparent;color:#FFFFFF;border-color:rgba(255,255,255,.7)}
+.fav-btn[aria-pressed="true"]{background:var(--red);border-color:var(--red)}
+
+/* Selected states in navy */
+.seg button[aria-pressed="true"],.radio-row button[aria-pressed="true"],.chip[aria-pressed="true"],.chip[aria-current="page"]{background:var(--sel);color:#FFFFFF;border-color:var(--sel)}
+.style-btn[aria-pressed="true"],button.wk-row.pick{border-color:var(--sel);box-shadow:inset 0 0 0 1px var(--sel)}
+.top .chip[aria-current="page"]{background:#FFFFFF;color:var(--brand-navy);border-color:#FFFFFF}
+.wax-slab .seg button[aria-pressed="true"]{background:var(--on);color:var(--wax);border-color:transparent}
+
+/* White cards with a soft navy shadow */
+.card,.resort-card,.guide-card,.kit-item,.step,.contact-form,.region-list a{box-shadow:var(--shadow)}
+.resort-card:hover,.guide-card:hover,.region-list a:hover{border-color:var(--sel)}
+.how li{border-top-color:var(--red)}
+
+/* Navy hero shading and footer */
+.hero-fly::after{background:linear-gradient(to top,rgba(0,23,75,.9) 0%,rgba(0,23,75,.52) 38%,rgba(0,23,75,0) 70%)}
+.site-foot{background:var(--brand-navy);color:#B8C7E0;border-top:4px solid var(--red)}
+.site-foot a,.foot-grid a{color:#D6E0F0}
+.foot-grid a:hover{color:#FFFFFF}
+.foot-grid h3,.site-foot .foot-links a{color:#FFFFFF}
 </style>
 <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "7effe80b68fa4bdd9944534b8a820936"}'></script>
 <script type="application/ld+json">[{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://theskiadvisor.com/"}, {"@type": "ListItem", "position": 2, "name": "Resorts", "item": "https://theskiadvisor.com/resorts/index.html"}, {"@type": "ListItem", "position": 3, "name": "Wisconsin", "item": "https://theskiadvisor.com/regions/us-wi.html"}, {"@type": "ListItem", "position": 4, "name": "Kettlebowl", "item": "https://theskiadvisor.com/resorts/kettlebowl.html"}]}, {"@context": "https://schema.org", "@type": "SkiResort", "name": "Kettlebowl", "mainEntityOfPage": "https://theskiadvisor.com/resorts/kettlebowl.html", "geo": {"@type": "GeoCoordinates", "latitude": 45.2718, "longitude": -88.9001, "elevation": 551}, "address": {"@type": "PostalAddress", "addressRegion": "Wisconsin", "addressCountry": "US", "addressLocality": "Langlade"}, "sameAs": ["https://kettlebowl.org/"]}]</script>
