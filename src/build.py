@@ -20,9 +20,18 @@ TODAY = datetime.date.today().isoformat()
 THREE = "https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"
 # Cloudflare Web Analytics site token (cookie-free). Empty = analytics off.
 CF_ANALYTICS_TOKEN = "7effe80b68fa4bdd9944534b8a820936"
-FONTS = ('<link rel="preconnect" href="https://fonts.googleapis.com">\n'
-         '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n'
-         '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&display=swap">')
+# Archivo (SIL OFL), served from the site, trimmed to widths 100-125% and weights 400-900. Preloaded so text
+# draws in it quickly; font-display: swap means nothing waits on it.
+FONTS = '<link rel="preload" href="/assets/fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin>'
+FONT_FACES = (
+    '@font-face{font-family:"Archivo";font-style:normal;font-weight:400 900;font-stretch:100% 125%;font-display:swap;'
+    'src:url(/assets/fonts/archivo-latin.woff2) format("woff2");'
+    'unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}\n'
+    '@font-face{font-family:"Archivo";font-style:normal;font-weight:400 900;font-stretch:100% 125%;font-display:swap;'
+    'src:url(/assets/fonts/archivo-latin-ext.woff2) format("woff2");'
+    'unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C4,U+2113,U+2C60-2C7F,U+A720-A7FF}\n')
+# The whole stylesheet (about 8 KB compressed) goes inline in every page, so the first paint waits on no request.
+SITE_CSS = FONT_FACES + open(os.path.join(SRC, "base.css")).read() + open(os.path.join(SRC, "extra.css")).read()
 esc = lambda s: html.escape(s, quote=True)
 
 # =====================================================================
@@ -562,7 +571,7 @@ def head(title, desc, path, depth, jsonld=None, noindex=False):
            '<link rel="icon" href="/favicon-48.png" sizes="48x48" type="image/png">',
            '<link rel="apple-touch-icon" href="/apple-touch-icon.png">',
            FONTS,
-           f'<link rel="stylesheet" href="{r}assets/site.css">']
+           '<style>' + SITE_CSS + '</style>']
     if noindex:
         out.append('<meta name="robots" content="noindex">')
     if CF_ANALYTICS_TOKEN:
@@ -1017,7 +1026,6 @@ def privacy_page():
 <h2>Services that see your visit</h2>
 <ul>
 <li><b>Netlify</b> hosts the site. Like any web host, it processes technical information such as your IP address and browser type to deliver and protect the site. See <a href="https://www.netlify.com/privacy/">Netlify's privacy policy</a>.</li>
-<li><b>Google Fonts</b> provides the site's fonts, so your browser requests them from Google's servers. See <a href="https://policies.google.com/privacy">Google's privacy policy</a>.</li>
 <li><b>cdnjs (Cloudflare)</b> provides the 3D graphics library for the home page flyover. See <a href="https://www.cloudflare.com/privacypolicy/">Cloudflare's privacy policy</a>.</li>
 <li><b>Weather</b> comes from MET Norway, but our server requests it; your browser doesn't contact MET Norway and we don't send them anything about you.</li>
 </ul>
@@ -1124,8 +1132,10 @@ def shards(n=6):
     return groups, load
 
 def main():
-    css = open(os.path.join(SRC, "base.css")).read() + open(os.path.join(SRC, "extra.css")).read()
-    write("assets/site.css", css)
+    write("assets/site.css", SITE_CSS)   # kept for pages cached before the CSS went inline
+    for f in ("archivo-latin.woff2", "archivo-latin-ext.woff2", "OFL.txt"):
+        dst = os.path.join(OUT, "assets", "fonts", f); os.makedirs(os.path.dirname(dst), exist_ok=True)
+        with open(os.path.join(SRC, "fonts", f), "rb") as a, open(dst, "wb") as b: b.write(a.read())
     write("assets/tool.js", open(os.path.join(SRC, "tool.js")).read())
     write("assets/flyover.js", open(os.path.join(SRC, "flyover.js")).read())
     write("assets/resort-index.json", json.dumps([[x["id"], x["name"], x["short"], x["regionName"], x.get("locality") or "", x["lat"], x["lon"], pass_code(x)] for x in ALL], ensure_ascii=False, separators=(",", ":")))

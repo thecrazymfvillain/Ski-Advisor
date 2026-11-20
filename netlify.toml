@@ -7,6 +7,12 @@
   [headers.values]
     Cache-Control = "public, max-age=86400"
 
+# Font files never change under the same name, so browsers can keep them for a year.
+[[headers]]
+  for = "/assets/fonts/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
 # One address for search engines: send the free Netlify address to the real domain.
 [[redirects]]
   from = "https://theskiadvisor.netlify.app/*"
