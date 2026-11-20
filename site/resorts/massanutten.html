@@ -22,8 +22,8 @@
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800&family=Barlow:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
-<link rel="stylesheet" href="../assets/site.css?v=d493e2dd4c">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&display=swap">
+<link rel="stylesheet" href="../assets/site.css?v=c24be23e2a">
 <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "7effe80b68fa4bdd9944534b8a820936"}'></script>
 <script type="application/ld+json">[{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://theskiadvisor.com/"}, {"@type": "ListItem", "position": 2, "name": "Resorts", "item": "https://theskiadvisor.com/resorts/index.html"}, {"@type": "ListItem", "position": 3, "name": "Virginia", "item": "https://theskiadvisor.com/regions/us-va.html"}, {"@type": "ListItem", "position": 4, "name": "Massanutten Resort", "item": "https://theskiadvisor.com/resorts/massanutten.html"}]}, {"@context": "https://schema.org", "@type": "SkiResort", "name": "Massanutten Resort", "mainEntityOfPage": "https://theskiadvisor.com/resorts/massanutten.html", "geo": {"@type": "GeoCoordinates", "latitude": 38.3979, "longitude": -78.7605, "elevation": 863}, "address": {"@type": "PostalAddress", "addressRegion": "Virginia", "addressCountry": "US", "addressLocality": "Massanutten"}, "sameAs": ["https://www.massresort.com/"]}]</script>
 </head>
@@ -36,14 +36,13 @@
       <a class="brand" href="../index.html"><img src="../assets/logo-header.webp" alt="The Ski Advisor" width="100" height="54"></a>
       <nav class="nav" aria-label="Site"><a href="../resorts/index.html" aria-current="page">Resorts</a><a href="../guides/index.html">Guides</a></nav>
     </div>
-    <nav class="chips" aria-label="Nearby resorts"><a class="chip" href="massanutten.html" aria-current="page">Massanutten Resort<small>VA</small></a><a class="chip" href="bryce.html">Bryce Resort<small>VA</small></a><a class="chip" href="wintergreen.html">Wintergreen Ski Resort<small>VA</small></a><a class="chip" href="canaan-valley-us-wv.html">Canaan Valley Ski Resort<small>WV</small></a><a class="chip" href="canaan-valley.html">Canaan Valley Resort<small>WV</small></a><a class="chip" href="timberline-mountain.html">Timberline Mountain<small>WV</small></a><a class="chip" href="the-homestead-us-va.html">The Homestead Ski Area<small>VA</small></a><a class="chip" href="snowshoe-mountain.html">Snowshoe Mountain<small>WV</small></a><a class="chip" href="snowflex.html">Snowflex<small>VA</small></a><a class="chip" href="../regions/us-va.html">All Virginia →</a></nav>
+    <nav class="chips" aria-label="Nearby resorts"><a class="chip" href="massanutten.html" aria-current="page">Massanutten Resort<small>VA</small></a><a class="chip" href="bryce.html">Bryce Resort<small>VA</small></a><a class="chip" href="wintergreen.html">Wintergreen Ski Resort<small>VA</small></a><a class="chip" href="canaan-valley-us-wv.html">Canaan Valley Ski Resort<small>WV</small></a><a class="chip" href="canaan-valley.html">Canaan Valley Resort<small>WV</small></a><a class="chip" href="timberline-mountain.html">Timberline Mountain<small>WV</small></a><a class="chip" href="the-homestead-us-va.html">The Homestead Ski Area<small>VA</small></a><a class="chip" href="snowshoe-mountain.html">Snowshoe Mountain<small>WV</small></a><a class="chip" href="snowflex.html">Snowflex<small>VA</small></a><a class="chip" href="../regions/us-va.html">All of Virginia</a></nav>
   </div>
 </header>
 <main class="wrap">
   <nav class="crumbs" aria-label="Breadcrumb"><a href="../index.html">Home</a><span aria-hidden="true">›</span><a href="index.html">Resorts</a><span aria-hidden="true">›</span><a href="../regions/us-va.html">Virginia</a><span aria-hidden="true">›</span><span>Massanutten Resort</span></nav>
   <div class="hero">
-    <span class="label" id="heroEyebrow">Today · VA · mid-mountain, 2,300 ft</span>
-    <h1>Wax &amp; tune for <em>Massanutten Resort</em></h1>
+    <h1><span class="h1-pre">Wax and tune for</span> Massanutten Resort</h1>
     <p class="lede">1,060 ft of vertical, 9 lifts, eastern snow and ice. Wax color and iron temperature from the forecast at mid-mountain, edge settings for how you ski or ride, and a step-by-step home tune.</p>
     <div class="hero-sub">
       <div class="seg" role="group" aria-label="When are you skiing?">
@@ -61,80 +60,85 @@
     </div>
   </div>
   <div class="today">
-    <!-- Conditions -->
-    <div class="card" id="conditionsCard">
-      <div class="label" id="condLabel">Estimated snow temperature</div>
-      <div class="readout">
-        <div class="big" id="snowTemp">−6°F</div>
-      </div>
-      <span class="surface-pill" id="surfacePill">Packed groomers</span>
+    <div class="col-a">
       <p class="callout" id="wkNote" hidden></p>
       <div class="wk" id="wkBox" hidden></div>
-      <dl class="stats">
-        <div><dt>Air temp</dt><dd id="statAir">—</dd></div>
-        <div><dt>Humidity</dt><dd id="statRh">—</dd></div>
-        <div><dt id="statSnowLabel">New snow, 48 h</dt><dd id="statSnow">—</dd></div>
-        <div><dt>Sky</dt><dd id="statSky">—</dd></div>
-        <div><dt>Forecast elevation</dt><dd id="statElev">—</dd></div>
-        <div><dt>Recent high</dt><dd id="statPastMax">—</dd></div>
-      </dl>
-      <details class="adjust" id="adjust">
-        <summary>Adjust conditions</summary>
-        <div class="adjust-body">
-          <div class="field">
-            <label for="airRange">Air temperature</label>
-            <div class="field-row"><input type="range" id="airRange" min="-30" max="10" step="0.5"><span class="mono" id="airRangeVal">—</span></div>
+      <!-- The answer: a slab in the wax's own color -->
+      <div class="card wax-card" id="waxCard">
+        <div class="wax-slab">
+          <div class="slab-top">
+            <span id="heroEyebrow">Today at mid-mountain</span>
+            <div class="seg" role="group" aria-label="Training or race day" id="raceSeg" hidden>
+              <button type="button" id="modeTraining" aria-pressed="false">Training day</button>
+              <button type="button" id="modeRace" aria-pressed="true">Race day</button>
+            </div>
           </div>
-          <div class="field">
-            <label for="snowSel">New snow in the last 48 hours</label>
-            <select id="snowSel"></select>
-          </div>
-          <div class="field">
-            <label for="surfSel">Snow surface</label>
-            <select id="surfSel">
-              <option value="auto">Auto (from forecast)</option>
-              <option value="new">New snow</option>
-              <option value="packed">Packed groomers</option>
-              <option value="refrozen">Refrozen / firm</option>
-              <option value="manmade">Man-made</option>
-              <option value="wet">Wet / spring</option>
-            </select>
-          </div>
-          <p class="note">Have a snow thermometer? Set the air temperature to your reading for the most accurate wax pick.</p>
-          <button type="button" class="btn-link" id="resetAdj">Reset to forecast</button>
+          <p class="wax-name"><span id="waxName">Violet</span><span class="sr"> wax</span></p>
+          <dl class="slab-facts">
+            <div><dt>Iron</dt><dd id="waxIron">—</dd></div>
+            <div><dt>Snow</dt><dd id="waxSnow">—</dd></div>
+            <div><dt>Made for snow</dt><dd id="waxRange">—</dd></div>
+          </dl>
         </div>
-      </details>
-    </div>
+        <div class="wax-body">
+          <div class="strip" id="strip" aria-hidden="true">
+            <div class="strip-marker" id="stripMarker">−6°</div>
+            <div class="strip-bands" id="stripBands"></div>
+            <div class="strip-ticks" id="stripTicks"></div>
+          </div>
+          <ul class="why" id="waxWhy"></ul>
+          <ol class="race" id="raceList" hidden></ol>
+          <p class="examples" id="waxEx"></p>
+        </div>
+      </div>
+      <!-- Conditions behind the pick -->
+      <div class="card" id="conditionsCard">
+        <div class="label" id="condLabel">Estimated snow temperature</div>
+        <div class="readout">
+          <div class="big" id="snowTemp">−6°F</div>
+        </div>
+        <span class="surface-pill" id="surfacePill">Packed groomers</span>
+        <dl class="stats">
+          <div><dt>Air temp</dt><dd id="statAir">—</dd></div>
+          <div><dt>Humidity</dt><dd id="statRh">—</dd></div>
+          <div><dt id="statSnowLabel">New snow, 48 h</dt><dd id="statSnow">—</dd></div>
+          <div><dt>Sky</dt><dd id="statSky">—</dd></div>
+          <div><dt>Forecast elevation</dt><dd id="statElev">—</dd></div>
+          <div><dt>Recent high</dt><dd id="statPastMax">—</dd></div>
+        </dl>
+        <details class="adjust" id="adjust">
+          <summary>Adjust conditions</summary>
+          <div class="adjust-body">
+            <div class="field">
+              <label for="airRange">Air temperature</label>
+              <div class="field-row"><input type="range" id="airRange" min="-30" max="10" step="0.5"><span class="mono" id="airRangeVal">—</span></div>
+            </div>
+            <div class="field">
+              <label for="snowSel">New snow in the last 48 hours</label>
+              <select id="snowSel"></select>
+            </div>
+            <div class="field">
+              <label for="surfSel">Snow surface</label>
+              <select id="surfSel">
+                <option value="auto">Auto (from forecast)</option>
+                <option value="new">New snow</option>
+                <option value="packed">Packed groomers</option>
+                <option value="refrozen">Refrozen / firm</option>
+                <option value="manmade">Man-made</option>
+                <option value="wet">Wet / spring</option>
+              </select>
+            </div>
+            <p class="note">Have a snow thermometer? Set the air temperature to your reading for the most accurate wax pick.</p>
+            <button type="button" class="btn-link" id="resetAdj">Reset to forecast</button>
+          </div>
+        </details>
+      </div>
 
-    <!-- Recommendation -->
-    <div class="stack">
+    </div>
+    <div class="col-b">
       <div class="card">
         <div class="label">How do you ski or ride?</div>
         <div class="styles" id="styles"></div>
-      </div>
-      <div class="card" id="waxCard">
-        <div class="wax-top">
-          <div class="label">Wax</div>
-          <div class="seg" role="group" aria-label="Training or race day" id="raceSeg" hidden>
-            <button type="button" id="modeTraining" aria-pressed="false">Training day</button>
-            <button type="button" id="modeRace" aria-pressed="true">Race day</button>
-          </div>
-        </div>
-        <div class="wax-head">
-          <div class="wax-bar" id="waxBar"></div>
-          <div>
-            <div class="wax-name" id="waxName">Violet</div>
-            <div class="wax-meta"><span>Snow range <b id="waxRange">—</b></span><span>Iron <b id="waxIron">—</b></span></div>
-          </div>
-        </div>
-        <div class="strip" id="strip" aria-hidden="true">
-          <div class="strip-marker" id="stripMarker">−6°</div>
-          <div class="strip-bands" id="stripBands"></div>
-          <div class="strip-ticks" id="stripTicks"></div>
-        </div>
-        <ul class="why" id="waxWhy"></ul>
-        <ol class="race" id="raceList" hidden></ol>
-        <p class="examples" id="waxEx"></p>
       </div>
       <div class="card" id="edgeCard">
         <div class="label">Edge settings for how you ski</div>
@@ -197,9 +201,8 @@
 
   <section class="report" aria-labelledby="reportH">
     <div class="report-copy">
-      <span class="label">Free email · launching this season</span>
       <h2 id="reportH">The Weekend Wax Report</h2>
-      <p>Every Thursday in ski season: this weekend's wax and iron temperature for Massanutten Resort and the mountains you save, in time to wax before you leave. Sign up now and you'll get the first one.</p>
+      <p>A free email, launching this season. Every Thursday in ski season: this weekend's wax and iron temperature for Massanutten Resort and the mountains you save, in time to wax before you leave. Sign up now and you'll get the first one.</p>
     </div>
     <form class="report-form" name="wax-report" method="POST" action="/report-thanks.html" data-netlify="true" netlify-honeypot="company" data-report>
       <input type="hidden" name="form-name" value="wax-report">
@@ -241,6 +244,6 @@
     <p>As an Amazon Associate, The Ski Advisor earns from qualifying purchases. Commissions don't change what we recommend. Recommendations are starting points: the temperature on your wax label wins, and a snow thermometer beats any forecast.</p>
   </div>
 </footer>
-<script src="../assets/tool.js?v=9f2c7d113f"></script>
+<script src="../assets/tool.js?v=74153e7b6a"></script>
 </body>
 </html>

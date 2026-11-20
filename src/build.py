@@ -22,8 +22,7 @@ THREE = "https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"
 CF_ANALYTICS_TOKEN = "7effe80b68fa4bdd9944534b8a820936"
 FONTS = ('<link rel="preconnect" href="https://fonts.googleapis.com">\n'
          '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>\n'
-         '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700;800'
-         '&family=Barlow:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">')
+         '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&display=swap">')
 esc = lambda s: html.escape(s, quote=True)
 
 # =====================================================================
@@ -282,7 +281,7 @@ def shop(q):
 def resort_links(depth):
     r = "../"*depth
     return ('<div class="related">' + "".join(f'<a href="{r}resorts/{x["id"]}.html">{x["name"]}</a>' for x in RESORTS) +
-            f'<a href="{r}resorts/index.html">All {len(ALL)} resorts →</a></div>')
+            f'<a href="{r}resorts/index.html">All {len(ALL)} resorts</a></div>')
 
 # =====================================================================
 # Guides
@@ -628,9 +627,8 @@ def report_box(depth, x=None):
     who = f"{esc(x['name'])} and the mountains you save" if x else "the mountains you save"
     return f"""<section class="report" aria-labelledby="reportH">
     <div class="report-copy">
-      <span class="label">Free email · launching this season</span>
       <h2 id="reportH">The Weekend Wax Report</h2>
-      <p>Every Thursday in ski season: this weekend's wax and iron temperature for {who}, in time to wax before you leave. Sign up now and you'll get the first one.</p>
+      <p>A free email, launching this season. Every Thursday in ski season: this weekend's wax and iron temperature for {who}, in time to wax before you leave. Sign up now and you'll get the first one.</p>
     </div>
     <form class="report-form" name="wax-report" method="POST" action="/report-thanks.html" data-netlify="true" netlify-honeypot="company" data-report>
       <input type="hidden" name="form-name" value="wax-report">
@@ -687,16 +685,16 @@ SIL = """<svg class="sil" viewBox="0 0 1200 600" preserveAspectRatio="xMidYMax s
 
 def home(full):
     cards = "".join(f"""<a class="resort-card" href="resorts/{x['id']}.html">
-  <span class="meta">{x['short']} · mid-mountain {ft(x['mid'])}</span>
+  <span class="meta">{x['regionName']}, mid-mountain {ft(x['mid'])}</span>
   <h3>{x['name']}</h3>
   <p>{x['tag']}.</p>
   <span class="wax-chip" data-home-wax="{x['id']}"><i></i><span>Loading today's wax…</span></span>
 </a>""" for x in FEATURED)
     cards += f"""<a class="resort-card alt" href="resorts/index.html">
-  <span class="meta">US · Canada · Mexico</span>
+  <span class="meta">US, Canada and Mexico</span>
   <h3>All {len(ALL)} resorts</h3>
   <p>Every operating ski area with a lift, from the biggest destinations to small local hills.</p>
-  <span class="wax-chip"><span>Browse by state or province →</span></span>
+  <span class="wax-chip"><span>Browse by state or province</span></span>
 </a>"""
     gcards = "".join(f'<a class="guide-card" href="guides/{g["slug"]}.html"><small>{guide_kind(g)}{read_minutes(guide_body(g))} min read</small><b>{g["title"]}</b><span>{g["card"]}</span></a>' for g in GUIDES)
     ld = {"@context":"https://schema.org","@type":"WebSite","name":"The Ski Advisor","url":DOMAIN+"/"}
@@ -712,7 +710,6 @@ def home(full):
   <button class="fly-ctrl" id="flyPause" type="button" aria-pressed="false">Pause flyover</button>
   <div class="hero-copy">
     <div class="wrap">
-      <span class="label">Wax &amp; edges · {len(ALL)} North American ski areas</span>
       <h1>Your Mountain<br>Your Snow<br>Your Skis</h1>
       <p>Pick your mountain. Get the wax color and iron temperature for today, tomorrow or this weekend, edge settings for how you ski or ride, and a step-by-step home tune to match.</p>
       <div class="hero-cta">
@@ -768,7 +765,7 @@ def resort_page(x):
     chips = ('\n    <nav class="chips" aria-label="Nearby resorts">' +
              f'<a class="chip" href="{x["id"]}.html" aria-current="page">{esc(x["name"])}<small>{x["short"]}</small></a>' +
              "".join(f'<a class="chip" href="{n["id"]}.html">{esc(n["name"])}<small>{n["short"]}</small></a>' for n in near) +
-             f'<a class="chip" href="{region_href(x["region"], 1)}">All {esc(x["regionName"])} →</a></nav>')
+             f'<a class="chip" href="{region_href(x["region"], 1)}">All of {esc(x["regionName"])}</a></nav>')
     rel = "".join(f'<a href="../guides/{s}.html">{G_BY[s]["title"]}</a>' for s in others)
     about = "".join(f"<p>{p}</p>" for p in x["about"])
     tips = "".join(f"<li>{t}</li>" for t in x["tips"])
@@ -794,8 +791,7 @@ def resort_page(x):
 <main class="wrap">
   {crumbs(1, [("Resorts","index.html"),(esc(x["regionName"]), region_href(x["region"], 1)),(name,None)])}
   <div class="hero">
-    <span class="label" id="heroEyebrow">Today · {x['short']} · mid-mountain, {ft(x['mid'])}</span>
-    <h1>Wax &amp; tune for <em>{name}</em></h1>
+    <h1><span class="h1-pre">Wax and tune for</span> {name}</h1>
     <p class="lede">{x['tag']}. Wax color and iron temperature from the forecast at mid-mountain, edge settings for how you ski or ride, and a step-by-step home tune.</p>{pass_line}
     <div class="hero-sub">
       <div class="seg" role="group" aria-label="When are you skiing?">
@@ -844,7 +840,7 @@ def pass_filter(rs):
 def region_page(g):
     rs = sorted(g["resorts"], key=lambda x: -x["vertical"])
     cards = "".join(f"""<a class="resort-card" href="../resorts/{x['id']}.html" data-pass="{x['pass'] or ''}">
-  <span class="meta">{esc(x.get('locality') or g['name'])} · {x['lifts']} lift{'s' if x['lifts'] != 1 else ''}{pass_tag(x)}</span>
+  <span class="meta">{esc(x.get('locality') or g['name'])}, {x['lifts']} lift{'s' if x['lifts'] != 1 else ''}{pass_tag(x)}</span>
   <h3>{esc(x['name'])}</h3>
   <p>{ft(x['vertical'])} of vertical, {ft(x['base'])} to {ft(x['summit'])}.</p>
   <span class="wax-chip" data-home-wax="{x['id']}"><i></i><span>Loading today's wax…</span></span>
@@ -859,9 +855,8 @@ def region_page(g):
 <main class="wrap">
   {crumbs(1, [("Resorts","../resorts/index.html"),(name,None)])}
   <div class="hero">
-    <span class="label">{n} ski area{'s' if n != 1 else ''} · {country}</span>
     <h1>{name} ski resorts</h1>
-    <p class="lede">Today's wax pick for every ski area in {name}, from MET Norway's forecast at each one's mid-mountain elevation. Pick a resort for the weekend forecast, edge settings and a full tune.</p>
+    <p class="lede">Today's wax pick for all {n} ski area{'s' if n != 1 else ''} in {name}, {country}. Pick a resort for the weekend forecast, edge settings and a full tune.</p>
   </div>
   <p class="muted" id="homeDataNote"></p>
   {pass_filter(rs)}
@@ -878,7 +873,6 @@ def resorts_index():
 <main class="wrap">
   {crumbs(1, [("Resorts",None)])}
   <div class="hero">
-    <span class="label">US · Canada · Mexico</span>
     <h1>Ski resorts in North America</h1>
     <p class="lede">{len(ALL)} operating ski areas with lifts. Search for yours, or browse by state or province.</p>
   </div>
@@ -986,9 +980,8 @@ def pass_page(key):
 <main class="wrap">
   {crumbs(1, [("Resorts","../resorts/index.html"),(pi["name"],None)])}
   <div class="hero">
-    <span class="label">{PASS_SEASON} season · {n} North American ski areas</span>
     <h1>{pi['name']} mountains</h1>
-    <p class="lede">Every North American ski area on the {PASS_SEASON} {pi['name']}. Pick one for today's wax and iron temperature, edge settings and a home tune.</p>
+    <p class="lede">All {n} North American ski areas on the {PASS_SEASON} {pi['name']}. Pick one for today's wax and iron temperature, edge settings and a home tune.</p>
   </div>
   <p class="muted">Days and blackout dates depend on which version of the pass you hold{limited_txt}. Check <a href="{pi['site']}" rel="noopener">the {pi['name']} site</a> before you go. The Ski Advisor isn't affiliated with {pi['owner']}.</p>
   {"".join(secs)}
@@ -1092,7 +1085,6 @@ def guides_index():
 <main class="wrap">
   {crumbs(1, [("Guides",None)])}
   <div class="hero">
-    <span class="label">Home tuning</span>
     <h1>Ski tuning guides</h1>
     <p class="lede">How to wax, sharpen and set up your skis at home, from your first wax job to race day.</p>
   </div>

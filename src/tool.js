@@ -26,12 +26,12 @@ const STYLES = {
 
 // Coldest → warmest. lo/hi = snow-temperature range in °C as printed on typical wax labels.
 const BANDS = [
-  {id:"polar",  name:"Polar",     color:"var(--wax-polar)",  lo:-30, hi:-15, iron:150, ex:"Swix PS Polar or a polar/arctic wax",  race:"Swix HS5 Turquoise"},
-  {id:"turq",   name:"Turquoise", color:"var(--wax-turq)",   lo:-18, hi:-10, iron:145, ex:"Swix PS5 Turquoise or a very cold wax", race:"Swix HS5 Turquoise"},
-  {id:"blue",   name:"Blue",      color:"var(--wax-blue)",   lo:-12, hi:-6,  iron:140, ex:"Swix PS6 Blue or a cold wax",           race:"Swix HS6 Blue"},
-  {id:"violet", name:"Violet",    color:"var(--wax-violet)", lo:-8,  hi:-2,  iron:135, ex:"Swix PS7 Violet or a cool/mid wax",     race:"Swix HS7 Violet"},
-  {id:"red",    name:"Red",       color:"var(--wax-red)",    lo:-4,  hi:4,   iron:130, ex:"Swix PS8 Red or a mild wax",            race:"Swix HS8 Red"},
-  {id:"yellow", name:"Yellow",    color:"var(--wax-yellow)", lo:0,   hi:10,  iron:120, ex:"Swix PS10 Yellow or a warm wax",        race:"Swix HS10 Yellow"}
+  {id:"polar",  name:"Polar",     color:"var(--wax-polar)",  lo:-30, hi:-15, iron:150, ex:"Swix PS Polar or a polar/arctic wax",  race:"Swix HS5 Turquoise", tone:"dark"},
+  {id:"turq",   name:"Turquoise", color:"var(--wax-turq)",   lo:-18, hi:-10, iron:145, ex:"Swix PS5 Turquoise or a very cold wax", race:"Swix HS5 Turquoise", tone:"dark"},
+  {id:"blue",   name:"Blue",      color:"var(--wax-blue)",   lo:-12, hi:-6,  iron:140, ex:"Swix PS6 Blue or a cold wax",           race:"Swix HS6 Blue", tone:"light"},
+  {id:"violet", name:"Violet",    color:"var(--wax-violet)", lo:-8,  hi:-2,  iron:135, ex:"Swix PS7 Violet or a cool/mid wax",     race:"Swix HS7 Violet", tone:"light"},
+  {id:"red",    name:"Red",       color:"var(--wax-red)",    lo:-4,  hi:4,   iron:130, ex:"Swix PS8 Red or a mild wax",            race:"Swix HS8 Red", tone:"light"},
+  {id:"yellow", name:"Yellow",    color:"var(--wax-yellow)", lo:0,   hi:10,  iron:120, ex:"Swix PS10 Yellow or a warm wax",        race:"Swix HS10 Yellow", tone:"dark"}
 ];
 // Non-overlapping picking thresholds on the strip (°C): segment edges.
 const STRIP_MIN = -24, STRIP_MAX = 6;
@@ -392,18 +392,18 @@ function render(){
   $("dayToday").setAttribute("aria-pressed", state.day==="today"); $("dayTomorrow").setAttribute("aria-pressed", state.day==="tomorrow");
   $("dayWeekend").setAttribute("aria-pressed", state.day==="weekend");
 
-  $("heroEyebrow").textContent = `${{today:"Today",tomorrow:"Tomorrow",weekend:"This weekend"}[state.day]} · ${r.region} · mid-mountain, ${fmtElev(r.mid)}`;
 
   const adjusted = state.adj.air!==null || state.adj.snow48!==null || state.adj.surface!=="auto";
   const isLive = !!(state.live && state.live[r.id]);
   const badge = $("sourceBadge");
   badge.className = "badge " + (adjusted ? "" : isLive ? "live" : "example");
   $("sourceText").textContent = adjusted ? "Adjusted by you" :
-    isLive ? `Live forecast · ${state.updatedAt.toLocaleTimeString([], {hour:"numeric", minute:"2-digit"})}` :
+    isLive ? `Live forecast, updated ${state.updatedAt.toLocaleTimeString([], {hour:"numeric", minute:"2-digit"})}` :
     state.live===null ? "Loading conditions…" : "Example conditions";
 
   const wk = c.weekend;
   const dayName = d => d.toLocaleDateString("en-US", {weekday:"long"});
+  $("heroEyebrow").textContent = `${state.day==="today" ? "Today" : state.day==="tomorrow" ? "Tomorrow" : dayName(wk.days[wk.chosen].date)}'s wax at mid-mountain, ${fmtElev(r.mid)}`;
   $("condLabel").textContent = state.day==="today" ? "Estimated snow temperature"
     : state.day==="tomorrow" ? "Tomorrow's estimated snow temperature"
     : `${dayName(wk.days[wk.chosen].date)}'s estimated snow temperature${wk.differ && wk.chosen === wk.colder ? " (the colder day)" : ""}`;
@@ -419,8 +419,8 @@ function render(){
   $("wkBox").hidden = !wk; $("wkNote").hidden = !(wk && wk.daysOut>=3);
   if(wk){
     const fmtDay = d => d.toLocaleDateString("en-US", {weekday:"short", month:"short", day:"numeric"});
-    $("wkBox").innerHTML = `<span class="label">Weekend forecast · low / high · new snow · tap a day</span>` +
-      wk.days.map((d,j)=>`<button type="button" class="wk-row${j===wk.chosen?" pick":""}" data-wk="${j}" aria-pressed="${j===wk.chosen}"><b>${fmtDay(d.date)}</b><span class="wk-chip"><i style="background:${d.band.color}"></i>${d.band.name}</span><span class="mono">${fmtTshort(d.min)} / ${fmtT(d.max)} · ${fmtSnow(d.snow)}</span></button>`).join("") +
+    $("wkBox").innerHTML = `<span class="label">This weekend at mid-mountain. Tap a day to see its wax.</span>` +
+      wk.days.map((d,j)=>`<button type="button" class="wk-row${j===wk.chosen?" pick":""}" data-wk="${j}" aria-pressed="${j===wk.chosen}"><b>${fmtDay(d.date)}</b><span class="wk-chip"><i style="background:${d.band.color}"></i>${d.band.name}</span><span class="mono">${fmtTshort(d.min)} to ${fmtT(d.max)}, ${fmtSnow(d.snow)} new</span></button>`).join("") +
       (wk.differ ? `<p class="note">The two days call for different waxes. Waxing once for both? Use the colder day's wax; it lasts longer and drags less if the forecast is off.</p>` : "");
     if(wk.daysOut>=3) $("wkNote").innerHTML = `<strong>${dayName(wk.days[0].date)} is ${wk.daysOut} days out.</strong> Forecasts that far ahead often miss by several degrees. Wax now, check this page again the night before you leave, and switch waxes if the color changed.`;
   }
@@ -433,8 +433,9 @@ function render(){
   $("surfSel").value = state.adj.surface;
 
   // wax
-  $("waxBar").style.background = band.color;
-  $("waxName").textContent = band.name;
+  $("waxCard").style.setProperty("--wax", band.color); $("waxCard").dataset.tone = band.tone;
+  $("waxName").textContent = band.name; $("waxName").parentElement.dataset.len = band.name.length;
+  $("waxSnow").textContent = c.surface==="wet" && c.air>0 ? fmtT(0) + ", wet" : `${fmtT(c.snowTemp)}, ${SURFACES[c.surface].label.toLowerCase()}`;
   $("waxRange").textContent = fmtRange(band);
   $("waxIron").textContent = fmtIron(band.iron);
   document.querySelectorAll("#stripBands span").forEach(s=>s.classList.toggle("on", Number(s.dataset.i)===wax.idx));
@@ -519,7 +520,8 @@ function renderHome(){
   document.querySelectorAll("[data-home-wax]").forEach(el=>{
     state.resort = el.dataset.homeWax;
     const c = conditions(), wax = pickWax(c);
-    el.innerHTML = `<i style="background:${wax.band.color}"></i><span>${wax.band.name} wax · snow ${fmtT(c.snowTemp)}${live ? "" : " (example)"}</span>`;
+    el.style.setProperty("--wax", wax.band.color); el.dataset.tone = wax.band.tone;
+    el.innerHTML = `<i></i><span><b>${wax.band.name} wax</b> for ${fmtT(c.snowTemp)} snow${live ? "" : " (example)"}</span>`;
   });
   state.resort = keep;
   setText("homeDataNote", live ? "Wax picks use today's live forecast at each resort's mid-mountain elevation."
@@ -749,8 +751,9 @@ async function drawShareCard(info){
   const W = 1080, H = 1080, M = 64;
   const cv = document.createElement("canvas"); cv.width = W; cv.height = H;
   const ctx = cv.getContext("2d");
-  const D = '"Barlow Condensed","Arial Narrow",sans-serif', B = '"Barlow",system-ui,sans-serif';
-  try{ await Promise.all(["800 90px", "700 40px"].map(f=>document.fonts.load(f + " " + D)).concat(["600 32px", "500 26px"].map(f=>document.fonts.load(f + " " + B)))); }catch(e){}
+  const D = '"Archivo",system-ui,sans-serif', B = D;
+  try{ await Promise.all(["900 90px", "700 30px", "600 32px", "400 26px"].map(f=>document.fonts.load(f + " " + D))); }catch(e){}
+  const wide = on => { if("fontStretch" in ctx) ctx.fontStretch = on ? "expanded" : "normal"; };
   const navy = "#00174B", red = "#FB1A31", ink = "#0F1B26", muted = "#56687A", line = "#D3DCE4";
   ctx.fillStyle = "#FFFFFF"; ctx.fillRect(0, 0, W, H);
   ctx.fillStyle = navy; ctx.fillRect(0, 0, W, 176);
@@ -762,33 +765,33 @@ async function drawShareCard(info){
   ctx.textBaseline = "alphabetic";
   ctx.fillStyle = "#FFFFFF"; ctx.font = `600 30px ${B}`; ctx.textAlign = "right"; ctx.fillText("theskiadvisor.com", W - M, 100); ctx.textAlign = "left";
   let y = 244;
-  ctx.fillStyle = red; ctx.font = `700 32px ${D}`; ctx.fillText(info.day.toUpperCase(), M, y);
-  ctx.fillStyle = ink; ctx.font = `800 88px ${D}`;
-  for(const l of wrapLines(ctx, info.r.name.toUpperCase(), W - 2*M, 2)){ y += 86; ctx.fillText(l, M, y); }
-  y += 48; ctx.fillStyle = muted; ctx.font = `500 30px ${B}`; ctx.fillText(`${info.r.region} · forecast at mid-mountain, ${fmtElev(info.r.mid)}`, M, y);
-  // wax block
-  y += 44; const top = y, S = 236;
+  ctx.fillStyle = red; ctx.font = `700 30px ${D}`; ctx.fillText(info.day, M, y);
+  wide(true); ctx.fillStyle = ink; ctx.font = `900 expanded 76px ${D}`;
+  for(const l of wrapLines(ctx, info.r.name, W - 2*M, 2)){ y += 84; ctx.fillText(l, M, y); }
+  wide(false); y += 48; ctx.fillStyle = muted; ctx.font = `400 30px ${B}`; ctx.fillText(`${info.r.region} · forecast at mid-mountain, ${fmtElev(info.r.mid)}`, M, y);
+  // wax block: the same colored slab as the page
+  y += 40; const top = y, S = 330, on = info.band.tone === "dark" ? ink : "#FFFFFF";
   ctx.fillStyle = cssColor(info.band.color);
-  ctx.beginPath(); (ctx.roundRect ? ctx.roundRect(M, top, S, S, 20) : ctx.rect(M, top, S, S)); ctx.fill();
-  const x2 = M + S + 40;
-  ctx.fillStyle = muted; ctx.font = `700 28px ${D}`; ctx.fillText(info.raceDay ? "RACE WAX" : "WAX", x2, top + 34);
-  ctx.fillStyle = ink; ctx.font = `800 104px ${D}`; ctx.fillText(info.band.name.toUpperCase(), x2, top + 128);
-  ctx.font = `600 38px ${B}`; ctx.fillText(`Iron ${fmtIron(info.band.iron)}`, x2, top + 184);
-  ctx.fillStyle = muted; ctx.font = `500 30px ${B}`;
-  ctx.fillText(`Snow ${info.snow} · ${SURFACES[info.c.surface].label.toLowerCase()}`, x2, top + 228);
+  ctx.beginPath(); (ctx.roundRect ? ctx.roundRect(M, top, W - 2*M, S, 22) : ctx.rect(M, top, W - 2*M, S)); ctx.fill();
+  ctx.save(); ctx.clip(); ctx.fillStyle = "rgba(0,0,0,.13)"; ctx.fillRect(M, top + S - 10, W - 2*M, 10); ctx.restore();
+  const x2 = M + 36;
+  ctx.fillStyle = on; ctx.font = `600 30px ${D}`; ctx.fillText(info.raceDay ? "Race wax" : "Wax", x2, top + 56);
+  wide(true); ctx.font = `900 expanded ${info.band.name.length > 6 ? 100 : 128}px ${D}`; ctx.fillText(info.band.name.toUpperCase(), x2 - 4, top + 180); wide(false);
+  ctx.font = `700 38px ${B}`; ctx.fillText(`Iron ${fmtIron(info.band.iron)}`, x2, top + 250);
+  ctx.font = `400 30px ${B}`; ctx.fillText(`Snow ${info.snow}${info.c.surface === "wet" ? "" : ", " + SURFACES[info.c.surface].label.toLowerCase()}`, x2, top + 294);
   y = top + S + 64;
   if(info.raceDay){
-    ctx.fillStyle = ink; ctx.font = `500 30px ${B}`;
+    ctx.fillStyle = ink; ctx.font = `400 30px ${B}`;
     for(const l of wrapLines(ctx, `Race day: base layer, then ${info.band.race} or equivalent, then a fluoro-free top coat.`, W - 2*M, 2)){ ctx.fillText(l, M, y); y += 40; }
     y += 12;
   }
   ctx.strokeStyle = line; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(M, y - 20); ctx.lineTo(W - M, y - 20); ctx.stroke();
   y += 26;
-  ctx.fillStyle = muted; ctx.font = `700 28px ${D}`; ctx.fillText(`EDGES · ${info.styleLabel.toUpperCase()}`, M, y);
+  ctx.fillStyle = muted; ctx.font = `600 28px ${D}`; ctx.fillText(`Edges for ${info.styleLabel.toLowerCase()}${info.styleLabel === "Snowboard" ? "ing" : " skiing"}`, M, y);
   y += 50; ctx.fillStyle = ink; ctx.font = `600 38px ${B}`;
   ctx.fillText(`${info.edges.base}° base · ${info.edges.side}° side (${90 - info.edges.side}° edge)`, M, y);
   // footer
-  ctx.fillStyle = muted; ctx.font = `500 24px ${B}`;
+  ctx.fillStyle = muted; ctx.font = `400 24px ${B}`;
   ctx.fillText("Estimated from the MET Norway forecast. The temperature on your wax label wins.", M, H - 96);
   ctx.fillStyle = "#1D54C2"; ctx.font = `600 30px ${B}`; ctx.fillText(info.url.replace(/^https?:\/\//, ""), M, H - 52);
   return cv;

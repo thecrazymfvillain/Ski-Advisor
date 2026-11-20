@@ -1,78 +1,83 @@
   <div class="today">
-    <!-- Conditions -->
-    <div class="card" id="conditionsCard">
-      <div class="label" id="condLabel">Estimated snow temperature</div>
-      <div class="readout">
-        <div class="big" id="snowTemp">−6°F</div>
-      </div>
-      <span class="surface-pill" id="surfacePill">Packed groomers</span>
+    <div class="col-a">
       <p class="callout" id="wkNote" hidden></p>
       <div class="wk" id="wkBox" hidden></div>
-      <dl class="stats">
-        <div><dt>Air temp</dt><dd id="statAir">—</dd></div>
-        <div><dt>Humidity</dt><dd id="statRh">—</dd></div>
-        <div><dt id="statSnowLabel">New snow, 48 h</dt><dd id="statSnow">—</dd></div>
-        <div><dt>Sky</dt><dd id="statSky">—</dd></div>
-        <div><dt>Forecast elevation</dt><dd id="statElev">—</dd></div>
-        <div><dt>Recent high</dt><dd id="statPastMax">—</dd></div>
-      </dl>
-      <details class="adjust" id="adjust">
-        <summary>Adjust conditions</summary>
-        <div class="adjust-body">
-          <div class="field">
-            <label for="airRange">Air temperature</label>
-            <div class="field-row"><input type="range" id="airRange" min="-30" max="10" step="0.5"><span class="mono" id="airRangeVal">—</span></div>
+      <!-- The answer: a slab in the wax's own color -->
+      <div class="card wax-card" id="waxCard">
+        <div class="wax-slab">
+          <div class="slab-top">
+            <span id="heroEyebrow">Today at mid-mountain</span>
+            <div class="seg" role="group" aria-label="Training or race day" id="raceSeg" hidden>
+              <button type="button" id="modeTraining" aria-pressed="false">Training day</button>
+              <button type="button" id="modeRace" aria-pressed="true">Race day</button>
+            </div>
           </div>
-          <div class="field">
-            <label for="snowSel">New snow in the last 48 hours</label>
-            <select id="snowSel"></select>
-          </div>
-          <div class="field">
-            <label for="surfSel">Snow surface</label>
-            <select id="surfSel">
-              <option value="auto">Auto (from forecast)</option>
-              <option value="new">New snow</option>
-              <option value="packed">Packed groomers</option>
-              <option value="refrozen">Refrozen / firm</option>
-              <option value="manmade">Man-made</option>
-              <option value="wet">Wet / spring</option>
-            </select>
-          </div>
-          <p class="note">Have a snow thermometer? Set the air temperature to your reading for the most accurate wax pick.</p>
-          <button type="button" class="btn-link" id="resetAdj">Reset to forecast</button>
+          <p class="wax-name"><span id="waxName">Violet</span><span class="sr"> wax</span></p>
+          <dl class="slab-facts">
+            <div><dt>Iron</dt><dd id="waxIron">—</dd></div>
+            <div><dt>Snow</dt><dd id="waxSnow">—</dd></div>
+            <div><dt>Made for snow</dt><dd id="waxRange">—</dd></div>
+          </dl>
         </div>
-      </details>
-    </div>
+        <div class="wax-body">
+          <div class="strip" id="strip" aria-hidden="true">
+            <div class="strip-marker" id="stripMarker">−6°</div>
+            <div class="strip-bands" id="stripBands"></div>
+            <div class="strip-ticks" id="stripTicks"></div>
+          </div>
+          <ul class="why" id="waxWhy"></ul>
+          <ol class="race" id="raceList" hidden></ol>
+          <p class="examples" id="waxEx"></p>
+        </div>
+      </div>
+      <!-- Conditions behind the pick -->
+      <div class="card" id="conditionsCard">
+        <div class="label" id="condLabel">Estimated snow temperature</div>
+        <div class="readout">
+          <div class="big" id="snowTemp">−6°F</div>
+        </div>
+        <span class="surface-pill" id="surfacePill">Packed groomers</span>
+        <dl class="stats">
+          <div><dt>Air temp</dt><dd id="statAir">—</dd></div>
+          <div><dt>Humidity</dt><dd id="statRh">—</dd></div>
+          <div><dt id="statSnowLabel">New snow, 48 h</dt><dd id="statSnow">—</dd></div>
+          <div><dt>Sky</dt><dd id="statSky">—</dd></div>
+          <div><dt>Forecast elevation</dt><dd id="statElev">—</dd></div>
+          <div><dt>Recent high</dt><dd id="statPastMax">—</dd></div>
+        </dl>
+        <details class="adjust" id="adjust">
+          <summary>Adjust conditions</summary>
+          <div class="adjust-body">
+            <div class="field">
+              <label for="airRange">Air temperature</label>
+              <div class="field-row"><input type="range" id="airRange" min="-30" max="10" step="0.5"><span class="mono" id="airRangeVal">—</span></div>
+            </div>
+            <div class="field">
+              <label for="snowSel">New snow in the last 48 hours</label>
+              <select id="snowSel"></select>
+            </div>
+            <div class="field">
+              <label for="surfSel">Snow surface</label>
+              <select id="surfSel">
+                <option value="auto">Auto (from forecast)</option>
+                <option value="new">New snow</option>
+                <option value="packed">Packed groomers</option>
+                <option value="refrozen">Refrozen / firm</option>
+                <option value="manmade">Man-made</option>
+                <option value="wet">Wet / spring</option>
+              </select>
+            </div>
+            <p class="note">Have a snow thermometer? Set the air temperature to your reading for the most accurate wax pick.</p>
+            <button type="button" class="btn-link" id="resetAdj">Reset to forecast</button>
+          </div>
+        </details>
+      </div>
 
-    <!-- Recommendation -->
-    <div class="stack">
+    </div>
+    <div class="col-b">
       <div class="card">
         <div class="label">How do you ski or ride?</div>
         <div class="styles" id="styles"></div>
-      </div>
-      <div class="card" id="waxCard">
-        <div class="wax-top">
-          <div class="label">Wax</div>
-          <div class="seg" role="group" aria-label="Training or race day" id="raceSeg" hidden>
-            <button type="button" id="modeTraining" aria-pressed="false">Training day</button>
-            <button type="button" id="modeRace" aria-pressed="true">Race day</button>
-          </div>
-        </div>
-        <div class="wax-head">
-          <div class="wax-bar" id="waxBar"></div>
-          <div>
-            <div class="wax-name" id="waxName">Violet</div>
-            <div class="wax-meta"><span>Snow range <b id="waxRange">—</b></span><span>Iron <b id="waxIron">—</b></span></div>
-          </div>
-        </div>
-        <div class="strip" id="strip" aria-hidden="true">
-          <div class="strip-marker" id="stripMarker">−6°</div>
-          <div class="strip-bands" id="stripBands"></div>
-          <div class="strip-ticks" id="stripTicks"></div>
-        </div>
-        <ul class="why" id="waxWhy"></ul>
-        <ol class="race" id="raceList" hidden></ol>
-        <p class="examples" id="waxEx"></p>
       </div>
       <div class="card" id="edgeCard">
         <div class="label">Edge settings for how you ski</div>
