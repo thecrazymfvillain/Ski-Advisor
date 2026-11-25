@@ -1,6 +1,6 @@
 # The Ski Advisor
 
-Ski wax and edge tuning recommendations for today's snow at 11 North American resorts, plus home tuning guides.
+Ski wax and edge tuning recommendations for today's snow at 745 North American ski areas, plus home tuning guides.
 
 ## Layout
 
