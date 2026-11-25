@@ -20,9 +20,10 @@
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/favicon-48.png" sizes="48x48" type="image/png">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-<link rel="preload" href="/assets/fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin>
-<style>@font-face{font-family:"Archivo";font-style:normal;font-weight:400 900;font-stretch:100% 125%;font-display:swap;src:url(/assets/fonts/archivo-latin.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
-@font-face{font-family:"Archivo";font-style:normal;font-weight:400 900;font-stretch:100% 125%;font-display:swap;src:url(/assets/fonts/archivo-latin-ext.woff2) format("woff2");unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C4,U+2113,U+2C60-2C7F,U+A720-A7FF}
+<link rel="preload" href="/assets/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="/assets/fonts/playfair-italic-latin.woff2" as="font" type="font/woff2" crossorigin>
+<style>@font-face{font-family:"Geist";font-style:normal;font-weight:400 800;font-display:swap;src:url(/assets/fonts/geist-latin.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:"Geist";font-style:normal;font-weight:400 800;font-display:swap;src:url(/assets/fonts/geist-latin-ext.woff2) format("woff2");unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C4,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:"Playfair Display";font-style:italic;font-weight:500;font-display:swap;src:url(/assets/fonts/playfair-italic-latin.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
 /* Layout: sticky resort bar → "today's tune" readout (conditions | wax + edges) → edge diagram → bench walkthrough → kit. One column on phones, two from 860px. */
 :root{
   --bg:#EDF1F4; --surface:#FFFFFF; --ink:#0F1B26; --muted:#56687A; --line:#D3DCE4; --soft:#E2E9F2;
@@ -566,6 +567,235 @@ h1,h2,h3{color:var(--heading)}
 .site-foot a,.foot-grid a{color:#D6E0F0}
 .foot-grid a:hover{color:#FFFFFF}
 .foot-grid h3,.site-foot .foot-links a{color:#FFFFFF}
+
+/* =====================================================================
+   "Buildify" theme applied to The Ski Advisor.
+   Geist + Playfair Display italic accents, #286FEC primary, white
+   surfaces, rounded-full buttons, rounded-2xl cards, sky gradient.
+   ===================================================================== */
+:root,:root[data-theme="dark"]{
+  --bg:#FFFFFF; --surface:#FFFFFF; --ink:#171717; --muted:#6B7280; --line:#E5E7EB; --soft:#F3F4F6;
+  --accent:#286FEC; --accent-ink:#FFFFFF; --heading:#111827; --sel:#286FEC; --red:#286FEC; --red-dark:#1F5ED0;
+  --t-primary:#286FEC; --t-secondary:#749AE8; --t-navy:#0D1B3E; --t-ice:#DCE8F8;
+  --shadow:0 1px 2px rgba(0,0,0,.05); --snow:#F3F6FB;
+  --display:"Geist",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --body:"Geist",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --serif:"Playfair Display",Georgia,serif;
+  --sky:linear-gradient(180deg,#0B5ADD 0%,#266BE2 10%,#3B77E5 20%,#5188EF 30%,#6293ED 40%,#75A2EF 50%,#89AEF3 60%,#9AB9F3 70%,#B7D1FA 80%,#E5EBFD 90%,#FDFDFC 100%);
+  --navh:96px;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#FFFFFF; --surface:#FFFFFF; --ink:#171717; --muted:#6B7280; --line:#E5E7EB; --soft:#F3F4F6;
+    --accent:#286FEC; --accent-ink:#FFFFFF; --heading:#111827; --sel:#286FEC; --shadow:0 1px 2px rgba(0,0,0,.05); --snow:#F3F6FB;
+    --steel:#8E9BA8; --core:#CDB78C; --basecol:#252B33; --cut:#286FEC; color-scheme:light;
+  }
+}
+html{scroll-behavior:smooth;scroll-padding-top:calc(var(--navh) + 8px)}
+body{background:#FFFFFF;color:var(--ink);font-family:var(--body);padding-top:var(--navh)}
+body:has(.t-hero){padding-top:0}
+body::before{display:none}
+h1,h2,h3{font-family:var(--display);font-stretch:100%;font-weight:600;letter-spacing:-.025em;color:var(--heading);text-transform:none}
+.t-serif{font-family:var(--serif);font-style:italic;font-weight:500;letter-spacing:0}
+.t-blue{color:var(--t-primary)}
+.label{font-size:13px;font-weight:500;color:var(--muted)}
+a{color:var(--t-primary)}
+
+/* Floating pill navigation */
+.top{display:none}
+.t-nav{position:fixed;top:0;left:0;right:0;z-index:50;padding:16px 16px 0}
+.t-pill{max-width:1024px;margin:0 auto;background:#FFFFFF;border-radius:999px;box-shadow:0 1px 3px rgba(15,23,42,.08),0 1px 2px rgba(15,23,42,.04);padding:6px 8px 6px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.t-logo{display:flex;align-items:center;border-radius:8px}
+.t-logo img{display:block;height:44px;width:auto}
+.t-links{display:flex;align-items:center;gap:6px}
+.t-links a{font-size:14px;color:#475569;text-decoration:none;padding:6px 10px;border-radius:8px}
+.t-links a:hover,.t-links a[aria-current="page"]{color:var(--t-primary)}
+.t-right{display:flex;align-items:center;gap:8px}
+.t-burger{display:none;border:0;background:transparent;color:#475569;padding:8px;cursor:pointer;border-radius:8px}
+.t-menu{position:absolute;top:84px;left:16px;right:16px;background:#FFFFFF;border:1px solid #F1F5F9;border-radius:12px;box-shadow:0 20px 40px rgba(15,23,42,.14);padding:20px;display:grid;gap:6px}
+.t-menu a{font-size:18px;font-weight:500;color:#334155;text-decoration:none;padding:6px 8px;border-radius:8px}
+.t-menu a.btn{color:#FFFFFF;justify-content:center;font-size:15px}
+.t-menu hr{border:0;border-top:1px solid #F1F5F9;margin:6px 0;width:100%}
+@media (max-width:767px){
+  :root{--navh:84px}
+  .t-links,.t-right .btn{display:none}
+  .t-burger{display:inline-flex}
+  .t-logo img{height:40px}
+}
+@media (min-width:768px){.t-menu{display:none!important}}
+.t-chiprow .chips{padding-block:8px 4px}
+.t-chiprow .chip{background:#F8FAFC}
+
+/* Buttons and controls */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:999px;padding:12px 18px;font-size:14px;font-weight:500;background:var(--t-primary);border:1px solid var(--t-primary);color:#FFFFFF;text-decoration:none;cursor:pointer;transition:opacity .2s}
+.btn:hover{opacity:.9;background:var(--t-primary);border-color:var(--t-primary)}
+.btn.ghost,.btn.ghost:hover{background:#FFFFFF;color:#111827;border-color:var(--line)}
+.btn.sm{padding:8px 14px;font-size:13.5px}
+.seg{border-radius:999px;border-color:var(--line);background:#FFFFFF;padding:2px}
+.seg button{border-radius:999px;font-weight:500;padding:6px 14px}
+.seg button[aria-pressed="true"],.radio-row button[aria-pressed="true"],.chip[aria-pressed="true"],.chip[aria-current="page"]{background:var(--t-primary);border-color:var(--t-primary);color:#FFFFFF}
+.chip{font-weight:500}
+.style-btn{border-radius:14px}
+.style-btn[aria-pressed="true"],button.wk-row.pick{border-color:var(--t-primary);box-shadow:inset 0 0 0 1px var(--t-primary)}
+.badge,.fav-btn{border-radius:999px;font-weight:500}
+.fav-btn[aria-pressed="true"]{background:var(--t-primary);border-color:var(--t-primary)}
+.radio-row button{border-radius:999px;font-family:var(--body)}
+.near-btn{border-radius:999px;font-weight:500}
+.search input{border-radius:999px;padding:12px 18px}
+.search ul{border-radius:16px;border-color:#E5E7EB;box-shadow:0 12px 30px rgba(15,23,42,.12)}
+.pass-tag{background:#EFF6FF;border-color:#DBEAFE;color:#1D4ED8;font-weight:500}
+
+/* Cards: rounded-2xl, hairline border, almost no shadow */
+.card,.resort-card,.guide-card,.kit-item,.step,.contact-form,.region-list a{border-radius:16px;border-color:var(--line);box-shadow:none}
+.card{padding:22px}
+.resort-card:hover,.guide-card:hover,.region-list a:hover{border-color:var(--t-secondary)}
+.section-head h2::after{display:none}
+section.block .section-head h2,.home-sec h2{font-size:clamp(26px,3.4vw,36px)}
+.hero h1{font-weight:600;letter-spacing:-.035em;font-size:clamp(36px,5.6vw,60px)}
+.hero h1 .h1-pre{font-family:var(--serif);font-style:italic;font-weight:500;font-size:clamp(18px,2vw,22px);color:#6B7280;letter-spacing:0}
+.big{font-family:var(--body);font-weight:700;letter-spacing:-.03em}
+.edge-nums div{border-radius:12px;background:#F5F8FE}
+.edge-nums b{font-family:var(--body);font-stretch:100%;font-weight:700}
+.surface-pill{border-radius:999px;background:#EFF6FF;color:#1D4ED8}
+.callout{border-radius:12px;background:#F5F8FE}
+.kit-item a{border-radius:999px;border-color:var(--t-primary);color:var(--t-primary)}
+.kit-item a:hover{background:var(--t-primary);color:#FFFFFF}
+.shop{border-radius:999px;border-color:var(--t-primary);color:var(--t-primary)}
+.step{border-radius:14px}
+.flag{border-radius:999px;background:#F59E0B}
+.progress-bar span{background:var(--t-primary)}
+.step input[type=checkbox]{accent-color:var(--t-primary)}
+.strip-bands{border-radius:999px}
+.log-status{border-radius:12px}
+.contact-form input,.contact-form select,.contact-form textarea{border-radius:12px;background:#F9FAFB}
+.region-list a{border-radius:999px;padding:10px 16px}
+.how li{border-top-color:var(--t-primary)}
+.cta-box{border-radius:20px;background:#F5F8FE}
+.article h1{font-weight:600;letter-spacing:-.035em}
+.dek{color:#6B7280}
+
+/* Wax slab keeps its wax color, with theme corners, type and a weather line */
+.card.wax-card{border-radius:20px;padding:0}
+.wax-name{font-family:var(--display);font-stretch:100%;font-weight:700;letter-spacing:-.04em;font-size:min(112px,19cqi)}
+.wax-name[data-len="9"]{font-size:min(104px,14cqi)}
+.slab-wx{margin:2px 0 0;font-size:15px;font-weight:500;opacity:.92}
+@media (max-width:859px){#conditionsCard{order:4} .col-b>.card:first-child{order:5} #edgeCard{order:6} #waxLog{order:7}}
+
+/* Weekend Wax Report as the theme's sky call-to-action */
+.report{background:var(--sky);color:#FFFFFF;border-radius:24px;padding:40px 24px;text-align:center;grid-template-columns:minmax(0,1fr)!important;justify-items:center}
+.report-copy{justify-items:center}
+.report h2{color:#FFFFFF;font-size:clamp(28px,4vw,44px)}
+.report-copy p{color:rgba(255,255,255,.88);margin:0 auto}
+.report-form{width:100%;max-width:640px;background:#F3F4F6;border-radius:18px;padding:14px;box-shadow:0 4px 12px rgba(15,23,42,.12);text-align:left}
+.report-row input{background:transparent;color:#374151;padding:12px 10px;border-radius:12px}
+.report .btn{background:var(--t-primary);border-color:var(--t-primary);border-radius:999px}
+.report .muted,.report .small{color:#6B7280}
+.report a{color:var(--t-primary)}
+.report-msg{color:#111827}
+
+/* White footer */
+.site-foot,.t-foot{background:#FFFFFF;color:#374151;border-top:1px solid #F1F5F9;margin-top:56px}
+.t-foot-grid{display:grid;gap:32px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:768px){.t-foot-grid{grid-template-columns:minmax(0,1.3fr) repeat(3,minmax(0,1fr))}}
+.t-foot-brand img{height:56px;width:auto;display:block;margin-bottom:14px}
+.t-foot-brand p{font-size:14px;line-height:1.6;max-width:36ch}
+.t-foot h3{font-size:15px;font-weight:600;color:#111827;margin-bottom:10px;letter-spacing:0}
+.t-foot ul{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.t-foot ul a{color:#374151;text-decoration:none;font-size:14px}
+.t-foot ul a:hover{color:#000000}
+.t-credits{display:grid;gap:8px;font-size:12.5px;color:#6B7280;border-top:1px solid #F1F5F9;margin-top:32px;padding-top:20px}
+.t-credits a{color:#6B7280}
+.t-copy{text-align:center;font-size:14px;color:#6B7280;margin-top:20px}
+
+/* ---------- Home page sections ---------- */
+.t-hero{position:relative;min-height:100vh;min-height:100svh;background:var(--sky);display:flex;align-items:center;justify-content:center;padding:calc(var(--navh) + 40px) 16px 64px;text-align:center}
+.t-hero-in{width:100%;max-width:896px;display:flex;flex-direction:column;align-items:center;gap:16px;color:#FFFFFF}
+.t-tag{display:inline-flex;align-items:center;gap:8px;background:#FFFFFF;color:#000000;border-radius:999px;padding:7px 16px;font-size:14px;margin:0}
+.t-tag svg{flex:none}
+.t-hero h1{color:#FFFFFF;font-size:clamp(34px,6vw,64px);font-weight:600;line-height:1.1;letter-spacing:-.035em;margin:0}
+.t-hero h1 .t-serif{font-weight:500}
+.t-hero-p{color:rgba(255,255,255,.9);max-width:36rem;font-size:16px;line-height:1.65;margin:-4px auto 0}
+.t-ask{width:100%;max-width:768px;margin-top:20px;background:#F3F4F6;border-radius:18px;box-shadow:0 4px 6px -1px rgba(0,0,0,.1),0 2px 4px -2px rgba(0,0,0,.1);padding:16px;display:flex;flex-direction:column;gap:12px;text-align:left}
+.t-ask-in{display:flex;align-items:center;gap:10px;padding:6px 8px}
+.t-ask-in svg{flex:none}
+.search.t-ask input{border:0;background:transparent;border-radius:0;padding:14px 0;font-size:17px;color:#374151}
+.search.t-ask input:focus{outline:none}
+.t-ask:focus-within{box-shadow:0 0 0 3px rgba(40,111,236,.35),0 4px 6px -1px rgba(0,0,0,.1)}
+.t-ask-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.t-ask .pass-row{margin:0}
+.t-ask .pass-row .chip{background:#FFFFFF;border-color:#D1D5DB;color:#374151;padding:5px 12px;font-size:13px}
+.t-ask .pass-row .chip[aria-pressed="true"]{background:var(--t-primary);border-color:var(--t-primary);color:#FFFFFF}
+.t-ask-act{display:flex;align-items:center;gap:8px;margin-left:auto}
+.t-near{display:inline-flex;align-items:center;gap:6px;background:transparent;border:0;color:var(--t-primary);padding:8px 12px}
+.t-near:hover{background:#E5E7EB}
+.t-ask .btn{padding:9px 16px}
+.search.t-ask ul{position:static;margin:0;box-shadow:none;border-color:#E5E7EB}
+.t-ask .near-msg{margin:0 8px;color:#6B7280}
+
+.t-sec{padding-block:72px 8px}
+.t-h2{text-align:center;font-size:clamp(28px,4vw,44px);font-weight:600;letter-spacing:-.03em;line-height:1.15;margin:0 auto 12px;max-width:22ch}
+.t-sub{text-align:center;color:#6B7280;margin:0 auto 28px;max-width:56ch}
+.t-h3{font-size:22px;margin:8px 0 6px}
+.t-center{text-align:center;margin-top:28px}
+
+.t-bento{display:flex;flex-direction:column;gap:12px;margin-top:28px}
+@media (min-width:768px){.t-bento{display:grid;grid-template-columns:300px minmax(0,1fr) 300px;grid-template-rows:220px 220px}}
+.t-b{border-radius:16px;padding:24px;display:flex;flex-direction:column;justify-content:space-between;gap:16px;min-height:180px}
+.t-b1{background:#FFFFFF;border:1px solid #E5E7EB;grid-column:1;grid-row:1}
+.t-b2{background:var(--t-navy);color:#FFFFFF;grid-column:1;grid-row:2}
+.t-b3{position:relative;overflow:hidden;background:var(--sky);grid-column:2;grid-row:1 / span 2;min-height:360px}
+.t-b3::after{content:"";position:absolute;inset:0;background:linear-gradient(to bottom,transparent 50%,rgba(220,235,255,.92) 80%,rgba(210,228,255,.98) 100%)}
+.t-b3>*{position:relative;z-index:1}
+.t-b4{background:var(--t-ice);grid-column:3;grid-row:1 / span 2;align-items:center;justify-content:center;text-align:center;min-height:280px}
+.t-stat{font-size:42px;font-weight:700;color:#3B82F6;line-height:1;margin:0;letter-spacing:-.03em}
+.t-stat.t-white{color:#FFFFFF;text-shadow:0 2px 6px rgba(0,0,0,.15)}
+.t-bt{font-size:20px;font-weight:700;color:#111827;margin:0 0 4px}
+.t-b2 .t-bt{color:#FFFFFF}
+.t-bd{font-size:13.5px;line-height:1.6;color:#6B7280;margin:0}
+.t-b2 .t-bd{color:#9CA3AF}
+.t-b3 .t-bd{color:#4B5563;max-width:300px}
+.t-b3-row{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.t-big{font-size:34px;font-weight:800;letter-spacing:-.03em;color:#030712;line-height:1;margin:0 0 12px}
+.t-b4 .t-bd{max-width:200px;margin:0 auto}
+
+.t-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px}
+.resort-card.t-card{padding:0;gap:0;background:#F3F4F6;border:0}
+.t-card .t-art{height:150px;background:var(--sky);overflow:hidden}
+.t-card .t-art svg{display:block;width:100%;height:100%;transition:transform .5s}
+.t-card:hover .t-art svg{transform:scale(1.05)}
+.t-card-b{padding:12px 14px 10px;display:grid;gap:2px}
+.t-card-b h3{font-size:15px;font-weight:600;letter-spacing:-.01em;color:#111827}
+.t-card-b p{font-size:12.5px;color:#9CA3AF;margin:0}
+.resort-card.t-card .wax-chip{margin:auto 0 0;padding:10px 14px}
+.resort-card.t-card.alt{background:#EFF6FF;border:1px dashed #BFDBFE}
+.t-card.alt .t-card-b{padding:18px 16px;gap:8px}
+#myMtns{margin-bottom:24px}
+
+.t-steps{display:grid;gap:24px;grid-template-columns:minmax(0,1fr);margin-top:32px}
+@media (min-width:640px){.t-steps{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.t-step{position:relative;overflow:hidden;border-radius:16px;border:1px solid #DBEAFE;background:linear-gradient(135deg,#EFF6FF,#FFFFFF 50%,#DBEAFE);padding:28px;min-height:240px;display:flex;flex-direction:column;justify-content:space-between}
+.t-step-l{font-size:12px;font-weight:500;color:#9CA3AF;letter-spacing:.04em;text-transform:uppercase}
+.t-step h3{font-size:22px;font-weight:600;position:relative;z-index:1;margin-top:16px}
+.t-step p{font-size:14px;color:#6B7280;line-height:1.6;margin:8px 0 0;position:relative;z-index:1}
+.t-step-n{position:absolute;right:-8px;bottom:-20px;font-size:140px;font-weight:700;line-height:1;background:linear-gradient(135deg,#BFDBFE,#DBEAFE 60%,#EFF6FF);-webkit-background-clip:text;background-clip:text;color:transparent;pointer-events:none;user-select:none}
+
+.t-sec .region-list{margin-top:8px}
+.t-sec h3{margin-top:18px}
+
+.t-faq{max-width:768px;margin:28px auto 0;display:grid;gap:14px}
+.t-q{border:1px solid #E5E7EB;border-radius:16px;background:#FFFFFF;padding:0 20px}
+.t-q summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:16px;padding:18px 0;font-weight:500;font-size:16px;color:#111827}
+.t-q summary::-webkit-details-marker{display:none}
+.t-plus{flex:none;width:28px;height:28px;border-radius:999px;background:#EFF6FF;position:relative;transition:transform .25s}
+.t-plus::before,.t-plus::after{content:"";position:absolute;left:50%;top:50%;width:12px;height:2px;background:var(--t-primary);transform:translate(-50%,-50%)}
+.t-plus::after{transform:translate(-50%,-50%) rotate(90deg)}
+.t-q[open] .t-plus{transform:rotate(45deg)}
+.t-q p{margin:0 0 18px;color:#6B7280;font-size:14.5px;line-height:1.65}
+
+.t-cta-wrap{padding-top:72px}
+.t-cta-wrap .report{border-radius:0;padding:96px 16px;margin:0}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.t-card .t-art svg{transition:none}}
 </style>
 <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "7effe80b68fa4bdd9944534b8a820936"}'></script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebSite", "name": "The Ski Advisor", "url": "https://theskiadvisor.com/"}</script>
@@ -573,131 +803,121 @@ h1,h2,h3{color:var(--heading)}
 <body>
 <div id="pageInfo" data-page="home" data-resort="" hidden></div>
 <script type="application/json" id="resortData">{"api": "featured", "resorts": [{"id": "whistler", "name": "Whistler Blackcomb", "region": "BC", "api": "CA-BC", "lat": 50.0888, "lon": -122.9419, "mid": 1456, "ex": {"air": -2, "rh": 88, "snow48": 12, "pastMax": 1, "cloud": 90, "code": 73, "tmrMin": -5, "tmrMax": -1, "tmrSnow": 6}, "pass": "epic"}, {"id": "vail", "name": "Vail", "region": "CO", "api": "US-CO", "lat": 39.6238, "lon": -106.3655, "mid": 2989, "ex": {"air": -8, "rh": 55, "snow48": 3, "pastMax": -2, "cloud": 20, "code": 1, "tmrMin": -13, "tmrMax": -4, "tmrSnow": 0}, "pass": "epic"}, {"id": "parkcity", "name": "Park City Mountain Resort", "region": "UT", "api": "US-UT", "lat": 40.6569, "lon": -111.5379, "mid": 2571, "ex": {"air": -5, "rh": 60, "snow48": 0, "pastMax": 2, "cloud": 10, "code": 0, "tmrMin": -9, "tmrMax": -1, "tmrSnow": 0}, "pass": "epic"}, {"id": "jackson", "name": "Jackson Hole Mountain Resort", "region": "WY", "api": "US-WY", "lat": 43.6032, "lon": -110.85, "mid": 2549, "ex": {"air": -11, "rh": 72, "snow48": 18, "pastMax": -6, "cloud": 95, "code": 75, "tmrMin": -15, "tmrMax": -8, "tmrSnow": 9}, "pass": "ikon"}, {"id": "aspen", "name": "Aspen Snowmass", "region": "CO", "api": "US-CO", "lat": 39.1984, "lon": -106.9499, "mid": 3144, "ex": {"air": -7, "rh": 50, "snow48": 2, "pastMax": -1, "cloud": 30, "code": 2, "tmrMin": -12, "tmrMax": -3, "tmrSnow": 0}, "pass": "ikon"}, {"id": "mammoth", "name": "Mammoth Mountain", "region": "CA", "api": "US-CA", "lat": 37.6444, "lon": -119.0088, "mid": 2908, "ex": {"air": -1, "rh": 45, "snow48": 0, "pastMax": 4, "cloud": 5, "code": 0, "tmrMin": -4, "tmrMax": 3, "tmrSnow": 0}, "pass": "ikon"}, {"id": "bigsky", "name": "Big Sky Resort", "region": "MT", "api": "US-MT", "lat": 45.2739, "lon": -111.4195, "mid": 2740, "ex": {"air": -14, "rh": 75, "snow48": 8, "pastMax": -9, "cloud": 70, "code": 71, "tmrMin": -19, "tmrMax": -10, "tmrSnow": 3}, "pass": "ikon"}, {"id": "telluride", "name": "Telluride Ski Area", "region": "CO", "api": "US-CO", "lat": 37.9197, "lon": -107.8348, "mid": 3237, "ex": {"air": -9, "rh": 50, "snow48": 5, "pastMax": -3, "cloud": 40, "code": 2, "tmrMin": -14, "tmrMax": -4, "tmrSnow": 2}, "pass": "epic"}, {"id": "snowbird", "name": "Snowbird", "region": "UT", "api": "US-UT", "lat": 40.5715, "lon": -111.641, "mid": 2852, "ex": {"air": -6, "rh": 82, "snow48": 22, "pastMax": -4, "cloud": 100, "code": 75, "tmrMin": -9, "tmrMax": -5, "tmrSnow": 15}, "pass": "ikon"}, {"id": "killington", "name": "Killington Resort", "region": "VT", "api": "US-VT", "lat": 43.6125, "lon": -72.7948, "mid": 808, "ex": {"air": -3, "rh": 82, "snow48": 1, "pastMax": 3, "cloud": 80, "code": 3, "tmrMin": -6, "tmrMax": 0, "tmrSnow": 1}, "pass": "ikon"}, {"id": "bogus", "name": "Bogus Basin Mountain Recreation Area", "region": "ID", "api": "US-ID", "lat": 43.7703, "lon": -116.0932, "mid": 2031, "ex": {"air": -2, "rh": 84, "snow48": 4, "pastMax": 2, "cloud": 75, "code": 3, "tmrMin": -5, "tmrMax": 0, "tmrSnow": 3}, "pass": ""}]}</script>
-<header class="top">
-  <div class="wrap">
-    <div class="top-row">
-      <a class="brand" href="index.html"><img src="assets/logo-header.webp" alt="The Ski Advisor" width="100" height="54"></a>
-      <nav class="nav" aria-label="Site"><a href="resorts/index.html">Resorts</a><a href="guides/index.html">Guides</a></nav>
-    </div>
+<header class="t-nav">
+  <div class="t-pill">
+    <a class="brand t-logo" href="index.html" aria-label="The Ski Advisor home"><img src="assets/logo-navy.webp" alt="The Ski Advisor" width="82" height="44"></a>
+    <nav class="t-links" aria-label="Site"><a href="resorts/index.html">Resorts</a><a href="guides/index.html">Guides</a><a href="about.html">About</a><a href="contact.html">Contact</a></nav>
+    <div class="t-right"><a class="btn" href="resorts/index.html">Find your mountain</a><button type="button" class="t-burger" aria-label="Open menu" aria-expanded="false" aria-controls="tMenu"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button></div>
   </div>
+  <nav class="t-menu" id="tMenu" aria-label="Menu" hidden><a href="resorts/index.html">Resorts</a><a href="guides/index.html">Guides</a><a href="about.html">About</a><a href="contact.html">Contact</a><hr><a class="btn" href="resorts/index.html">Find your mountain</a></nav>
 </header>
-<section class="hero-fly" id="flyHero" aria-label="Flyover of a snowy ski mountain">
-  <svg class="sil" viewBox="0 0 1200 600" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
-  <polygon points="0,420 140,330 260,370 400,250 520,320 640,170 760,290 880,230 1010,320 1200,260 1200,600 0,600" fill="var(--hero-m1)"/>
-  <polygon points="560,250 640,170 720,250 690,240 660,262 630,238 600,258" fill="#F2F6FA"/>
-  <polygon points="0,500 180,420 330,470 470,380 620,450 780,360 940,440 1080,390 1200,430 1200,600 0,600" fill="var(--hero-m2)"/>
-  <polygon points="0,560 220,510 420,550 640,490 860,545 1040,500 1200,530 1200,600 0,600" fill="var(--hero-m3)"/>
-</svg>
-  <canvas id="flyover" aria-hidden="true"></canvas>
-  <button class="fly-ctrl" id="flyPause" type="button" aria-pressed="false">Pause flyover</button>
-  <div class="hero-copy">
-    <div class="wrap">
-      <h1>Your Mountain<br>Your Snow<br>Your Skis</h1>
-      <p>Pick your mountain. Get the wax color and iron temperature for today, tomorrow or this weekend, edge settings for how you ski or ride, and a step-by-step home tune to match.</p>
-      <div class="hero-cta">
-        <a class="btn" href="#resorts">Find your mountain</a>
-        <a class="btn ghost" href="guides/index.html">Read the guides</a>
+<section class="t-hero" aria-labelledby="heroH">
+  <div class="t-hero-in">
+    <p class="t-tag"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><g stroke="#286FEC" stroke-width="2" stroke-linecap="round" fill="none"><path d="M12 2v20M3.3 7l17.4 10M20.7 7 3.3 17"/><path d="M9 4l3 2 3-2M9 20l3-2 3 2M4.2 10.5l3.4-.3-1.3-3.2M19.8 13.5l-3.4.3 1.3 3.2M4.2 13.5l3.4.3-1.3 3.2M19.8 10.5l-3.4-.3 1.3-3.2"/></g></svg><span class="t-serif">Free wax &amp; tune advice for <span class="t-blue">745 ski areas</span></span></p>
+    <h1 id="heroH">Your Mountain Your Snow<br><span class="t-serif">Your Skis</span></h1>
+    <p class="t-hero-p">Pick your mountain. Get the wax color and iron temperature for today, tomorrow or this weekend, edge settings for how you ski or ride, and a step-by-step home tune to match.</p>
+    <form class="search t-ask" data-search data-index="assets/resort-index.json" data-prefix="resorts/" role="search">
+      <div class="t-ask-in"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><g stroke="#286FEC" stroke-width="2" stroke-linecap="round" fill="none"><path d="M12 2v20M3.3 7l17.4 10M20.7 7 3.3 17"/><path d="M9 4l3 2 3-2M9 20l3-2 3 2M4.2 10.5l3.4-.3-1.3-3.2M19.8 13.5l-3.4.3 1.3 3.2M4.2 13.5l3.4.3-1.3 3.2M19.8 10.5l-3.4-.3 1.3-3.2"/></g></svg><label class="sr" for="homeSearch">Find a ski resort</label><input id="homeSearch" type="search" autocomplete="off" placeholder="Search by resort, town or state"></div>
+      <div class="t-ask-bar">
+        <div class="pass-row" role="group" aria-label="Filter by season pass"><span>Pass</span><button type="button" class="chip" data-passpick="" aria-pressed="true">Any</button><button type="button" class="chip" data-passpick="epic" aria-pressed="false">Epic</button><button type="button" class="chip" data-passpick="ikon" aria-pressed="false">Ikon</button></div>
+        <div class="t-ask-act"><button type="button" class="near-btn t-near" data-near><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="10" r="2.6" fill="currentColor"/></svg><span>Near me</span></button><button type="submit" class="btn">Find my wax</button></div>
       </div>
-    </div>
-  </div>
-</section>
-<main class="wrap">
-  <section class="home-sec" id="resorts" aria-labelledby="resortsH">
-    <div class="section-head"><h2 id="resortsH">Find your mountain</h2><p class="muted">745 ski areas across the US, Canada and Mexico.</p></div>
-    <form class="search" data-search data-index="assets/resort-index.json" data-prefix="resorts/" role="search">
-      <label class="sr" for="homeSearch">Find a ski resort</label>
-      <div class="search-row">
-        <input id="homeSearch" type="search" autocomplete="off" placeholder="Search 745 ski resorts by name, town or state">
-        <button type="button" class="near-btn" data-near>Near me</button>
-      </div>
-      <div class="pass-row" role="group" aria-label="Filter by season pass"><span>Pass</span><button type="button" class="chip" data-passpick="" aria-pressed="true">Any</button><button type="button" class="chip" data-passpick="epic" aria-pressed="false">Epic</button><button type="button" class="chip" data-passpick="ikon" aria-pressed="false">Ikon</button></div>
       <ul hidden></ul>
       <p class="near-msg muted" hidden></p>
     </form>
+  </div>
+</section>
+<main>
+  <section class="t-sec wrap" aria-labelledby="featH">
+    <h2 class="t-h2" id="featH">Built for the snow <span class="t-serif">you'll ski</span></h2>
+    <div class="t-bento">
+      <div class="t-b t-b1"><p class="t-stat">745</p><div><p class="t-bt">Ski areas covered</p><p class="t-bd">Every operating ski area with a lift in the US, Canada and Mexico, each forecast at its own mid-mountain elevation.</p></div></div>
+      <div class="t-b t-b2"><svg width="26" height="26" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13.5V5a2 2 0 1 1 4 0v8.5a4 4 0 1 1-4 0z" fill="none" stroke="#FFFFFF" stroke-width="2"/><circle cx="12" cy="17" r="1.8" fill="#FFFFFF"/></svg><div><p class="t-bt">Snow, not air</p><p class="t-bd">We estimate the snow temperature and surface, then pick the wax for that snow.</p></div></div>
+      <div class="t-b t-b3"><p class="t-stat t-white">Every 6 hours</p><div><p class="t-bt">Today, tomorrow or the weekend</p><div class="t-b3-row"><p class="t-bd">Each resort's forecast refreshes every six hours, with Saturday and Sunday side by side for weekend trips.</p><a class="btn" href="#resorts">Find your mountain</a></div></div></div>
+      <div class="t-b t-b4"><svg width="96" height="96" viewBox="0 0 96 96" aria-hidden="true"><defs>
+<linearGradient id="twxa" x1="10" y1="20" x2="70" y2="90" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#93C5FD"/><stop offset=".5" stop-color="#3B82F6"/><stop offset="1" stop-color="#1E3A8A"/></linearGradient>
+<linearGradient id="twxb" x1="20" y1="14" x2="60" y2="40" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFFFFF" stop-opacity=".75"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/></linearGradient></defs>
+<path d="M18 38 L58 24 L80 34 L40 48 Z" fill="#1D4ED8" opacity=".2" transform="translate(4,6)"/>
+<path d="M14 34 L54 20 L78 30 L38 44 Z" fill="#BFDBFE"/><path d="M14 34 L38 44 L38 76 L14 66 Z" fill="url(#twxa)"/><path d="M38 44 L78 30 L78 62 L38 76 Z" fill="#2563EB"/>
+<path d="M18 36 L52 24 L70 31 L38 42 Z" fill="url(#twxb)"/></svg><div><p class="t-big">Free</p><p class="t-bd">No account and no app. Your mountains, style and wax log stay on your device.</p></div></div>
+    </div>
+  </section>
+  <section class="t-sec wrap" id="resorts" aria-labelledby="resortsH">
+    <h2 class="t-h2" id="resortsH">Popular <span class="t-serif">mountains</span></h2>
+    <p class="t-sub" id="homeDataNote">Today's wax pick for each resort, from the forecast at mid-mountain.</p>
     <div id="myMtns" hidden>
-      <h3 class="sub-h">My mountains</h3>
+      <h3 class="t-h3">My mountains</h3>
       <p class="muted">Saved on this device. Save or remove a resort from its page.</p>
       <div class="resort-grid" id="myMtnsGrid"></div>
     </div>
-    <h3 class="sub-h">Popular resorts</h3>
-    <p class="muted" id="homeDataNote">Today's wax pick for each resort, from the forecast at mid-mountain.</p>
-    <div class="resort-grid"><a class="resort-card" href="resorts/whistler.html">
-  <span class="meta">British Columbia, mid-mountain 4,780 ft</span>
-  <h3>Whistler Blackcomb</h3>
-  <p>Coastal snow, huge vertical and big temperature swings.</p>
+    <div class="t-grid"><a class="resort-card t-card" href="resorts/whistler.html">
+  <div class="t-art"><svg viewBox="0 0 400 200" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><polygon points="0,106 60,78 144,111 193,60 258,107 340,59 400,100 400,200 0,200" fill="#C9DAF6"/><polygon points="0,134 58,87 137,131 186,106 278,128 331,92 400,150 400,200 0,200" fill="#E8F0FC"/><polygon points="0,191 144,161 293,192 400,189 400,200 0,200" fill="#FFFFFF"/></svg></div>
+  <div class="t-card-b"><h3>Whistler Blackcomb</h3><p>British Columbia, mid-mountain 4,780 ft</p></div>
   <span class="wax-chip" data-home-wax="whistler"><i></i><span>Loading today's wax…</span></span>
-</a><a class="resort-card" href="resorts/vail.html">
-  <span class="meta">Colorado, mid-mountain 9,810 ft</span>
-  <h3>Vail</h3>
-  <p>High, dry Colorado snow and long groomers.</p>
+</a><a class="resort-card t-card" href="resorts/vail.html">
+  <div class="t-art"><svg viewBox="0 0 400 200" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><polygon points="0,108 48,58 106,100 184,73 238,102 286,55 343,104 400,101 400,200 0,200" fill="#C9DAF6"/><polygon points="0,143 97,96 160,134 233,85 332,126 400,139 400,200 0,200" fill="#E8F0FC"/><polygon points="0,191 109,154 295,188 400,194 400,200 0,200" fill="#FFFFFF"/></svg></div>
+  <div class="t-card-b"><h3>Vail</h3><p>Colorado, mid-mountain 9,810 ft</p></div>
   <span class="wax-chip" data-home-wax="vail"><i></i><span>Loading today's wax…</span></span>
-</a><a class="resort-card" href="resorts/parkcity.html">
-  <span class="meta">Utah, mid-mountain 8,440 ft</span>
-  <h3>Park City Mountain Resort</h3>
-  <p>Utah's dry snow across one of the biggest lift networks in the US.</p>
+</a><a class="resort-card t-card" href="resorts/parkcity.html">
+  <div class="t-art"><svg viewBox="0 0 400 200" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><polygon points="0,111 69,69 143,100 203,71 270,98 326,64 400,99 400,200 0,200" fill="#C9DAF6"/><polygon points="0,148 102,94 179,141 295,103 400,136 400,200 0,200" fill="#E8F0FC"/><polygon points="0,194 83,161 180,182 313,169 400,186 400,200 0,200" fill="#FFFFFF"/></svg></div>
+  <div class="t-card-b"><h3>Park City Mountain Resort</h3><p>Utah, mid-mountain 8,440 ft</p></div>
   <span class="wax-chip" data-home-wax="parkcity"><i></i><span>Loading today's wax…</span></span>
-</a><a class="resort-card" href="resorts/jackson.html">
-  <span class="meta">Wyoming, mid-mountain 8,360 ft</span>
-  <h3>Jackson Hole Mountain Resort</h3>
-  <p>Steep terrain, cold days and more than 4,000 feet of vertical.</p>
+</a><a class="resort-card t-card" href="resorts/jackson.html">
+  <div class="t-art"><svg viewBox="0 0 400 200" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><polygon points="0,114 68,65 143,108 215,70 273,97 320,57 400,116 400,200 0,200" fill="#C9DAF6"/><polygon points="0,130 97,90 215,141 287,96 400,142 400,200 0,200" fill="#E8F0FC"/><polygon points="0,191 136,170 245,183 400,190 400,200 0,200" fill="#FFFFFF"/></svg></div>
+  <div class="t-card-b"><h3>Jackson Hole Mountain Resort</h3><p>Wyoming, mid-mountain 8,360 ft</p></div>
   <span class="wax-chip" data-home-wax="jackson"><i></i><span>Loading today's wax…</span></span>
-</a><a class="resort-card" href="resorts/aspen.html">
-  <span class="meta">Colorado, mid-mountain 10,310 ft</span>
-  <h3>Aspen Snowmass</h3>
-  <p>Four mountains, high elevation and dry snow.</p>
+</a><a class="resort-card t-card" href="resorts/aspen.html">
+  <div class="t-art"><svg viewBox="0 0 400 200" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><polygon points="0,103 68,68 121,109 168,72 223,98 291,62 342,100 400,101 400,200 0,200" fill="#C9DAF6"/><polygon points="0,149 60,93 130,141 187,94 254,131 345,92 400,148 400,200 0,200" fill="#E8F0FC"/><polygon points="0,187 100,164 222,188 285,156 400,184 400,200 0,200" fill="#FFFFFF"/></svg></div>
+  <div class="t-card-b"><h3>Aspen Snowmass</h3><p>Colorado, mid-mountain 10,310 ft</p></div>
   <span class="wax-chip" data-home-wax="aspen"><i></i><span>Loading today's wax…</span></span>
-</a><a class="resort-card" href="resorts/mammoth.html">
-  <span class="meta">California, mid-mountain 9,540 ft</span>
-  <h3>Mammoth Mountain</h3>
-  <p>Sierra snow, lots of sunshine and a long spring season.</p>
+</a><a class="resort-card t-card" href="resorts/mammoth.html">
+  <div class="t-art"><svg viewBox="0 0 400 200" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><polygon points="0,115 54,65 102,100 182,59 219,98 296,67 350,103 400,105 400,200 0,200" fill="#C9DAF6"/><polygon points="0,148 64,103 168,126 223,86 304,139 400,130 400,200 0,200" fill="#E8F0FC"/><polygon points="0,195 118,165 220,181 312,162 400,185 400,200 0,200" fill="#FFFFFF"/></svg></div>
+  <div class="t-card-b"><h3>Mammoth Mountain</h3><p>California, mid-mountain 9,540 ft</p></div>
   <span class="wax-chip" data-home-wax="mammoth"><i></i><span>Loading today's wax…</span></span>
-</a><a class="resort-card" href="resorts/bigsky.html">
-  <span class="meta">Montana, mid-mountain 8,990 ft</span>
-  <h3>Big Sky Resort</h3>
-  <p>Cold Montana snow below Lone Peak.</p>
+</a><a class="resort-card t-card" href="resorts/bigsky.html">
+  <div class="t-art"><svg viewBox="0 0 400 200" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><polygon points="0,110 81,74 125,112 198,56 268,107 346,66 400,111 400,200 0,200" fill="#C9DAF6"/><polygon points="0,133 82,84 195,139 315,103 400,133 400,200 0,200" fill="#E8F0FC"/><polygon points="0,192 99,154 220,183 311,152 400,194 400,200 0,200" fill="#FFFFFF"/></svg></div>
+  <div class="t-card-b"><h3>Big Sky Resort</h3><p>Montana, mid-mountain 8,990 ft</p></div>
   <span class="wax-chip" data-home-wax="bigsky"><i></i><span>Loading today's wax…</span></span>
-</a><a class="resort-card" href="resorts/telluride.html">
-  <span class="meta">Colorado, mid-mountain 10,620 ft</span>
-  <h3>Telluride Ski Area</h3>
-  <p>High, sunny and dry in southwest Colorado.</p>
+</a><a class="resort-card t-card" href="resorts/telluride.html">
+  <div class="t-art"><svg viewBox="0 0 400 200" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><polygon points="0,116 43,60 93,96 147,71 194,99 247,72 307,105 349,58 400,108 400,200 0,200" fill="#C9DAF6"/><polygon points="0,131 99,94 197,137 302,95 400,147 400,200 0,200" fill="#E8F0FC"/><polygon points="0,190 161,162 248,191 400,187 400,200 0,200" fill="#FFFFFF"/></svg></div>
+  <div class="t-card-b"><h3>Telluride Ski Area</h3><p>Colorado, mid-mountain 10,620 ft</p></div>
   <span class="wax-chip" data-home-wax="telluride"><i></i><span>Loading today's wax…</span></span>
-</a><a class="resort-card" href="resorts/snowbird.html">
-  <span class="meta">Utah, mid-mountain 9,360 ft</span>
-  <h3>Snowbird</h3>
-  <p>Deep, frequent storms in Little Cottonwood Canyon.</p>
+</a><a class="resort-card t-card" href="resorts/snowbird.html">
+  <div class="t-art"><svg viewBox="0 0 400 200" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><polygon points="0,110 55,79 123,105 160,77 221,99 285,73 346,97 400,115 400,200 0,200" fill="#C9DAF6"/><polygon points="0,133 89,106 177,130 231,101 306,138 400,143 400,200 0,200" fill="#E8F0FC"/><polygon points="0,187 115,164 207,191 294,169 400,192 400,200 0,200" fill="#FFFFFF"/></svg></div>
+  <div class="t-card-b"><h3>Snowbird</h3><p>Utah, mid-mountain 9,360 ft</p></div>
   <span class="wax-chip" data-home-wax="snowbird"><i></i><span>Loading today's wax…</span></span>
-</a><a class="resort-card" href="resorts/killington.html">
-  <span class="meta">Vermont, mid-mountain 2,650 ft</span>
-  <h3>Killington Resort</h3>
-  <p>The East's biggest mountain, with snowmaking and ice.</p>
+</a><a class="resort-card t-card" href="resorts/killington.html">
+  <div class="t-art"><svg viewBox="0 0 400 200" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><polygon points="0,116 54,77 108,110 176,77 224,106 274,63 345,106 400,115 400,200 0,200" fill="#C9DAF6"/><polygon points="0,143 93,88 211,128 278,81 400,145 400,200 0,200" fill="#E8F0FC"/><polygon points="0,188 131,161 294,192 400,196 400,200 0,200" fill="#FFFFFF"/></svg></div>
+  <div class="t-card-b"><h3>Killington Resort</h3><p>Vermont, mid-mountain 2,650 ft</p></div>
   <span class="wax-chip" data-home-wax="killington"><i></i><span>Loading today's wax…</span></span>
-</a><a class="resort-card" href="resorts/bogus.html">
-  <span class="meta">Idaho, mid-mountain 6,660 ft</span>
-  <h3>Bogus Basin Mountain Recreation Area</h3>
-  <p>Boise's nonprofit hill, with night skiing and fast-changing snow.</p>
+</a><a class="resort-card t-card" href="resorts/bogus.html">
+  <div class="t-art"><svg viewBox="0 0 400 200" preserveAspectRatio="xMidYMax slice" aria-hidden="true"><polygon points="0,114 52,76 94,101 154,70 211,97 242,56 307,108 360,57 400,111 400,200 0,200" fill="#C9DAF6"/><polygon points="0,129 72,103 130,127 203,101 252,131 340,82 400,147 400,200 0,200" fill="#E8F0FC"/><polygon points="0,194 111,155 183,192 313,165 400,191 400,200 0,200" fill="#FFFFFF"/></svg></div>
+  <div class="t-card-b"><h3>Bogus Basin Mountain Recreation Area</h3><p>Idaho, mid-mountain 6,660 ft</p></div>
   <span class="wax-chip" data-home-wax="bogus"><i></i><span>Loading today's wax…</span></span>
-</a><a class="resort-card alt" href="resorts/index.html">
-  <span class="meta">US, Canada and Mexico</span>
-  <h3>All 745 resorts</h3>
-  <p>Every operating ski area with a lift, from the biggest destinations to small local hills.</p>
-  <span class="wax-chip"><span>Browse by state or province</span></span>
 </a></div>
+    <p class="t-center"><a class="btn" href="resorts/index.html">See all 745 resorts</a></p>
   </section>
-  <section class="home-sec" aria-labelledby="browseH">
-    <div class="section-head"><h2 id="browseH">Browse by state or province</h2></div>
+  <section class="t-sec wrap" aria-labelledby="howH">
+    <h2 class="t-h2" id="howH">How it works</h2>
+    <div class="t-steps"><div class="t-step"><span class="t-step-l">Step - 01</span><div><h3>Forecast at mid-mountain</h3><p>We pull temperature, humidity and new snow at the elevation you'll actually ski, not at the base.</p></div><span class="t-step-n" aria-hidden="true">1</span></div><div class="t-step"><span class="t-step-l">Step - 02</span><div><h3>Snow, not air</h3><p>We estimate the snow temperature and surface: new, packed, refrozen, man-made or wet.</p></div><span class="t-step-n" aria-hidden="true">2</span></div><div class="t-step"><span class="t-step-l">Step - 03</span><div><h3>Wax, edges, steps</h3><p>You get the wax color and iron setting for the snow, edge settings for how you ski or ride, and a tune walkthrough set to match.</p></div><span class="t-step-n" aria-hidden="true">3</span></div></div>
+  </section>
+  <section class="t-sec wrap" aria-labelledby="browseH">
+    <h2 class="t-h2" id="browseH">Browse by <span class="t-serif">state or province</span></h2>
     <h3>United States</h3><div class="region-list"><a href="regions/us-al.html">Alabama<small>1</small></a><a href="regions/us-ak.html">Alaska<small>10</small></a><a href="regions/us-az.html">Arizona<small>3</small></a><a href="regions/us-ca.html">California<small>27</small></a><a href="regions/us-co.html">Colorado<small>36</small></a><a href="regions/us-ct.html">Connecticut<small>5</small></a><a href="regions/us-id.html">Idaho<small>21</small></a><a href="regions/us-il.html">Illinois<small>5</small></a><a href="regions/us-in.html">Indiana<small>2</small></a><a href="regions/us-ia.html">Iowa<small>4</small></a><a href="regions/us-me.html">Maine<small>21</small></a><a href="regions/us-md.html">Maryland<small>1</small></a><a href="regions/us-ma.html">Massachusetts<small>12</small></a><a href="regions/us-mi.html">Michigan<small>43</small></a><a href="regions/us-mn.html">Minnesota<small>19</small></a><a href="regions/us-mo.html">Missouri<small>2</small></a><a href="regions/us-mt.html">Montana<small>15</small></a><a href="regions/us-nv.html">Nevada<small>5</small></a><a href="regions/us-nh.html">New Hampshire<small>29</small></a><a href="regions/us-nj.html">New Jersey<small>4</small></a><a href="regions/us-nm.html">New Mexico<small>9</small></a><a href="regions/us-ny.html">New York<small>51</small></a><a href="regions/us-nc.html">North Carolina<small>7</small></a><a href="regions/us-nd.html">North Dakota<small>4</small></a><a href="regions/us-oh.html">Ohio<small>6</small></a><a href="regions/us-or.html">Oregon<small>12</small></a><a href="regions/us-pa.html">Pennsylvania<small>29</small></a><a href="regions/us-ri.html">Rhode Island<small>1</small></a><a href="regions/us-sd.html">South Dakota<small>3</small></a><a href="regions/us-tn.html">Tennessee<small>1</small></a><a href="regions/us-ut.html">Utah<small>19</small></a><a href="regions/us-vt.html">Vermont<small>31</small></a><a href="regions/us-va.html">Virginia<small>5</small></a><a href="regions/us-wa.html">Washington<small>19</small></a><a href="regions/us-wv.html">West Virginia<small>6</small></a><a href="regions/us-wi.html">Wisconsin<small>31</small></a><a href="regions/us-wy.html">Wyoming<small>11</small></a></div>
 <h3>Canada</h3><div class="region-list"><a href="regions/ca-ab.html">Alberta<small>33</small></a><a href="regions/ca-bc.html">British Columbia<small>42</small></a><a href="regions/ca-mb.html">Manitoba<small>8</small></a><a href="regions/ca-nb.html">New Brunswick<small>4</small></a><a href="regions/ca-nl.html">Newfoundland and Labrador<small>4</small></a><a href="regions/ca-nt.html">Northwest Territories<small>1</small></a><a href="regions/ca-ns.html">Nova Scotia<small>4</small></a><a href="regions/ca-on.html">Ontario<small>50</small></a><a href="regions/ca-pe.html">Prince Edward Island<small>1</small></a><a href="regions/ca-qc.html">Quebec<small>78</small></a><a href="regions/ca-sk.html">Saskatchewan<small>6</small></a><a href="regions/ca-yt.html">Yukon<small>3</small></a></div>
 <h3>Mexico</h3><div class="region-list"><a href="regions/mx-coa.html">Coahuila de Zaragoza<small>1</small></a></div>
   </section>
-  <section class="home-sec" aria-labelledby="howH">
-    <div class="section-head"><h2 id="howH">How it works</h2></div>
-    <ol class="how">
-      <li><b>Forecast at mid-mountain</b><span>We pull temperature, humidity and new snow at the elevation you'll actually ski, not at the base.</span></li>
-      <li><b>Snow, not air</b><span>We estimate the snow temperature and surface: new, packed, refrozen, man-made or wet.</span></li>
-      <li><b>Wax, edges, steps</b><span>You get the wax color and iron setting for the snow, edge settings for how you ski or ride, and a tune walkthrough set to match.</span></li>
-    </ol>
+  <section class="t-sec wrap" aria-labelledby="guidesH">
+    <h2 class="t-h2" id="guidesH">Tuning <span class="t-serif">guides</span></h2>
+    <p class="t-sub">Everything you need to tune skis or a snowboard at home, from your first wax job to race day.</p>
+    <div class="guide-grid"><a class="guide-card" href="guides/how-to-wax-skis.html"><small>4 min read</small><b>How to Wax Skis at Home</b><span>The full hot-wax process, start to finish, with the mistakes to avoid.</span></a><a class="guide-card" href="guides/how-to-wax-a-snowboard.html"><small>2 min read</small><b>How to Wax a Snowboard at Home</b><span>The full hot-wax process for a snowboard, plus edge care for riders.</span></a><a class="guide-card" href="guides/ski-wax-temperature-chart.html"><small>3 min read</small><b>Ski Wax Temperature Chart</b><span>Which wax color for which temperature, in °F and °C, with iron settings.</span></a><a class="guide-card" href="guides/ski-edge-angles.html"><small>3 min read</small><b>Ski Edge Angles Explained: 89°, 88° and 87°</b><span>Base bevel, side bevel, and what an 88° edge actually means.</span></a><a class="guide-card" href="guides/how-to-sharpen-ski-edges.html"><small>3 min read</small><b>How to Sharpen Ski Edges at Home</b><span>Guides, diamond stones and a steady hand. Sharp edges without wrecking the bevel.</span></a><a class="guide-card" href="guides/race-wax-vs-training-wax.html"><small>3 min read</small><b>Race Wax vs Training Wax</b><span>Two jobs, two waxes. How racers layer race wax and save money in training.</span></a><a class="guide-card" href="guides/waxing-for-spring-snow.html"><small>2 min read</small><b>Waxing for Wet Spring Snow</b><span>Warm wax, extra structure and timing for wet, sticky spring days.</span></a><a class="guide-card" href="guides/icy-and-man-made-snow.html"><small>2 min read</small><b>Tuning for Ice and Man-Made Snow</b><span>Sharper edges, harder wax and more frequent tunes for hard snow.</span></a><a class="guide-card" href="guides/how-often-to-wax-skis.html"><small>2 min read</small><b>How Often Should You Wax Your Skis?</b><span>A rule of thumb by ski days, and the signs your base is dry.</span></a><a class="guide-card" href="guides/ski-tuning-kit.html"><small>2 min read</small><b>Home Ski Tuning Kit: What to Buy First</b><span>Start with five tools and add the rest as you go. Here's the order.</span></a><a class="guide-card" href="guides/best-ski-wax-iron.html"><small>Buying guide · 3 min read</small><b>Best Ski Wax Iron: What to Buy and What to Skip</b><span>The iron is the one tool worth spending on. Here's what separates a good one.</span></a><a class="guide-card" href="guides/ski-tuning-kit-under-100.html"><small>Buying guide · 2 min read</small><b>Ski Tuning Kit Under $100: A Starter Setup That Works</b><span>Six tools, about $100, and a full hot wax and edge touch-up at home.</span></a><a class="guide-card" href="guides/best-race-wax.html"><small>Buying guide · 3 min read</small><b>Best Race Wax: Fluoro-Free Picks for Ski Racers</b><span>Fluoro-free base layers, race waxes and top coats, and where to spend.</span></a></div>
   </section>
-  <section class="report" aria-labelledby="reportH">
+  <section class="t-sec wrap" aria-labelledby="faqH">
+    <h2 class="t-h2" id="faqH">Got questions? <span class="t-serif">We've got answers</span></h2>
+    <div class="t-faq"><details class="t-q" open><summary>Is The Ski Advisor free?<span class="t-plus" aria-hidden="true"></span></summary><p>Yes. There's no account and no app. Your saved mountains, your style and your wax log stay in your own browser. The site earns a small commission when you buy through its Amazon links.</p></details><details class="t-q"><summary>How do you pick the wax?<span class="t-plus" aria-hidden="true"></span></summary><p>We take the forecast at your resort's mid-mountain elevation, estimate the snow temperature and surface, and match it to the standard wax color bands. New and man-made snow get one step colder; wet snow gets a warm wax and extra brushing.</p></details><details class="t-q"><summary>Does it work for snowboards?<span class="t-plus" aria-hidden="true"></span></summary><p>Yes. Choose Snowboard and the tune steps, edge settings and kit switch to board wording. The wax is the same.</p></details><details class="t-q"><summary>Should I change my edge angles for the conditions?<span class="t-plus" aria-hidden="true"></span></summary><p>No. Most people set their angles once, usually at a shop, and keep them. The snow changes how much edge work is worth doing, not the angles.</p></details><details class="t-q"><summary>Where does the weather come from?<span class="t-plus" aria-hidden="true"></span></summary><p>MET Norway's forecast, refreshed for every resort every six hours. Resort locations and elevations come from OpenStreetMap.</p></details><details class="t-q"><summary>Are the waxes fluoro-free?<span class="t-plus" aria-hidden="true"></span></summary><p>Yes. Every wax we suggest is fluoro-free, including race waxes and top coats.</p></details></div>
+  </section>
+</main>
+<div class="t-cta-wrap"><section class="report" aria-labelledby="reportH">
     <div class="report-copy">
       <h2 id="reportH">The Weekend Wax Report</h2>
       <p>A free email, launching this season. Every Thursday in ski season: this weekend's wax and iron temperature for the mountains you save, in time to wax before you leave. Sign up now and you'll get the first one.</p>
@@ -712,27 +932,19 @@ h1,h2,h3{color:var(--heading)}
       <p class="muted small">From The Ski Advisor. Free; unsubscribe from any email in one click. We use your address only to send this report. See our <a href="privacy.html">privacy policy</a>.</p>
       <p class="report-msg" role="status" hidden></p>
     </form>
-  </section>
-  <section class="home-sec" aria-labelledby="guidesH">
-    <div class="section-head"><h2 id="guidesH">Tuning guides</h2><p class="muted">Everything you need to tune skis or a snowboard at home, from your first wax job to race day.</p></div>
-    <div class="guide-grid"><a class="guide-card" href="guides/how-to-wax-skis.html"><small>4 min read</small><b>How to Wax Skis at Home</b><span>The full hot-wax process, start to finish, with the mistakes to avoid.</span></a><a class="guide-card" href="guides/how-to-wax-a-snowboard.html"><small>2 min read</small><b>How to Wax a Snowboard at Home</b><span>The full hot-wax process for a snowboard, plus edge care for riders.</span></a><a class="guide-card" href="guides/ski-wax-temperature-chart.html"><small>3 min read</small><b>Ski Wax Temperature Chart</b><span>Which wax color for which temperature, in °F and °C, with iron settings.</span></a><a class="guide-card" href="guides/ski-edge-angles.html"><small>3 min read</small><b>Ski Edge Angles Explained: 89°, 88° and 87°</b><span>Base bevel, side bevel, and what an 88° edge actually means.</span></a><a class="guide-card" href="guides/how-to-sharpen-ski-edges.html"><small>3 min read</small><b>How to Sharpen Ski Edges at Home</b><span>Guides, diamond stones and a steady hand. Sharp edges without wrecking the bevel.</span></a><a class="guide-card" href="guides/race-wax-vs-training-wax.html"><small>3 min read</small><b>Race Wax vs Training Wax</b><span>Two jobs, two waxes. How racers layer race wax and save money in training.</span></a><a class="guide-card" href="guides/waxing-for-spring-snow.html"><small>2 min read</small><b>Waxing for Wet Spring Snow</b><span>Warm wax, extra structure and timing for wet, sticky spring days.</span></a><a class="guide-card" href="guides/icy-and-man-made-snow.html"><small>2 min read</small><b>Tuning for Ice and Man-Made Snow</b><span>Sharper edges, harder wax and more frequent tunes for hard snow.</span></a><a class="guide-card" href="guides/how-often-to-wax-skis.html"><small>2 min read</small><b>How Often Should You Wax Your Skis?</b><span>A rule of thumb by ski days, and the signs your base is dry.</span></a><a class="guide-card" href="guides/ski-tuning-kit.html"><small>2 min read</small><b>Home Ski Tuning Kit: What to Buy First</b><span>Start with five tools and add the rest as you go. Here's the order.</span></a><a class="guide-card" href="guides/best-ski-wax-iron.html"><small>Buying guide · 3 min read</small><b>Best Ski Wax Iron: What to Buy and What to Skip</b><span>The iron is the one tool worth spending on. Here's what separates a good one.</span></a><a class="guide-card" href="guides/ski-tuning-kit-under-100.html"><small>Buying guide · 2 min read</small><b>Ski Tuning Kit Under $100: A Starter Setup That Works</b><span>Six tools, about $100, and a full hot wax and edge touch-up at home.</span></a><a class="guide-card" href="guides/best-race-wax.html"><small>Buying guide · 3 min read</small><b>Best Race Wax: Fluoro-Free Picks for Ski Racers</b><span>Fluoro-free base layers, race waxes and top coats, and where to spend.</span></a></div>
-  </section>
-</main>
-<footer class="site-foot">
-  <div class="wrap" style="display:grid;gap:22px">
-    <div class="foot-grid">
-      <div><h3>Popular resorts</h3><ul><li><a href="resorts/whistler.html">Whistler Blackcomb</a></li><li><a href="resorts/vail.html">Vail</a></li><li><a href="resorts/parkcity.html">Park City</a></li><li><a href="resorts/jackson.html">Jackson Hole</a></li><li><a href="resorts/aspen.html">Aspen Snowmass</a></li><li><a href="resorts/mammoth.html">Mammoth Mountain</a></li><li><a href="resorts/bigsky.html">Big Sky</a></li><li><a href="resorts/telluride.html">Telluride</a></li><li><a href="resorts/snowbird.html">Snowbird</a></li><li><a href="resorts/killington.html">Killington</a></li><li><a href="resorts/bogus.html">Bogus Basin</a></li><li><a href="resorts/index.html"><b>All 745 resorts</b></a></li><li><a href="passes/epic.html">Epic Pass mountains</a></li><li><a href="passes/ikon.html">Ikon Pass mountains</a></li></ul></div>
-      <div><h3>Guides</h3><ul><li><a href="guides/how-to-wax-skis.html">How to Wax Skis at Home</a></li><li><a href="guides/how-to-wax-a-snowboard.html">How to Wax a Snowboard at Home</a></li><li><a href="guides/ski-wax-temperature-chart.html">Ski Wax Temperature Chart</a></li><li><a href="guides/ski-edge-angles.html">Ski Edge Angles Explained: 89°, 88° and 87°</a></li><li><a href="guides/how-to-sharpen-ski-edges.html">How to Sharpen Ski Edges at Home</a></li><li><a href="guides/race-wax-vs-training-wax.html">Race Wax vs Training Wax</a></li><li><a href="guides/waxing-for-spring-snow.html">Waxing for Wet Spring Snow</a></li><li><a href="guides/icy-and-man-made-snow.html">Tuning for Ice and Man-Made Snow</a></li><li><a href="guides/how-often-to-wax-skis.html">How Often Should You Wax Your Skis?</a></li><li><a href="guides/ski-tuning-kit.html">Home Ski Tuning Kit: What to Buy First</a></li><li><a href="guides/best-ski-wax-iron.html">Best Ski Wax Iron: What to Buy and What to Skip</a></li><li><a href="guides/ski-tuning-kit-under-100.html">Ski Tuning Kit Under $100: A Starter Setup That Works</a></li><li><a href="guides/best-race-wax.html">Best Race Wax: Fluoro-Free Picks for Ski Racers</a></li></ul></div>
-      <div><h3>The Ski Advisor</h3><p>Wax and edge recommendations for 745 ski areas in the US, Canada and Mexico, from the forecast at each one's mid-mountain elevation.</p></div>
+  </section></div>
+<footer class="site-foot t-foot">
+  <div class="wrap" style="padding-block:56px 24px">
+    <div class="t-foot-grid">
+      <div class="t-foot-brand"><img src="assets/logo-navy.webp" alt="The Ski Advisor" width="104" height="56"><p>Wax and edge recommendations for 745 ski areas in the US, Canada and Mexico, from the forecast at each one's mid-mountain elevation.</p></div>
+      <div><h3>Popular resorts</h3><ul><li><a href="resorts/whistler.html">Whistler Blackcomb</a></li><li><a href="resorts/vail.html">Vail</a></li><li><a href="resorts/parkcity.html">Park City</a></li><li><a href="resorts/jackson.html">Jackson Hole</a></li><li><a href="resorts/aspen.html">Aspen Snowmass</a></li><li><a href="resorts/mammoth.html">Mammoth Mountain</a></li><li><a href="resorts/bigsky.html">Big Sky</a></li><li><a href="resorts/telluride.html">Telluride</a></li><li><a href="resorts/index.html">All 745 resorts</a></li></ul></div>
+      <div><h3>Guides</h3><ul><li><a href="guides/how-to-wax-skis.html">How to Wax Skis at Home</a></li><li><a href="guides/how-to-wax-a-snowboard.html">How to Wax a Snowboard at Home</a></li><li><a href="guides/ski-wax-temperature-chart.html">Ski Wax Temperature Chart</a></li><li><a href="guides/ski-edge-angles.html">Ski Edge Angles Explained: 89°, 88° and 87°</a></li><li><a href="guides/how-to-sharpen-ski-edges.html">How to Sharpen Ski Edges at Home</a></li><li><a href="guides/race-wax-vs-training-wax.html">Race Wax vs Training Wax</a></li><li><a href="guides/waxing-for-spring-snow.html">Waxing for Wet Spring Snow</a></li><li><a href="guides/icy-and-man-made-snow.html">Tuning for Ice and Man-Made Snow</a></li><li><a href="guides/index.html">All guides</a></li></ul></div>
+      <div><h3>The Ski Advisor</h3><ul><li><a href="about.html">About</a></li><li><a href="contact.html">Contact</a></li><li><a href="privacy.html">Privacy</a></li><li><a href="passes/epic.html">Epic Pass mountains</a></li><li><a href="passes/ikon.html">Ikon Pass mountains</a></li></ul></div>
     </div>
-    <p class="foot-links"><a href="about.html">About</a> · <a href="contact.html">Contact</a> · <a href="privacy.html">Privacy</a></p>
-    <p>Weather data from <a href="https://api.met.no/">MET Norway</a> (<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>), adapted by us: forecasts at mid-mountain altitude, snow estimated from precipitation and temperature. MET Norway is not responsible for our recommendations.</p>
-    <p>Resort data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a> and <a href="https://openskimap.org">OpenSkiMap</a>, available under the <a href="https://opendatacommons.org/licenses/odbl/">Open Database License</a>.</p>
-    <p>As an Amazon Associate, The Ski Advisor earns from qualifying purchases. Commissions don't change what we recommend. Recommendations are starting points: the temperature on your wax label wins, and a snow thermometer beats any forecast.</p>
+    <div class="t-credits"><p>Weather data from <a href="https://api.met.no/">MET Norway</a> (<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>), adapted by us: forecasts at mid-mountain altitude, snow estimated from precipitation and temperature. MET Norway is not responsible for our recommendations.</p><p>Resort data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a> and <a href="https://openskimap.org">OpenSkiMap</a>, available under the <a href="https://opendatacommons.org/licenses/odbl/">Open Database License</a>.</p><p>As an Amazon Associate, The Ski Advisor earns from qualifying purchases. Commissions don't change what we recommend. The temperature on your wax label wins, and a snow thermometer beats any forecast.</p></div>
+    <p class="t-copy">© 2026 The Ski Advisor</p>
   </div>
 </footer>
-<script src="assets/tool.js?v=74153e7b6a"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="assets/flyover.js?v=05c9c91e21"></script>
+<script src="assets/tool.js?v=71a447971d"></script>
 </body>
 </html>

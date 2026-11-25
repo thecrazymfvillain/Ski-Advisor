@@ -20,18 +20,18 @@ TODAY = datetime.date.today().isoformat()
 THREE = "https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"
 # Cloudflare Web Analytics site token (cookie-free). Empty = analytics off.
 CF_ANALYTICS_TOKEN = "7effe80b68fa4bdd9944534b8a820936"
-# Archivo (SIL OFL), served from the site, trimmed to widths 100-125% and weights 400-900. Preloaded so text
-# draws in it quickly; font-display: swap means nothing waits on it.
-FONTS = '<link rel="preload" href="/assets/fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin>'
+# Geist and Playfair Display italic (both SIL OFL), served from the site. Preloaded so text draws in them
+# quickly; font-display: swap means nothing waits on them.
+FONTS = '<link rel="preload" href="/assets/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin>'
+FONT_SERIF = '<link rel="preload" href="/assets/fonts/playfair-italic-latin.woff2" as="font" type="font/woff2" crossorigin>'   # only pages that use the italic accents
+LATIN = "U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD"
+LATIN_EXT = "U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C4,U+2113,U+2C60-2C7F,U+A720-A7FF"
 FONT_FACES = (
-    '@font-face{font-family:"Archivo";font-style:normal;font-weight:400 900;font-stretch:100% 125%;font-display:swap;'
-    'src:url(/assets/fonts/archivo-latin.woff2) format("woff2");'
-    'unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}\n'
-    '@font-face{font-family:"Archivo";font-style:normal;font-weight:400 900;font-stretch:100% 125%;font-display:swap;'
-    'src:url(/assets/fonts/archivo-latin-ext.woff2) format("woff2");'
-    'unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C4,U+2113,U+2C60-2C7F,U+A720-A7FF}\n')
+    '@font-face{font-family:"Geist";font-style:normal;font-weight:400 800;font-display:swap;src:url(/assets/fonts/geist-latin.woff2) format("woff2");unicode-range:' + LATIN + '}\n'
+    '@font-face{font-family:"Geist";font-style:normal;font-weight:400 800;font-display:swap;src:url(/assets/fonts/geist-latin-ext.woff2) format("woff2");unicode-range:' + LATIN_EXT + '}\n'
+    '@font-face{font-family:"Playfair Display";font-style:italic;font-weight:500;font-display:swap;src:url(/assets/fonts/playfair-italic-latin.woff2) format("woff2");unicode-range:' + LATIN + '}\n')
 # The whole stylesheet (about 8 KB compressed) goes inline in every page, so the first paint waits on no request.
-SITE_CSS = FONT_FACES + open(os.path.join(SRC, "base.css")).read() + open(os.path.join(SRC, "extra.css")).read()
+SITE_CSS = FONT_FACES + open(os.path.join(SRC, "base.css")).read() + open(os.path.join(SRC, "extra.css")).read() + open(os.path.join(SRC, "theme.css")).read()
 esc = lambda s: html.escape(s, quote=True)
 
 # =====================================================================
@@ -570,7 +570,7 @@ def head(title, desc, path, depth, jsonld=None, noindex=False):
            '<link rel="icon" href="/favicon.svg" type="image/svg+xml">',
            '<link rel="icon" href="/favicon-48.png" sizes="48x48" type="image/png">',
            '<link rel="apple-touch-icon" href="/apple-touch-icon.png">',
-           FONTS,
+           FONTS + (FONT_SERIF if path == "" or (path.startswith("resorts/") and path != "resorts/index.html") else ""),
            '<style>' + SITE_CSS + '</style>']
     if noindex:
         out.append('<meta name="robots" content="noindex">')
@@ -581,35 +581,53 @@ def head(title, desc, path, depth, jsonld=None, noindex=False):
         out.append('<script type="application/ld+json">' + json.dumps(jsonld, ensure_ascii=False) + '</script>')
     return "\n".join(out)
 
+ICON_SNOW = '''<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><g stroke="#286FEC" stroke-width="2" stroke-linecap="round" fill="none"><path d="M12 2v20M3.3 7l17.4 10M20.7 7 3.3 17"/><path d="M9 4l3 2 3-2M9 20l3-2 3 2M4.2 10.5l3.4-.3-1.3-3.2M19.8 13.5l-3.4.3 1.3 3.2M4.2 13.5l3.4.3-1.3 3.2M19.8 10.5l-3.4-.3 1.3-3.2"/></g></svg>'''
+ICON_PIN = '''<svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="10" r="2.6" fill="currentColor"/></svg>'''
+ICON_THERMO = '''<svg width="26" height="26" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13.5V5a2 2 0 1 1 4 0v8.5a4 4 0 1 1-4 0z" fill="none" stroke="#FFFFFF" stroke-width="2"/><circle cx="12" cy="17" r="1.8" fill="#FFFFFF"/></svg>'''
+ICON_WAX = '''<svg width="96" height="96" viewBox="0 0 96 96" aria-hidden="true"><defs>
+<linearGradient id="twxa" x1="10" y1="20" x2="70" y2="90" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#93C5FD"/><stop offset=".5" stop-color="#3B82F6"/><stop offset="1" stop-color="#1E3A8A"/></linearGradient>
+<linearGradient id="twxb" x1="20" y1="14" x2="60" y2="40" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#FFFFFF" stop-opacity=".75"/><stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/></linearGradient></defs>
+<path d="M18 38 L58 24 L80 34 L40 48 Z" fill="#1D4ED8" opacity=".2" transform="translate(4,6)"/>
+<path d="M14 34 L54 20 L78 30 L38 44 Z" fill="#BFDBFE"/><path d="M14 34 L38 44 L38 76 L14 66 Z" fill="url(#twxa)"/><path d="M38 44 L78 30 L78 62 L38 76 Z" fill="#2563EB"/>
+<path d="M18 36 L52 24 L70 31 L38 42 Z" fill="url(#twxb)"/></svg>'''
+
 def header(depth, current="", chips=""):
+    """Floating white pill navigation (Buildify theme)."""
     r = "../"*depth
     cur = lambda k: ' aria-current="page"' if current == k else ""
-    return f"""<header class="top">
-  <div class="wrap">
-    <div class="top-row">
-      <a class="brand" href="{r}index.html"><img src="{r}assets/logo-header.webp" alt="The Ski Advisor" width="100" height="54"></a>
-      <nav class="nav" aria-label="Site"><a href="{r}resorts/index.html"{cur("resorts")}>Resorts</a><a href="{r}guides/index.html"{cur("guides")}>Guides</a></nav>
-    </div>{chips}
+    links = (f'<a href="{r}resorts/index.html"{cur("resorts")}>Resorts</a><a href="{r}guides/index.html"{cur("guides")}>Guides</a>'
+             f'<a href="{r}about.html">About</a><a href="{r}contact.html">Contact</a>')
+    cta = f'<a class="btn" href="{r}resorts/index.html">Find your mountain</a>'
+    burger = '<svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>'
+    chiprow = f'<div class="wrap t-chiprow">{chips}</div>' if chips else ""
+    return f"""<header class="t-nav">
+  <div class="t-pill">
+    <a class="brand t-logo" href="{r}index.html" aria-label="The Ski Advisor home"><img src="{r}assets/logo-navy.webp" alt="The Ski Advisor" width="82" height="44"></a>
+    <nav class="t-links" aria-label="Site">{links}</nav>
+    <div class="t-right">{cta}<button type="button" class="t-burger" aria-label="Open menu" aria-expanded="false" aria-controls="tMenu">{burger}</button></div>
   </div>
-</header>"""
+  <nav class="t-menu" id="tMenu" aria-label="Menu" hidden>{links}<hr>{cta}</nav>
+</header>{chiprow}"""
 
 def footer(depth):
+    """White footer (Buildify theme)."""
     r = "../"*depth
-    res = "".join(f'<li><a href="{r}resorts/{x["id"]}.html">{x["name"]}</a></li>' for x in RESORTS)
-    res += f'<li><a href="{r}resorts/index.html"><b>All {len(ALL)} resorts</b></a></li>'
-    res += f'<li><a href="{r}passes/epic.html">Epic Pass mountains</a></li><li><a href="{r}passes/ikon.html">Ikon Pass mountains</a></li>'
-    gds = "".join(f'<li><a href="{r}guides/{g["slug"]}.html">{g["title"]}</a></li>' for g in GUIDES)
-    return f"""<footer class="site-foot">
-  <div class="wrap" style="display:grid;gap:22px">
-    <div class="foot-grid">
+    res = "".join(f'<li><a href="{r}resorts/{x["id"]}.html">{x["name"]}</a></li>' for x in RESORTS[:8])
+    res += f'<li><a href="{r}resorts/index.html">All {len(ALL)} resorts</a></li>'
+    gds = "".join(f'<li><a href="{r}guides/{g["slug"]}.html">{g["title"]}</a></li>' for g in GUIDES[:8])
+    gds += f'<li><a href="{r}guides/index.html">All guides</a></li>'
+    site = (f'<li><a href="{r}about.html">About</a></li><li><a href="{r}contact.html">Contact</a></li><li><a href="{r}privacy.html">Privacy</a></li>'
+            f'<li><a href="{r}passes/epic.html">Epic Pass mountains</a></li><li><a href="{r}passes/ikon.html">Ikon Pass mountains</a></li>')
+    return f"""<footer class="site-foot t-foot">
+  <div class="wrap" style="padding-block:56px 24px">
+    <div class="t-foot-grid">
+      <div class="t-foot-brand"><img src="{r}assets/logo-navy.webp" alt="The Ski Advisor" width="104" height="56"><p>Wax and edge recommendations for {len(ALL)} ski areas in the US, Canada and Mexico, from the forecast at each one's mid-mountain elevation.</p></div>
       <div><h3>Popular resorts</h3><ul>{res}</ul></div>
       <div><h3>Guides</h3><ul>{gds}</ul></div>
-      <div><h3>The Ski Advisor</h3><p>Wax and edge recommendations for {len(ALL)} ski areas in the US, Canada and Mexico, from the forecast at each one's mid-mountain elevation.</p></div>
+      <div><h3>The Ski Advisor</h3><ul>{site}</ul></div>
     </div>
-    <p class="foot-links"><a href="{r}about.html">About</a> · <a href="{r}contact.html">Contact</a> · <a href="{r}privacy.html">Privacy</a></p>
-    <p>{MET_CREDIT}</p>
-    <p>{OSM_CREDIT}</p>
-    <p>As an Amazon Associate, The Ski Advisor earns from qualifying purchases. Commissions don't change what we recommend. Recommendations are starting points: the temperature on your wax label wins, and a snow thermometer beats any forecast.</p>
+    <div class="t-credits"><p>{MET_CREDIT}</p><p>{OSM_CREDIT}</p><p>As an Amazon Associate, The Ski Advisor earns from qualifying purchases. Commissions don't change what we recommend. The temperature on your wax label wins, and a snow thermometer beats any forecast.</p></div>
+    <p class="t-copy">© 2026 The Ski Advisor</p>
   </div>
 </footer>"""
 
@@ -692,20 +710,57 @@ SIL = """<svg class="sil" viewBox="0 0 1200 600" preserveAspectRatio="xMidYMax s
   <polygon points="0,560 220,510 420,550 640,490 860,545 1040,500 1200,530 1200,600 0,600" fill="var(--hero-m3)"/>
 </svg>"""
 
+def mtn_art(seed):
+    """Seeded mountain ridges for a resort card (no photos needed)."""
+    import random, hashlib
+    rnd = random.Random(int(hashlib.md5(seed.encode()).hexdigest()[:8], 16))
+    W, H = 400, 200
+    def ridge(base, amp, n):
+        pts = [(0, base - rnd.uniform(0, amp * .3))]
+        for i in range(1, n):
+            x = W * i / n + rnd.uniform(-W / n * .22, W / n * .22)
+            pts.append((x, base - amp * (rnd.uniform(.6, 1) if i % 2 else rnd.uniform(.08, .35))))
+        pts.append((W, base - rnd.uniform(0, amp * .3)))
+        return " ".join(f"{x:.0f},{y:.0f}" for x, y in pts) + f" {W},{H} 0,{H}"
+    return (f'<svg viewBox="0 0 {W} {H}" preserveAspectRatio="xMidYMax slice" aria-hidden="true">'
+            f'<polygon points="{ridge(118, 64, rnd.choice([6, 7, 8]))}" fill="#C9DAF6"/>'
+            f'<polygon points="{ridge(150, 70, rnd.choice([4, 5, 6]))}" fill="#E8F0FC"/>'
+            f'<polygon points="{ridge(196, 44, rnd.choice([3, 4]))}" fill="#FFFFFF"/></svg>')
+
+def hero_search():
+    chips = ''.join(f'<button type="button" class="chip" data-passpick="{k}" aria-pressed="{"true" if not k else "false"}">{n}</button>' for k, n in (("", "Any"), ("epic", "Epic"), ("ikon", "Ikon")))
+    return f"""<form class="search t-ask" data-search data-index="assets/resort-index.json" data-prefix="resorts/" role="search">
+      <div class="t-ask-in">{ICON_SNOW}<label class="sr" for="homeSearch">Find a ski resort</label><input id="homeSearch" type="search" autocomplete="off" placeholder="Search by resort, town or state"></div>
+      <div class="t-ask-bar">
+        <div class="pass-row" role="group" aria-label="Filter by season pass"><span>Pass</span>{chips}</div>
+        <div class="t-ask-act"><button type="button" class="near-btn t-near" data-near>{ICON_PIN}<span>Near me</span></button><button type="submit" class="btn">Find my wax</button></div>
+      </div>
+      <ul hidden></ul>
+      <p class="near-msg muted" hidden></p>
+    </form>"""
+
+FAQ = [
+ ("Is The Ski Advisor free?", "Yes. There's no account and no app. Your saved mountains, your style and your wax log stay in your own browser. The site earns a small commission when you buy through its Amazon links."),
+ ("How do you pick the wax?", "We take the forecast at your resort's mid-mountain elevation, estimate the snow temperature and surface, and match it to the standard wax color bands. New and man-made snow get one step colder; wet snow gets a warm wax and extra brushing."),
+ ("Does it work for snowboards?", "Yes. Choose Snowboard and the tune steps, edge settings and kit switch to board wording. The wax is the same."),
+ ("Should I change my edge angles for the conditions?", "No. Most people set their angles once, usually at a shop, and keep them. The snow changes how much edge work is worth doing, not the angles."),
+ ("Where does the weather come from?", "MET Norway's forecast, refreshed for every resort every six hours. Resort locations and elevations come from OpenStreetMap."),
+ ("Are the waxes fluoro-free?", "Yes. Every wax we suggest is fluoro-free, including race waxes and top coats."),
+]
+
 def home(full):
-    cards = "".join(f"""<a class="resort-card" href="resorts/{x['id']}.html">
-  <span class="meta">{x['regionName']}, mid-mountain {ft(x['mid'])}</span>
-  <h3>{x['name']}</h3>
-  <p>{x['tag']}.</p>
+    """Home page in the Buildify theme's landing layout, with the site's real content."""
+    cards = "".join(f"""<a class="resort-card t-card" href="resorts/{x['id']}.html">
+  <div class="t-art">{mtn_art(x['id'])}</div>
+  <div class="t-card-b"><h3>{x['name']}</h3><p>{x['regionName']}, mid-mountain {ft(x['mid'])}</p></div>
   <span class="wax-chip" data-home-wax="{x['id']}"><i></i><span>Loading today's wax…</span></span>
 </a>""" for x in FEATURED)
-    cards += f"""<a class="resort-card alt" href="resorts/index.html">
-  <span class="meta">US, Canada and Mexico</span>
-  <h3>All {len(ALL)} resorts</h3>
-  <p>Every operating ski area with a lift, from the biggest destinations to small local hills.</p>
-  <span class="wax-chip"><span>Browse by state or province</span></span>
-</a>"""
     gcards = "".join(f'<a class="guide-card" href="guides/{g["slug"]}.html"><small>{guide_kind(g)}{read_minutes(guide_body(g))} min read</small><b>{g["title"]}</b><span>{g["card"]}</span></a>' for g in GUIDES)
+    steps = [("Forecast at mid-mountain", "We pull temperature, humidity and new snow at the elevation you'll actually ski, not at the base."),
+             ("Snow, not air", "We estimate the snow temperature and surface: new, packed, refrozen, man-made or wet."),
+             ("Wax, edges, steps", "You get the wax color and iron setting for the snow, edge settings for how you ski or ride, and a tune walkthrough set to match.")]
+    steps_html = "".join(f'<div class="t-step"><span class="t-step-l">Step - {i+1:02d}</span><div><h3>{t}</h3><p>{d}</p></div><span class="t-step-n" aria-hidden="true">{i+1}</span></div>' for i, (t, d) in enumerate(steps))
+    faq_html = "".join(f'<details class="t-q"{" open" if i == 0 else ""}><summary>{q}<span class="t-plus" aria-hidden="true"></span></summary><p>{a}</p></details>' for i, (q, a) in enumerate(FAQ))
     ld = {"@context":"https://schema.org","@type":"WebSite","name":"The Ski Advisor","url":DOMAIN+"/"}
     h = head("The Ski Advisor: Ski and Snowboard Wax for Today's Snow",
              f"Ski and snowboard wax color and iron temperature for today's snow at {len(ALL)} resorts across the US, Canada and Mexico, edge settings for how you ski or ride, and step-by-step home tuning guides.",
@@ -713,56 +768,56 @@ def home(full):
     body = f"""{page_info("home")}
 {rd_script({"api": "featured", "resorts": [rd_resort(x) for x in FEATURED]})}
 {header(0)}
-<section class="hero-fly" id="flyHero" aria-label="Flyover of a snowy ski mountain">
-  {SIL}
-  <canvas id="flyover" aria-hidden="true"></canvas>
-  <button class="fly-ctrl" id="flyPause" type="button" aria-pressed="false">Pause flyover</button>
-  <div class="hero-copy">
-    <div class="wrap">
-      <h1>Your Mountain<br>Your Snow<br>Your Skis</h1>
-      <p>Pick your mountain. Get the wax color and iron temperature for today, tomorrow or this weekend, edge settings for how you ski or ride, and a step-by-step home tune to match.</p>
-      <div class="hero-cta">
-        <a class="btn" href="#resorts">Find your mountain</a>
-        <a class="btn ghost" href="guides/index.html">Read the guides</a>
-      </div>
-    </div>
+<section class="t-hero" aria-labelledby="heroH">
+  <div class="t-hero-in">
+    <p class="t-tag">{ICON_SNOW}<span class="t-serif">Free wax &amp; tune advice for <span class="t-blue">{len(ALL)} ski areas</span></span></p>
+    <h1 id="heroH">Your Mountain Your Snow<br><span class="t-serif">Your Skis</span></h1>
+    <p class="t-hero-p">Pick your mountain. Get the wax color and iron temperature for today, tomorrow or this weekend, edge settings for how you ski or ride, and a step-by-step home tune to match.</p>
+    {hero_search()}
   </div>
 </section>
-<main class="wrap">
-  <section class="home-sec" id="resorts" aria-labelledby="resortsH">
-    <div class="section-head"><h2 id="resortsH">Find your mountain</h2><p class="muted">{len(ALL)} ski areas across the US, Canada and Mexico.</p></div>
-    {search_box(0, "resorts/", "homeSearch")}
+<main>
+  <section class="t-sec wrap" aria-labelledby="featH">
+    <h2 class="t-h2" id="featH">Built for the snow <span class="t-serif">you'll ski</span></h2>
+    <div class="t-bento">
+      <div class="t-b t-b1"><p class="t-stat">{len(ALL)}</p><div><p class="t-bt">Ski areas covered</p><p class="t-bd">Every operating ski area with a lift in the US, Canada and Mexico, each forecast at its own mid-mountain elevation.</p></div></div>
+      <div class="t-b t-b2">{ICON_THERMO}<div><p class="t-bt">Snow, not air</p><p class="t-bd">We estimate the snow temperature and surface, then pick the wax for that snow.</p></div></div>
+      <div class="t-b t-b3"><p class="t-stat t-white">Every 6 hours</p><div><p class="t-bt">Today, tomorrow or the weekend</p><div class="t-b3-row"><p class="t-bd">Each resort's forecast refreshes every six hours, with Saturday and Sunday side by side for weekend trips.</p><a class="btn" href="#resorts">Find your mountain</a></div></div></div>
+      <div class="t-b t-b4">{ICON_WAX}<div><p class="t-big">Free</p><p class="t-bd">No account and no app. Your mountains, style and wax log stay on your device.</p></div></div>
+    </div>
+  </section>
+  <section class="t-sec wrap" id="resorts" aria-labelledby="resortsH">
+    <h2 class="t-h2" id="resortsH">Popular <span class="t-serif">mountains</span></h2>
+    <p class="t-sub" id="homeDataNote">Today's wax pick for each resort, from the forecast at mid-mountain.</p>
     <div id="myMtns" hidden>
-      <h3 class="sub-h">My mountains</h3>
+      <h3 class="t-h3">My mountains</h3>
       <p class="muted">Saved on this device. Save or remove a resort from its page.</p>
       <div class="resort-grid" id="myMtnsGrid"></div>
     </div>
-    <h3 class="sub-h">Popular resorts</h3>
-    <p class="muted" id="homeDataNote">Today's wax pick for each resort, from the forecast at mid-mountain.</p>
-    <div class="resort-grid">{cards}</div>
+    <div class="t-grid">{cards}</div>
+    <p class="t-center"><a class="btn" href="resorts/index.html">See all {len(ALL)} resorts</a></p>
   </section>
-  <section class="home-sec" aria-labelledby="browseH">
-    <div class="section-head"><h2 id="browseH">Browse by state or province</h2></div>
+  <section class="t-sec wrap" aria-labelledby="howH">
+    <h2 class="t-h2" id="howH">How it works</h2>
+    <div class="t-steps">{steps_html}</div>
+  </section>
+  <section class="t-sec wrap" aria-labelledby="browseH">
+    <h2 class="t-h2" id="browseH">Browse by <span class="t-serif">state or province</span></h2>
     {region_grid(0)}
   </section>
-  <section class="home-sec" aria-labelledby="howH">
-    <div class="section-head"><h2 id="howH">How it works</h2></div>
-    <ol class="how">
-      <li><b>Forecast at mid-mountain</b><span>We pull temperature, humidity and new snow at the elevation you'll actually ski, not at the base.</span></li>
-      <li><b>Snow, not air</b><span>We estimate the snow temperature and surface: new, packed, refrozen, man-made or wet.</span></li>
-      <li><b>Wax, edges, steps</b><span>You get the wax color and iron setting for the snow, edge settings for how you ski or ride, and a tune walkthrough set to match.</span></li>
-    </ol>
-  </section>
-  {report_box(0)}
-  <section class="home-sec" aria-labelledby="guidesH">
-    <div class="section-head"><h2 id="guidesH">Tuning guides</h2><p class="muted">Everything you need to tune skis or a snowboard at home, from your first wax job to race day.</p></div>
+  <section class="t-sec wrap" aria-labelledby="guidesH">
+    <h2 class="t-h2" id="guidesH">Tuning <span class="t-serif">guides</span></h2>
+    <p class="t-sub">Everything you need to tune skis or a snowboard at home, from your first wax job to race day.</p>
     <div class="guide-grid">{gcards}</div>
   </section>
+  <section class="t-sec wrap" aria-labelledby="faqH">
+    <h2 class="t-h2" id="faqH">Got questions? <span class="t-serif">We've got answers</span></h2>
+    <div class="t-faq">{faq_html}</div>
+  </section>
 </main>
+<div class="t-cta-wrap">{report_box(0)}</div>
 {footer(0)}
-<script src="assets/tool.js"></script>
-<script src="{THREE}"></script>
-<script src="assets/flyover.js"></script>"""
+<script src="assets/tool.js"></script>"""
     return doc(full, h, body)
 
 TOOL_FRAG = open(os.path.join(SRC, "tool-fragment.html")).read()
@@ -1133,7 +1188,7 @@ def shards(n=6):
 
 def main():
     write("assets/site.css", SITE_CSS)   # kept for pages cached before the CSS went inline
-    for f in ("archivo-latin.woff2", "archivo-latin-ext.woff2", "OFL.txt"):
+    for f in ("geist-latin.woff2", "geist-latin-ext.woff2", "playfair-italic-latin.woff2", "OFL-Geist.txt", "OFL-PlayfairDisplay.txt"):
         dst = os.path.join(OUT, "assets", "fonts", f); os.makedirs(os.path.dirname(dst), exist_ok=True)
         with open(os.path.join(SRC, "fonts", f), "rb") as a, open(dst, "wb") as b: b.write(a.read())
     write("assets/tool.js", open(os.path.join(SRC, "tool.js")).read())
@@ -1167,10 +1222,10 @@ def main():
     write("report-thanks.html", report_thanks_page())
     for k in PASS_INFO: write(f"passes/{k}.html", pass_page(k))
     write("404.html", not_found_page())
-    for f in ("favicon.svg", "favicon-48.png", "apple-touch-icon.png", "og-image.jpg", "logo-header.webp"):
+    for f in ("favicon.svg", "favicon-48.png", "apple-touch-icon.png", "og-image.jpg", "logo-header.webp", "logo-navy.webp"):
         src_f = os.path.join(SRC, "brand", f)
         if os.path.exists(src_f):
-            dst = os.path.join(OUT, "assets" if f in ("og-image.jpg", "logo-header.webp") else "", f); os.makedirs(os.path.dirname(dst), exist_ok=True)
+            dst = os.path.join(OUT, "assets" if f in ("og-image.jpg", "logo-header.webp", "logo-navy.webp") else "", f); os.makedirs(os.path.dirname(dst), exist_ok=True)
             with open(src_f, "rb") as a, open(dst, "wb") as b: b.write(a.read())
     urls = ([""] + ["resorts/index.html"] + [f"regions/{c.lower()}.html" for c in sorted(REGIONS)] + [f"resorts/{x['id']}.html" for x in ALL] +
             ["passes/epic.html", "passes/ikon.html"] + ["guides/index.html"] + [f"guides/{g['slug']}.html" for g in GUIDES] + ["about.html", "contact.html", "privacy.html"])

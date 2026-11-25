@@ -20,9 +20,10 @@
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="icon" href="/favicon-48.png" sizes="48x48" type="image/png">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-<link rel="preload" href="/assets/fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin>
-<style>@font-face{font-family:"Archivo";font-style:normal;font-weight:400 900;font-stretch:100% 125%;font-display:swap;src:url(/assets/fonts/archivo-latin.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
-@font-face{font-family:"Archivo";font-style:normal;font-weight:400 900;font-stretch:100% 125%;font-display:swap;src:url(/assets/fonts/archivo-latin-ext.woff2) format("woff2");unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C4,U+2113,U+2C60-2C7F,U+A720-A7FF}
+<link rel="preload" href="/assets/fonts/geist-latin.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="/assets/fonts/playfair-italic-latin.woff2" as="font" type="font/woff2" crossorigin>
+<style>@font-face{font-family:"Geist";font-style:normal;font-weight:400 800;font-display:swap;src:url(/assets/fonts/geist-latin.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
+@font-face{font-family:"Geist";font-style:normal;font-weight:400 800;font-display:swap;src:url(/assets/fonts/geist-latin-ext.woff2) format("woff2");unicode-range:U+0100-02BA,U+02BD-02C5,U+02C7-02CC,U+02CE-02D7,U+02DD-02FF,U+0304,U+0308,U+0329,U+1D00-1DBF,U+1E00-1E9F,U+1EF2-1EFF,U+2020,U+20A0-20AB,U+20AD-20C4,U+2113,U+2C60-2C7F,U+A720-A7FF}
+@font-face{font-family:"Playfair Display";font-style:italic;font-weight:500;font-display:swap;src:url(/assets/fonts/playfair-italic-latin.woff2) format("woff2");unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+0304,U+0308,U+0329,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
 /* Layout: sticky resort bar → "today's tune" readout (conditions | wax + edges) → edge diagram → bench walkthrough → kit. One column on phones, two from 860px. */
 :root{
   --bg:#EDF1F4; --surface:#FFFFFF; --ink:#0F1B26; --muted:#56687A; --line:#D3DCE4; --soft:#E2E9F2;
@@ -566,6 +567,235 @@ h1,h2,h3{color:var(--heading)}
 .site-foot a,.foot-grid a{color:#D6E0F0}
 .foot-grid a:hover{color:#FFFFFF}
 .foot-grid h3,.site-foot .foot-links a{color:#FFFFFF}
+
+/* =====================================================================
+   "Buildify" theme applied to The Ski Advisor.
+   Geist + Playfair Display italic accents, #286FEC primary, white
+   surfaces, rounded-full buttons, rounded-2xl cards, sky gradient.
+   ===================================================================== */
+:root,:root[data-theme="dark"]{
+  --bg:#FFFFFF; --surface:#FFFFFF; --ink:#171717; --muted:#6B7280; --line:#E5E7EB; --soft:#F3F4F6;
+  --accent:#286FEC; --accent-ink:#FFFFFF; --heading:#111827; --sel:#286FEC; --red:#286FEC; --red-dark:#1F5ED0;
+  --t-primary:#286FEC; --t-secondary:#749AE8; --t-navy:#0D1B3E; --t-ice:#DCE8F8;
+  --shadow:0 1px 2px rgba(0,0,0,.05); --snow:#F3F6FB;
+  --display:"Geist",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --body:"Geist",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --serif:"Playfair Display",Georgia,serif;
+  --sky:linear-gradient(180deg,#0B5ADD 0%,#266BE2 10%,#3B77E5 20%,#5188EF 30%,#6293ED 40%,#75A2EF 50%,#89AEF3 60%,#9AB9F3 70%,#B7D1FA 80%,#E5EBFD 90%,#FDFDFC 100%);
+  --navh:96px;
+  color-scheme:light;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#FFFFFF; --surface:#FFFFFF; --ink:#171717; --muted:#6B7280; --line:#E5E7EB; --soft:#F3F4F6;
+    --accent:#286FEC; --accent-ink:#FFFFFF; --heading:#111827; --sel:#286FEC; --shadow:0 1px 2px rgba(0,0,0,.05); --snow:#F3F6FB;
+    --steel:#8E9BA8; --core:#CDB78C; --basecol:#252B33; --cut:#286FEC; color-scheme:light;
+  }
+}
+html{scroll-behavior:smooth;scroll-padding-top:calc(var(--navh) + 8px)}
+body{background:#FFFFFF;color:var(--ink);font-family:var(--body);padding-top:var(--navh)}
+body:has(.t-hero){padding-top:0}
+body::before{display:none}
+h1,h2,h3{font-family:var(--display);font-stretch:100%;font-weight:600;letter-spacing:-.025em;color:var(--heading);text-transform:none}
+.t-serif{font-family:var(--serif);font-style:italic;font-weight:500;letter-spacing:0}
+.t-blue{color:var(--t-primary)}
+.label{font-size:13px;font-weight:500;color:var(--muted)}
+a{color:var(--t-primary)}
+
+/* Floating pill navigation */
+.top{display:none}
+.t-nav{position:fixed;top:0;left:0;right:0;z-index:50;padding:16px 16px 0}
+.t-pill{max-width:1024px;margin:0 auto;background:#FFFFFF;border-radius:999px;box-shadow:0 1px 3px rgba(15,23,42,.08),0 1px 2px rgba(15,23,42,.04);padding:6px 8px 6px 20px;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.t-logo{display:flex;align-items:center;border-radius:8px}
+.t-logo img{display:block;height:44px;width:auto}
+.t-links{display:flex;align-items:center;gap:6px}
+.t-links a{font-size:14px;color:#475569;text-decoration:none;padding:6px 10px;border-radius:8px}
+.t-links a:hover,.t-links a[aria-current="page"]{color:var(--t-primary)}
+.t-right{display:flex;align-items:center;gap:8px}
+.t-burger{display:none;border:0;background:transparent;color:#475569;padding:8px;cursor:pointer;border-radius:8px}
+.t-menu{position:absolute;top:84px;left:16px;right:16px;background:#FFFFFF;border:1px solid #F1F5F9;border-radius:12px;box-shadow:0 20px 40px rgba(15,23,42,.14);padding:20px;display:grid;gap:6px}
+.t-menu a{font-size:18px;font-weight:500;color:#334155;text-decoration:none;padding:6px 8px;border-radius:8px}
+.t-menu a.btn{color:#FFFFFF;justify-content:center;font-size:15px}
+.t-menu hr{border:0;border-top:1px solid #F1F5F9;margin:6px 0;width:100%}
+@media (max-width:767px){
+  :root{--navh:84px}
+  .t-links,.t-right .btn{display:none}
+  .t-burger{display:inline-flex}
+  .t-logo img{height:40px}
+}
+@media (min-width:768px){.t-menu{display:none!important}}
+.t-chiprow .chips{padding-block:8px 4px}
+.t-chiprow .chip{background:#F8FAFC}
+
+/* Buttons and controls */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border-radius:999px;padding:12px 18px;font-size:14px;font-weight:500;background:var(--t-primary);border:1px solid var(--t-primary);color:#FFFFFF;text-decoration:none;cursor:pointer;transition:opacity .2s}
+.btn:hover{opacity:.9;background:var(--t-primary);border-color:var(--t-primary)}
+.btn.ghost,.btn.ghost:hover{background:#FFFFFF;color:#111827;border-color:var(--line)}
+.btn.sm{padding:8px 14px;font-size:13.5px}
+.seg{border-radius:999px;border-color:var(--line);background:#FFFFFF;padding:2px}
+.seg button{border-radius:999px;font-weight:500;padding:6px 14px}
+.seg button[aria-pressed="true"],.radio-row button[aria-pressed="true"],.chip[aria-pressed="true"],.chip[aria-current="page"]{background:var(--t-primary);border-color:var(--t-primary);color:#FFFFFF}
+.chip{font-weight:500}
+.style-btn{border-radius:14px}
+.style-btn[aria-pressed="true"],button.wk-row.pick{border-color:var(--t-primary);box-shadow:inset 0 0 0 1px var(--t-primary)}
+.badge,.fav-btn{border-radius:999px;font-weight:500}
+.fav-btn[aria-pressed="true"]{background:var(--t-primary);border-color:var(--t-primary)}
+.radio-row button{border-radius:999px;font-family:var(--body)}
+.near-btn{border-radius:999px;font-weight:500}
+.search input{border-radius:999px;padding:12px 18px}
+.search ul{border-radius:16px;border-color:#E5E7EB;box-shadow:0 12px 30px rgba(15,23,42,.12)}
+.pass-tag{background:#EFF6FF;border-color:#DBEAFE;color:#1D4ED8;font-weight:500}
+
+/* Cards: rounded-2xl, hairline border, almost no shadow */
+.card,.resort-card,.guide-card,.kit-item,.step,.contact-form,.region-list a{border-radius:16px;border-color:var(--line);box-shadow:none}
+.card{padding:22px}
+.resort-card:hover,.guide-card:hover,.region-list a:hover{border-color:var(--t-secondary)}
+.section-head h2::after{display:none}
+section.block .section-head h2,.home-sec h2{font-size:clamp(26px,3.4vw,36px)}
+.hero h1{font-weight:600;letter-spacing:-.035em;font-size:clamp(36px,5.6vw,60px)}
+.hero h1 .h1-pre{font-family:var(--serif);font-style:italic;font-weight:500;font-size:clamp(18px,2vw,22px);color:#6B7280;letter-spacing:0}
+.big{font-family:var(--body);font-weight:700;letter-spacing:-.03em}
+.edge-nums div{border-radius:12px;background:#F5F8FE}
+.edge-nums b{font-family:var(--body);font-stretch:100%;font-weight:700}
+.surface-pill{border-radius:999px;background:#EFF6FF;color:#1D4ED8}
+.callout{border-radius:12px;background:#F5F8FE}
+.kit-item a{border-radius:999px;border-color:var(--t-primary);color:var(--t-primary)}
+.kit-item a:hover{background:var(--t-primary);color:#FFFFFF}
+.shop{border-radius:999px;border-color:var(--t-primary);color:var(--t-primary)}
+.step{border-radius:14px}
+.flag{border-radius:999px;background:#F59E0B}
+.progress-bar span{background:var(--t-primary)}
+.step input[type=checkbox]{accent-color:var(--t-primary)}
+.strip-bands{border-radius:999px}
+.log-status{border-radius:12px}
+.contact-form input,.contact-form select,.contact-form textarea{border-radius:12px;background:#F9FAFB}
+.region-list a{border-radius:999px;padding:10px 16px}
+.how li{border-top-color:var(--t-primary)}
+.cta-box{border-radius:20px;background:#F5F8FE}
+.article h1{font-weight:600;letter-spacing:-.035em}
+.dek{color:#6B7280}
+
+/* Wax slab keeps its wax color, with theme corners, type and a weather line */
+.card.wax-card{border-radius:20px;padding:0}
+.wax-name{font-family:var(--display);font-stretch:100%;font-weight:700;letter-spacing:-.04em;font-size:min(112px,19cqi)}
+.wax-name[data-len="9"]{font-size:min(104px,14cqi)}
+.slab-wx{margin:2px 0 0;font-size:15px;font-weight:500;opacity:.92}
+@media (max-width:859px){#conditionsCard{order:4} .col-b>.card:first-child{order:5} #edgeCard{order:6} #waxLog{order:7}}
+
+/* Weekend Wax Report as the theme's sky call-to-action */
+.report{background:var(--sky);color:#FFFFFF;border-radius:24px;padding:40px 24px;text-align:center;grid-template-columns:minmax(0,1fr)!important;justify-items:center}
+.report-copy{justify-items:center}
+.report h2{color:#FFFFFF;font-size:clamp(28px,4vw,44px)}
+.report-copy p{color:rgba(255,255,255,.88);margin:0 auto}
+.report-form{width:100%;max-width:640px;background:#F3F4F6;border-radius:18px;padding:14px;box-shadow:0 4px 12px rgba(15,23,42,.12);text-align:left}
+.report-row input{background:transparent;color:#374151;padding:12px 10px;border-radius:12px}
+.report .btn{background:var(--t-primary);border-color:var(--t-primary);border-radius:999px}
+.report .muted,.report .small{color:#6B7280}
+.report a{color:var(--t-primary)}
+.report-msg{color:#111827}
+
+/* White footer */
+.site-foot,.t-foot{background:#FFFFFF;color:#374151;border-top:1px solid #F1F5F9;margin-top:56px}
+.t-foot-grid{display:grid;gap:32px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:768px){.t-foot-grid{grid-template-columns:minmax(0,1.3fr) repeat(3,minmax(0,1fr))}}
+.t-foot-brand img{height:56px;width:auto;display:block;margin-bottom:14px}
+.t-foot-brand p{font-size:14px;line-height:1.6;max-width:36ch}
+.t-foot h3{font-size:15px;font-weight:600;color:#111827;margin-bottom:10px;letter-spacing:0}
+.t-foot ul{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.t-foot ul a{color:#374151;text-decoration:none;font-size:14px}
+.t-foot ul a:hover{color:#000000}
+.t-credits{display:grid;gap:8px;font-size:12.5px;color:#6B7280;border-top:1px solid #F1F5F9;margin-top:32px;padding-top:20px}
+.t-credits a{color:#6B7280}
+.t-copy{text-align:center;font-size:14px;color:#6B7280;margin-top:20px}
+
+/* ---------- Home page sections ---------- */
+.t-hero{position:relative;min-height:100vh;min-height:100svh;background:var(--sky);display:flex;align-items:center;justify-content:center;padding:calc(var(--navh) + 40px) 16px 64px;text-align:center}
+.t-hero-in{width:100%;max-width:896px;display:flex;flex-direction:column;align-items:center;gap:16px;color:#FFFFFF}
+.t-tag{display:inline-flex;align-items:center;gap:8px;background:#FFFFFF;color:#000000;border-radius:999px;padding:7px 16px;font-size:14px;margin:0}
+.t-tag svg{flex:none}
+.t-hero h1{color:#FFFFFF;font-size:clamp(34px,6vw,64px);font-weight:600;line-height:1.1;letter-spacing:-.035em;margin:0}
+.t-hero h1 .t-serif{font-weight:500}
+.t-hero-p{color:rgba(255,255,255,.9);max-width:36rem;font-size:16px;line-height:1.65;margin:-4px auto 0}
+.t-ask{width:100%;max-width:768px;margin-top:20px;background:#F3F4F6;border-radius:18px;box-shadow:0 4px 6px -1px rgba(0,0,0,.1),0 2px 4px -2px rgba(0,0,0,.1);padding:16px;display:flex;flex-direction:column;gap:12px;text-align:left}
+.t-ask-in{display:flex;align-items:center;gap:10px;padding:6px 8px}
+.t-ask-in svg{flex:none}
+.search.t-ask input{border:0;background:transparent;border-radius:0;padding:14px 0;font-size:17px;color:#374151}
+.search.t-ask input:focus{outline:none}
+.t-ask:focus-within{box-shadow:0 0 0 3px rgba(40,111,236,.35),0 4px 6px -1px rgba(0,0,0,.1)}
+.t-ask-bar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.t-ask .pass-row{margin:0}
+.t-ask .pass-row .chip{background:#FFFFFF;border-color:#D1D5DB;color:#374151;padding:5px 12px;font-size:13px}
+.t-ask .pass-row .chip[aria-pressed="true"]{background:var(--t-primary);border-color:var(--t-primary);color:#FFFFFF}
+.t-ask-act{display:flex;align-items:center;gap:8px;margin-left:auto}
+.t-near{display:inline-flex;align-items:center;gap:6px;background:transparent;border:0;color:var(--t-primary);padding:8px 12px}
+.t-near:hover{background:#E5E7EB}
+.t-ask .btn{padding:9px 16px}
+.search.t-ask ul{position:static;margin:0;box-shadow:none;border-color:#E5E7EB}
+.t-ask .near-msg{margin:0 8px;color:#6B7280}
+
+.t-sec{padding-block:72px 8px}
+.t-h2{text-align:center;font-size:clamp(28px,4vw,44px);font-weight:600;letter-spacing:-.03em;line-height:1.15;margin:0 auto 12px;max-width:22ch}
+.t-sub{text-align:center;color:#6B7280;margin:0 auto 28px;max-width:56ch}
+.t-h3{font-size:22px;margin:8px 0 6px}
+.t-center{text-align:center;margin-top:28px}
+
+.t-bento{display:flex;flex-direction:column;gap:12px;margin-top:28px}
+@media (min-width:768px){.t-bento{display:grid;grid-template-columns:300px minmax(0,1fr) 300px;grid-template-rows:220px 220px}}
+.t-b{border-radius:16px;padding:24px;display:flex;flex-direction:column;justify-content:space-between;gap:16px;min-height:180px}
+.t-b1{background:#FFFFFF;border:1px solid #E5E7EB;grid-column:1;grid-row:1}
+.t-b2{background:var(--t-navy);color:#FFFFFF;grid-column:1;grid-row:2}
+.t-b3{position:relative;overflow:hidden;background:var(--sky);grid-column:2;grid-row:1 / span 2;min-height:360px}
+.t-b3::after{content:"";position:absolute;inset:0;background:linear-gradient(to bottom,transparent 50%,rgba(220,235,255,.92) 80%,rgba(210,228,255,.98) 100%)}
+.t-b3>*{position:relative;z-index:1}
+.t-b4{background:var(--t-ice);grid-column:3;grid-row:1 / span 2;align-items:center;justify-content:center;text-align:center;min-height:280px}
+.t-stat{font-size:42px;font-weight:700;color:#3B82F6;line-height:1;margin:0;letter-spacing:-.03em}
+.t-stat.t-white{color:#FFFFFF;text-shadow:0 2px 6px rgba(0,0,0,.15)}
+.t-bt{font-size:20px;font-weight:700;color:#111827;margin:0 0 4px}
+.t-b2 .t-bt{color:#FFFFFF}
+.t-bd{font-size:13.5px;line-height:1.6;color:#6B7280;margin:0}
+.t-b2 .t-bd{color:#9CA3AF}
+.t-b3 .t-bd{color:#4B5563;max-width:300px}
+.t-b3-row{display:flex;align-items:flex-end;justify-content:space-between;gap:16px;flex-wrap:wrap}
+.t-big{font-size:34px;font-weight:800;letter-spacing:-.03em;color:#030712;line-height:1;margin:0 0 12px}
+.t-b4 .t-bd{max-width:200px;margin:0 auto}
+
+.t-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px}
+.resort-card.t-card{padding:0;gap:0;background:#F3F4F6;border:0}
+.t-card .t-art{height:150px;background:var(--sky);overflow:hidden}
+.t-card .t-art svg{display:block;width:100%;height:100%;transition:transform .5s}
+.t-card:hover .t-art svg{transform:scale(1.05)}
+.t-card-b{padding:12px 14px 10px;display:grid;gap:2px}
+.t-card-b h3{font-size:15px;font-weight:600;letter-spacing:-.01em;color:#111827}
+.t-card-b p{font-size:12.5px;color:#9CA3AF;margin:0}
+.resort-card.t-card .wax-chip{margin:auto 0 0;padding:10px 14px}
+.resort-card.t-card.alt{background:#EFF6FF;border:1px dashed #BFDBFE}
+.t-card.alt .t-card-b{padding:18px 16px;gap:8px}
+#myMtns{margin-bottom:24px}
+
+.t-steps{display:grid;gap:24px;grid-template-columns:minmax(0,1fr);margin-top:32px}
+@media (min-width:640px){.t-steps{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.t-step{position:relative;overflow:hidden;border-radius:16px;border:1px solid #DBEAFE;background:linear-gradient(135deg,#EFF6FF,#FFFFFF 50%,#DBEAFE);padding:28px;min-height:240px;display:flex;flex-direction:column;justify-content:space-between}
+.t-step-l{font-size:12px;font-weight:500;color:#9CA3AF;letter-spacing:.04em;text-transform:uppercase}
+.t-step h3{font-size:22px;font-weight:600;position:relative;z-index:1;margin-top:16px}
+.t-step p{font-size:14px;color:#6B7280;line-height:1.6;margin:8px 0 0;position:relative;z-index:1}
+.t-step-n{position:absolute;right:-8px;bottom:-20px;font-size:140px;font-weight:700;line-height:1;background:linear-gradient(135deg,#BFDBFE,#DBEAFE 60%,#EFF6FF);-webkit-background-clip:text;background-clip:text;color:transparent;pointer-events:none;user-select:none}
+
+.t-sec .region-list{margin-top:8px}
+.t-sec h3{margin-top:18px}
+
+.t-faq{max-width:768px;margin:28px auto 0;display:grid;gap:14px}
+.t-q{border:1px solid #E5E7EB;border-radius:16px;background:#FFFFFF;padding:0 20px}
+.t-q summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:16px;padding:18px 0;font-weight:500;font-size:16px;color:#111827}
+.t-q summary::-webkit-details-marker{display:none}
+.t-plus{flex:none;width:28px;height:28px;border-radius:999px;background:#EFF6FF;position:relative;transition:transform .25s}
+.t-plus::before,.t-plus::after{content:"";position:absolute;left:50%;top:50%;width:12px;height:2px;background:var(--t-primary);transform:translate(-50%,-50%)}
+.t-plus::after{transform:translate(-50%,-50%) rotate(90deg)}
+.t-q[open] .t-plus{transform:rotate(45deg)}
+.t-q p{margin:0 0 18px;color:#6B7280;font-size:14.5px;line-height:1.65}
+
+.t-cta-wrap{padding-top:72px}
+.t-cta-wrap .report{border-radius:0;padding:96px 16px;margin:0}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.t-card .t-art svg{transition:none}}
 </style>
 <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "7effe80b68fa4bdd9944534b8a820936"}'></script>
 <script type="application/ld+json">[{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://theskiadvisor.com/"}, {"@type": "ListItem", "position": 2, "name": "Resorts", "item": "https://theskiadvisor.com/resorts/index.html"}, {"@type": "ListItem", "position": 3, "name": "British Columbia", "item": "https://theskiadvisor.com/regions/ca-bc.html"}, {"@type": "ListItem", "position": 4, "name": "Little Mac", "item": "https://theskiadvisor.com/resorts/little-mac.html"}]}, {"@context": "https://schema.org", "@type": "SkiResort", "name": "Little Mac", "mainEntityOfPage": "https://theskiadvisor.com/resorts/little-mac.html", "geo": {"@type": "GeoCoordinates", "latitude": 55.3385, "longitude": -123.0834, "elevation": 799}, "address": {"@type": "PostalAddress", "addressRegion": "British Columbia", "addressCountry": "CA", "addressLocality": "Mackenzie"}}]</script>
@@ -573,15 +803,15 @@ h1,h2,h3{color:var(--heading)}
 <body>
 <div id="pageInfo" data-page="resort" data-resort="little-mac" hidden></div>
 <script type="application/json" id="resortData">{"api": "CA-BC", "resorts": [{"id": "little-mac", "name": "Little Mac", "region": "BC", "api": "CA-BC", "lat": 55.3385, "lon": -123.0834, "mid": 777, "ex": {"air": -0.9, "rh": 86, "snow48": 3, "pastMax": 2.1, "cloud": 50, "code": 2, "tmrMin": -4.9, "tmrMax": 1.1, "tmrSnow": 1}, "pass": ""}]}</script>
-<header class="top">
-  <div class="wrap">
-    <div class="top-row">
-      <a class="brand" href="../index.html"><img src="../assets/logo-header.webp" alt="The Ski Advisor" width="100" height="54"></a>
-      <nav class="nav" aria-label="Site"><a href="../resorts/index.html" aria-current="page">Resorts</a><a href="../guides/index.html">Guides</a></nav>
-    </div>
-    <nav class="chips" aria-label="Nearby resorts"><a class="chip" href="little-mac.html" aria-current="page">Little Mac<small>BC</small></a><a class="chip" href="powder-king.html">Powder King Mountain Resort<small>BC</small></a><a class="chip" href="portage-mountain.html">Portage Mountain Ski Hill<small>BC</small></a><a class="chip" href="murray-ridge.html">Murray Ridge<small>BC</small></a><a class="chip" href="hart-highlands.html">Hart Highlands<small>BC</small></a><a class="chip" href="tabor-mountain.html">Tabor Mountain<small>BC</small></a><a class="chip" href="big-bam.html">Big Bam<small>BC</small></a><a class="chip" href="purden-ski-village.html">Purden Ski Village<small>BC</small></a><a class="chip" href="bear-mountain-ca-bc.html">Bear Mountain Ski Hill<small>BC</small></a><a class="chip" href="../regions/ca-bc.html">All of British Columbia</a></nav>
+<header class="t-nav">
+  <div class="t-pill">
+    <a class="brand t-logo" href="../index.html" aria-label="The Ski Advisor home"><img src="../assets/logo-navy.webp" alt="The Ski Advisor" width="82" height="44"></a>
+    <nav class="t-links" aria-label="Site"><a href="../resorts/index.html" aria-current="page">Resorts</a><a href="../guides/index.html">Guides</a><a href="../about.html">About</a><a href="../contact.html">Contact</a></nav>
+    <div class="t-right"><a class="btn" href="../resorts/index.html">Find your mountain</a><button type="button" class="t-burger" aria-label="Open menu" aria-expanded="false" aria-controls="tMenu"><svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></button></div>
   </div>
-</header>
+  <nav class="t-menu" id="tMenu" aria-label="Menu" hidden><a href="../resorts/index.html" aria-current="page">Resorts</a><a href="../guides/index.html">Guides</a><a href="../about.html">About</a><a href="../contact.html">Contact</a><hr><a class="btn" href="../resorts/index.html">Find your mountain</a></nav>
+</header><div class="wrap t-chiprow">
+    <nav class="chips" aria-label="Nearby resorts"><a class="chip" href="little-mac.html" aria-current="page">Little Mac<small>BC</small></a><a class="chip" href="powder-king.html">Powder King Mountain Resort<small>BC</small></a><a class="chip" href="portage-mountain.html">Portage Mountain Ski Hill<small>BC</small></a><a class="chip" href="murray-ridge.html">Murray Ridge<small>BC</small></a><a class="chip" href="hart-highlands.html">Hart Highlands<small>BC</small></a><a class="chip" href="tabor-mountain.html">Tabor Mountain<small>BC</small></a><a class="chip" href="big-bam.html">Big Bam<small>BC</small></a><a class="chip" href="purden-ski-village.html">Purden Ski Village<small>BC</small></a><a class="chip" href="bear-mountain-ca-bc.html">Bear Mountain Ski Hill<small>BC</small></a><a class="chip" href="../regions/ca-bc.html">All of British Columbia</a></nav></div>
 <main class="wrap">
   <nav class="crumbs" aria-label="Breadcrumb"><a href="../index.html">Home</a><span aria-hidden="true">›</span><a href="index.html">Resorts</a><span aria-hidden="true">›</span><a href="../regions/ca-bc.html">British Columbia</a><span aria-hidden="true">›</span><span>Little Mac</span></nav>
   <div class="hero">
@@ -622,6 +852,7 @@ h1,h2,h3{color:var(--heading)}
             <div><dt>Snow</dt><dd id="waxSnow">—</dd></div>
             <div><dt>Made for snow</dt><dd id="waxRange">—</dd></div>
           </dl>
+          <p class="slab-wx" id="slabWx"></p>
         </div>
         <div class="wax-body">
           <div class="strip" id="strip" aria-hidden="true">
@@ -774,19 +1005,18 @@ h1,h2,h3{color:var(--heading)}
     <p>Base bevels are usually set by a shop's stone grind. If your skis are new or freshly ground, ask the shop what they set before you change anything.</p>
   </div>
 </main>
-<footer class="site-foot">
-  <div class="wrap" style="display:grid;gap:22px">
-    <div class="foot-grid">
-      <div><h3>Popular resorts</h3><ul><li><a href="../resorts/whistler.html">Whistler Blackcomb</a></li><li><a href="../resorts/vail.html">Vail</a></li><li><a href="../resorts/parkcity.html">Park City</a></li><li><a href="../resorts/jackson.html">Jackson Hole</a></li><li><a href="../resorts/aspen.html">Aspen Snowmass</a></li><li><a href="../resorts/mammoth.html">Mammoth Mountain</a></li><li><a href="../resorts/bigsky.html">Big Sky</a></li><li><a href="../resorts/telluride.html">Telluride</a></li><li><a href="../resorts/snowbird.html">Snowbird</a></li><li><a href="../resorts/killington.html">Killington</a></li><li><a href="../resorts/bogus.html">Bogus Basin</a></li><li><a href="../resorts/index.html"><b>All 745 resorts</b></a></li><li><a href="../passes/epic.html">Epic Pass mountains</a></li><li><a href="../passes/ikon.html">Ikon Pass mountains</a></li></ul></div>
-      <div><h3>Guides</h3><ul><li><a href="../guides/how-to-wax-skis.html">How to Wax Skis at Home</a></li><li><a href="../guides/how-to-wax-a-snowboard.html">How to Wax a Snowboard at Home</a></li><li><a href="../guides/ski-wax-temperature-chart.html">Ski Wax Temperature Chart</a></li><li><a href="../guides/ski-edge-angles.html">Ski Edge Angles Explained: 89°, 88° and 87°</a></li><li><a href="../guides/how-to-sharpen-ski-edges.html">How to Sharpen Ski Edges at Home</a></li><li><a href="../guides/race-wax-vs-training-wax.html">Race Wax vs Training Wax</a></li><li><a href="../guides/waxing-for-spring-snow.html">Waxing for Wet Spring Snow</a></li><li><a href="../guides/icy-and-man-made-snow.html">Tuning for Ice and Man-Made Snow</a></li><li><a href="../guides/how-often-to-wax-skis.html">How Often Should You Wax Your Skis?</a></li><li><a href="../guides/ski-tuning-kit.html">Home Ski Tuning Kit: What to Buy First</a></li><li><a href="../guides/best-ski-wax-iron.html">Best Ski Wax Iron: What to Buy and What to Skip</a></li><li><a href="../guides/ski-tuning-kit-under-100.html">Ski Tuning Kit Under $100: A Starter Setup That Works</a></li><li><a href="../guides/best-race-wax.html">Best Race Wax: Fluoro-Free Picks for Ski Racers</a></li></ul></div>
-      <div><h3>The Ski Advisor</h3><p>Wax and edge recommendations for 745 ski areas in the US, Canada and Mexico, from the forecast at each one's mid-mountain elevation.</p></div>
+<footer class="site-foot t-foot">
+  <div class="wrap" style="padding-block:56px 24px">
+    <div class="t-foot-grid">
+      <div class="t-foot-brand"><img src="../assets/logo-navy.webp" alt="The Ski Advisor" width="104" height="56"><p>Wax and edge recommendations for 745 ski areas in the US, Canada and Mexico, from the forecast at each one's mid-mountain elevation.</p></div>
+      <div><h3>Popular resorts</h3><ul><li><a href="../resorts/whistler.html">Whistler Blackcomb</a></li><li><a href="../resorts/vail.html">Vail</a></li><li><a href="../resorts/parkcity.html">Park City</a></li><li><a href="../resorts/jackson.html">Jackson Hole</a></li><li><a href="../resorts/aspen.html">Aspen Snowmass</a></li><li><a href="../resorts/mammoth.html">Mammoth Mountain</a></li><li><a href="../resorts/bigsky.html">Big Sky</a></li><li><a href="../resorts/telluride.html">Telluride</a></li><li><a href="../resorts/index.html">All 745 resorts</a></li></ul></div>
+      <div><h3>Guides</h3><ul><li><a href="../guides/how-to-wax-skis.html">How to Wax Skis at Home</a></li><li><a href="../guides/how-to-wax-a-snowboard.html">How to Wax a Snowboard at Home</a></li><li><a href="../guides/ski-wax-temperature-chart.html">Ski Wax Temperature Chart</a></li><li><a href="../guides/ski-edge-angles.html">Ski Edge Angles Explained: 89°, 88° and 87°</a></li><li><a href="../guides/how-to-sharpen-ski-edges.html">How to Sharpen Ski Edges at Home</a></li><li><a href="../guides/race-wax-vs-training-wax.html">Race Wax vs Training Wax</a></li><li><a href="../guides/waxing-for-spring-snow.html">Waxing for Wet Spring Snow</a></li><li><a href="../guides/icy-and-man-made-snow.html">Tuning for Ice and Man-Made Snow</a></li><li><a href="../guides/index.html">All guides</a></li></ul></div>
+      <div><h3>The Ski Advisor</h3><ul><li><a href="../about.html">About</a></li><li><a href="../contact.html">Contact</a></li><li><a href="../privacy.html">Privacy</a></li><li><a href="../passes/epic.html">Epic Pass mountains</a></li><li><a href="../passes/ikon.html">Ikon Pass mountains</a></li></ul></div>
     </div>
-    <p class="foot-links"><a href="../about.html">About</a> · <a href="../contact.html">Contact</a> · <a href="../privacy.html">Privacy</a></p>
-    <p>Weather data from <a href="https://api.met.no/">MET Norway</a> (<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>), adapted by us: forecasts at mid-mountain altitude, snow estimated from precipitation and temperature. MET Norway is not responsible for our recommendations.</p>
-    <p>Resort data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a> and <a href="https://openskimap.org">OpenSkiMap</a>, available under the <a href="https://opendatacommons.org/licenses/odbl/">Open Database License</a>.</p>
-    <p>As an Amazon Associate, The Ski Advisor earns from qualifying purchases. Commissions don't change what we recommend. Recommendations are starting points: the temperature on your wax label wins, and a snow thermometer beats any forecast.</p>
+    <div class="t-credits"><p>Weather data from <a href="https://api.met.no/">MET Norway</a> (<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>), adapted by us: forecasts at mid-mountain altitude, snow estimated from precipitation and temperature. MET Norway is not responsible for our recommendations.</p><p>Resort data © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a> and <a href="https://openskimap.org">OpenSkiMap</a>, available under the <a href="https://opendatacommons.org/licenses/odbl/">Open Database License</a>.</p><p>As an Amazon Associate, The Ski Advisor earns from qualifying purchases. Commissions don't change what we recommend. The temperature on your wax label wins, and a snow thermometer beats any forecast.</p></div>
+    <p class="t-copy">© 2026 The Ski Advisor</p>
   </div>
 </footer>
-<script src="../assets/tool.js?v=74153e7b6a"></script>
+<script src="../assets/tool.js?v=71a447971d"></script>
 </body>
 </html>
