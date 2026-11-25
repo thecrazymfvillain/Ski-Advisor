@@ -414,6 +414,7 @@ function render(){
   $("statSnowLabel").textContent = state.day==="today" ? "New snow, 48 h" : `New snow by ${c.date.toLocaleDateString("en-US",{weekday:"short"})}`;
   $("statSnow").textContent = fmtSnow(c.snow48);
   $("statSky").textContent = c.sky;
+  $("slabWx").textContent = `Air ${fmtT(c.air)} · ${fmtSnow(c.snow48)} new snow ${state.day==="today" ? "in 48 h" : "by " + c.date.toLocaleDateString("en-US",{weekday:"short"})} · ${c.sky}`;
 
   // weekend breakdown
   $("wkBox").hidden = !wk; $("wkNote").hidden = !(wk && wk.daysOut>=3);
@@ -616,7 +617,12 @@ function initSearch(){
     input.addEventListener("focus", load);
     input.addEventListener("input", () => load().then(show));
     input.addEventListener("keydown", e => { if(e.key === "Escape"){ list.hidden = true; } });
-    form.addEventListener("submit", e => { e.preventDefault(); const a = list.querySelector("a"); if(a) location.href = a.href; });
+    form.addEventListener("submit", async e => {
+      e.preventDefault();
+      if(!input.value.trim()){ input.focus(); return; }
+      await load(); show();
+      const a = list.querySelector("a"); if(a) location.href = a.href;
+    });
     document.addEventListener("click", e => { if(!form.contains(e.target)) list.hidden = true; });
   });
 }
@@ -751,15 +757,15 @@ async function drawShareCard(info){
   const W = 1080, H = 1080, M = 64;
   const cv = document.createElement("canvas"); cv.width = W; cv.height = H;
   const ctx = cv.getContext("2d");
-  const D = '"Archivo",system-ui,sans-serif', B = D;
+  const D = '"Geist",system-ui,sans-serif', B = D;
   try{ await Promise.all(["900 90px", "700 30px", "600 32px", "400 26px"].map(f=>document.fonts.load(f + " " + D))); }catch(e){}
   const wide = on => { if("fontStretch" in ctx) ctx.fontStretch = on ? "expanded" : "normal"; };
-  const navy = "#00174B", red = "#FB1A31", ink = "#0F1B26", muted = "#56687A", line = "#D3DCE4";
+  const navy = "#00174B", red = "#286FEC", ink = "#111827", muted = "#6B7280", line = "#E5E7EB";
   ctx.fillStyle = "#FFFFFF"; ctx.fillRect(0, 0, W, H);
   ctx.fillStyle = navy; ctx.fillRect(0, 0, W, 176);
   const logo = document.querySelector(".brand img");
   try{
-    const img = new Image(); img.src = logo.currentSrc || logo.src; await img.decode();
+    const img = new Image(); img.src = new URL("../assets/logo-header.webp", location.href).href; await img.decode();
     const h = 124, w = img.naturalWidth * h / img.naturalHeight; ctx.drawImage(img, M - 8, 26, w, h);
   }catch(e){ ctx.fillStyle = "#FFFFFF"; ctx.font = `800 54px ${D}`; ctx.textBaseline = "middle"; ctx.fillText("THE SKI ADVISOR", M, 88); }
   ctx.textBaseline = "alphabetic";
@@ -855,11 +861,22 @@ function initReport(){
   });
 }
 
+/* ---------- Mobile menu ---------- */
+function initMenu(){
+  const btn = document.querySelector(".t-burger"), menu = $("tMenu");
+  if(!btn || !menu) return;
+  const set = open => { menu.hidden = !open; btn.setAttribute("aria-expanded", String(open)); btn.setAttribute("aria-label", open ? "Close menu" : "Open menu"); };
+  btn.addEventListener("click", () => set(menu.hidden));
+  document.addEventListener("keydown", e => { if(e.key === "Escape") set(false); });
+  menu.addEventListener("click", e => { if(e.target.closest("a")) set(false); });
+}
+
 /* ---------- Wire up ---------- */
 const PAGE = PI.page;
 initSearch();
 initNearMe();
 initPassFilter();
+initMenu();
 initReport();
 document.querySelectorAll("[data-edge-diagram]").forEach(el=>{ el.innerHTML = edgeSVG(Number(el.dataset.base), Number(el.dataset.side)); });
 if(PAGE==="resort"){
