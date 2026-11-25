@@ -13,7 +13,7 @@ the change and said to push. No pull requests or review needed.
 
 ## Rules that cost money or break the live site
 
-- **Every push to `main` deploys to production and costs 15 Netlify credits** (the plan has 300 a month).
+- **Every push to `main` deploys to production and costs 15 Netlify credits** (the plan has 1,000 a month).
   Show the owner the change and get their go-ahead before each push that changes the site, and group related
   changes into one push to save credits.
 - A commit that doesn't change the site (notes, docs) can go to `main` without a deploy if its message
