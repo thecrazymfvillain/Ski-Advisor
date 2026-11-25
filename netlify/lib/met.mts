@@ -17,12 +17,24 @@ export const RESORTS = resorts as Resort[];
 const USER_AGENT = "TheSkiAdvisor/1.0 (+https://theskiadvisor.com)";
 const HOUR = 3600_000;
 
-// Fresh snow from liquid-equivalent precipitation: about 1 cm per mm when it's cold, less near freezing.
-export function snowFrom(mm: number, tempC: number): number {
+// How much of the precipitation settles as snow. Both have to agree: MET's label for the hour
+// (snow, sleet or rain) and the mid-mountain temperature. Rain never counts; sleet counts half at most.
+export function snowShare(symbol: string | undefined, tempC: number): number {
+  const s = (symbol || "").replace(/_(day|night|polartwilight)$/, "");
+  const byLabel = s.includes("sleet") ? 0.5 : s.includes("snow") ? 1 : s.includes("rain") ? 0 : 1;
+  const byTemp = tempC <= 0 ? 1 : tempC <= 1.5 ? 0.5 : 0;
+  return Math.min(byLabel, byTemp);
+}
+
+// Centimeters of new snow per millimeter of water: dense and wet near freezing, light when it's cold.
+export function snowRatio(tempC: number): number {
+  return tempC <= -10 ? 1.5 : tempC <= -4 ? 1.2 : tempC <= -1 ? 1 : 0.8;
+}
+
+// Fresh snow (cm) from liquid-equivalent precipitation (mm).
+export function snowFrom(mm: number, tempC: number, symbol?: string): number {
   if (!(mm > 0)) return 0;
-  if (tempC <= 0) return mm;
-  if (tempC <= 1.5) return mm * 0.5;
-  return 0;
+  return mm * snowShare(symbol, tempC) * snowRatio(tempC);
 }
 
 export function skyFrom(symbol: string | undefined): string {
@@ -62,7 +74,7 @@ export function recordWindow(forecast: any, hours = 6): Hour | null {
     const det = e.data?.instant?.details || {};
     if (typeof det.air_temperature === "number") temp = Math.max(temp, det.air_temperature);
     const mm = e.data?.next_1_hours?.details?.precipitation_amount;
-    if (typeof mm === "number") snow += snowFrom(mm, det.air_temperature ?? 0);
+    if (typeof mm === "number") snow += snowFrom(mm, det.air_temperature ?? 0, e.data?.next_1_hours?.summary?.symbol_code);
   }
   return Number.isFinite(temp) ? { t: Math.floor(t0 / HOUR) * HOUR, temp, snow } : null;
 }
@@ -102,7 +114,7 @@ export function summarize(r: Resort, forecast: any, history: Hour[], now = Date.
     const next = ts[i + 1] ? Date.parse(ts[i + 1].time) - t : HOUR;
     const block = next <= HOUR ? e.data?.next_1_hours : e.data?.next_6_hours;
     const mm = block?.details?.precipitation_amount ?? 0;
-    day.snow += snowFrom(mm, det.air_temperature ?? 0);
+    day.snow += snowFrom(mm, det.air_temperature ?? 0, block?.summary?.symbol_code);
   });
   const days = [...byDay.values()]
     .filter(d => Number.isFinite(d.min))
