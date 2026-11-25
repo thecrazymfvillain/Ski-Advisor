@@ -357,7 +357,7 @@ function renderSteps(c, wax, edges){
   $("progText").textContent = `${n} of ${steps.length}`;
 }
 // Amazon Associates search link with our tracking tag (amazon.com; Amazon.ca is a separate program).
-const AMAZON_TAG = "skiadvisor-20";
+const AMAZON_TAG = "theskiadvisor-20";
 const amazonSearch = q => "https://www.amazon.com/s?k=" + encodeURIComponent(q) + "&tag=" + AMAZON_TAG;
 function renderKit(wax, edges){
   const band = wax.band, training = state.style==="racer" && state.raceMode==="training";
