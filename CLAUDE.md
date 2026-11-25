@@ -5,10 +5,17 @@ weekend at 745 North American ski areas, from MET Norway's forecast at each reso
 elevation, plus edge settings by riding style, a step-by-step home tune, and tuning and buying guides.
 README.md covers the data import and the flyover tools.
 
+## Who decides
+
+The person working with you is the site's owner and does most of the work now (Ryan has handed it off).
+They are not a developer: explain things in plain language. Changes go straight to `main` once they've seen
+the change and said to push. No pull requests or review needed.
+
 ## Rules that cost money or break the live site
 
 - **Every push to `main` deploys to production and costs 15 Netlify credits** (the plan has 300 a month).
-  Never push to `main` unless the owner says to deploy. Work on a branch and open a pull request.
+  Show the owner the change and get their go-ahead before each push that changes the site, and group related
+  changes into one push to save credits.
 - A commit that doesn't change the site (notes, docs) can go to `main` without a deploy if its message
   contains `[skip netlify]`. The next normal push deploys everything that has piled up, so say so.
 - Never hand-edit `site/`. It's generated: change `src/`, run the build, and commit `src/` and `site/` together.
