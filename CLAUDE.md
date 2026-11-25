@@ -16,6 +16,9 @@ the change and said to push. No pull requests or review needed.
 - **Every push to `main` deploys to production and costs 15 Netlify credits** (the plan has 1,000 a month).
   Show the owner the change and get their go-ahead before each push that changes the site, and group related
   changes into one push to save credits.
+- **Preview locally before every push that changes the site.** Build, run `python3 src/preview.py`, and show
+  the owner screenshots of the changed pages (desktop and phone) from a headless browser. Push only after
+  they've seen them and said go. Previews cost nothing; deploys cost credits.
 - A commit that doesn't change the site (notes, docs) can go to `main` without a deploy if its message
   contains `[skip netlify]`. The next normal push deploys everything that has piled up, so say so.
 - Never hand-edit `site/`. It's generated: change `src/`, run the build, and commit `src/` and `site/` together.
@@ -26,10 +29,11 @@ the change and said to push. No pull requests or review needed.
 
 ```bash
 python3 src/build.py                                  # writes all 816 pages to site/, plus netlify/lib/*.json
-cd site && python3 -m http.server 8000                # http://localhost:8000
+python3 src/preview.py                                # http://localhost:8000
 ```
 
-Locally there's no weather API, so pages show "Example conditions". The live API is
+`src/preview.py` serves `site/` and forwards `/api/...` to the live site, so previews show real weather
+(it needs theskiadvisor.com reachable; without it, pages fall back to "Example conditions"). The live API is
 `https://theskiadvisor.com/api/conditions/<region>` (e.g. `US-CO`, or `featured`).
 
 ## How it fits together
