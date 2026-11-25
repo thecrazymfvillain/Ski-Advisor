@@ -282,7 +282,7 @@ def edge_figs():
     return '<div class="figs">' + "".join(
         f'<figure><div data-edge-diagram data-base="{b}" data-side="{s}"></div><figcaption>{c}</figcaption></figure>' for b,s,c in figs) + '</div>'
 
-AMAZON_TAG = "skiadvisor-20"   # Amazon Associates (amazon.com)
+AMAZON_TAG = "theskiadvisor-20"   # Amazon Associates (amazon.com)
 def shop(q):
     from urllib.parse import quote_plus
     return f'<a class="shop" href="https://www.amazon.com/s?k={quote_plus(q)}&amp;tag={AMAZON_TAG}" target="_blank" rel="noopener sponsored">Shop on Amazon</a>'
