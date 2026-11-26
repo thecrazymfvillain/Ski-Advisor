@@ -744,7 +744,7 @@ FAQ = [
  ("How do you pick the wax?", "We take the forecast at your resort's mid-mountain elevation, estimate the snow temperature and surface, and match it to the standard wax color bands. New and man-made snow get one step colder; wet snow gets a warm wax and extra brushing."),
  ("Does it work for snowboards?", "Yes. Choose Snowboard and the tune steps, edge settings and kit switch to board wording. The wax is the same."),
  ("Should I change my edge angles for the conditions?", "No. Most people set their angles once, usually at a shop, and keep them. The snow changes how much edge work is worth doing, not the angles."),
- ("Where does the weather come from?", "MET Norway's forecast, refreshed for every resort every six hours. Resort locations and elevations come from OpenStreetMap."),
+ ("Where does the weather come from?", "MET Norway's forecast, refreshed for every resort every six hours. US resort pages also show the National Weather Service's 7-day forecast. Resort locations and elevations come from OpenStreetMap."),
  ("Are the waxes fluoro-free?", "Yes. Every wax we suggest is fluoro-free, including race waxes and top coats."),
 ]
 
@@ -986,7 +986,7 @@ def about_page():
 <li><b>Edges from how you ski.</b> Edge angles are a one-time setup for your style of skiing. The snow only changes how much edge work is worth doing.</li>
 </ul>
 <h2>Where the data comes from</h2>
-<p>Weather comes from <a href="https://api.met.no/">MET Norway</a> under the <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> license. Resort locations, elevations, lifts and runs come from <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a> and <a href="https://openskimap.org">OpenSkiMap</a> under the <a href="https://opendatacommons.org/licenses/odbl/">Open Database License</a>. Volunteers maintain that map, so some details will be wrong. If you spot one, <a href="contact.html">tell us</a> or fix it in OpenStreetMap; the fix reaches this site at the next data refresh.</p>
+<p>Weather comes from <a href="https://api.met.no/">MET Norway</a> under the <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> license. The 7-day forecast text on US resort pages comes from the <a href="https://www.weather.gov/">National Weather Service</a>. Resort locations, elevations, lifts and runs come from <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a> and <a href="https://openskimap.org">OpenSkiMap</a> under the <a href="https://opendatacommons.org/licenses/odbl/">Open Database License</a>. Volunteers maintain that map, so some details will be wrong. If you spot one, <a href="contact.html">tell us</a> or fix it in OpenStreetMap; the fix reaches this site at the next data refresh.</p>
 <h2>Starting points, not rules</h2>
 <p>The temperature on your wax label beats our chart, and a snow thermometer beats any forecast. Use the recommendations as a starting point and adjust from what you see on the hill.</p>
 <h2>How the site makes money</h2>
@@ -1085,7 +1085,7 @@ def privacy_page():
 <ul>
 <li><b>Netlify</b> hosts the site. Like any web host, it processes technical information such as your IP address and browser type to deliver and protect the site. See <a href="https://www.netlify.com/privacy/">Netlify's privacy policy</a>.</li>
 <li><b>cdnjs (Cloudflare)</b> provides the 3D graphics library for the home page flyover. See <a href="https://www.cloudflare.com/privacypolicy/">Cloudflare's privacy policy</a>.</li>
-<li><b>Weather</b> comes from MET Norway, but our server requests it; your browser doesn't contact MET Norway and we don't send them anything about you.</li>
+<li><b>Weather</b> comes from MET Norway and, for US resorts, the National Weather Service, but our server requests it; your browser doesn't contact either of them and we don't send them anything about you.</li>
 </ul>
 <h2>Amazon links</h2>
 <p>{AMZ_NOTE} When you click a Shop link, you go to Amazon, and Amazon may use cookies to record that you came from this site so it can pay us a commission. What Amazon collects is covered by <a href="https://www.amazon.com/gp/help/customer/display.html?nodeId=GX7NJQ4ZB8MHFRNJ">Amazon's privacy notice</a>.</p>

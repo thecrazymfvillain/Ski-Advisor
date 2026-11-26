@@ -51,6 +51,10 @@ python3 src/preview.py                                # http://localhost:8000
 - `netlify/functions/weather-update.mts`: runs hourly at minute 11 UTC; refreshes one sixth of the regions
   from MET Norway (every resort every 6 hours) and stores them in Netlify Blobs ("weather" store).
 - `netlify/functions/conditions.mts`: serves `/api/conditions/:key` from that store.
+- `netlify/functions/nws-update.mts`: runs hourly at minute 41 UTC; saves the National Weather Service 7-day text
+  forecast for the US resorts in that hour's sixth of the regions (`nws-v1/<region>`, grid lookups in `nws-grid`).
+  `netlify/functions/nws.mts` serves `/api/nws/:id` (US only). Parsing is in `netlify/lib/nws.mts`. The preview runs
+  that same code through `src/nws_preview.mts` until the live site has the route (needs api.weather.gov reachable).
 - `netlify/lib/met.mts`: forecast parsing, the snow estimate (`snowFrom`: MET's rain/sleet/snow label plus
   temperature), daily summaries, and the 48-hour new-snow history. MET requires the User-Agent it sets.
 
@@ -62,7 +66,7 @@ python3 src/preview.py                                # http://localhost:8000
 - Amazon Associates tag: `theskiadvisor-20` (amazon.com only), set in both build.py and tool.js.
 - Anything new that collects or stores information about visitors needs a matching update to the privacy
   page (`privacy_page()` in build.py) and its effective date.
-- Weather credit: MET Norway (CC BY 4.0). Resort data credit: OpenStreetMap contributors and OpenSkiMap (ODbL).
+- Weather credit: MET Norway (CC BY 4.0); the National Weather Service for the US 7-day forecast text (public domain). Resort data credit: OpenStreetMap contributors and OpenSkiMap (ODbL).
 
 ## Services
 

@@ -31,6 +31,13 @@
           <p class="examples" id="waxEx"></p>
         </div>
       </div>
+      <!-- National Weather Service 7-day forecast (US resorts only; filled by tool.js from /api/nws/:id) -->
+      <div class="card nws-card" id="nwsCard" hidden>
+        <div class="nws-head"><h2 class="label">National Weather Service forecast</h2><span class="nws-elev" id="nwsElev"></span></div>
+        <div class="nws-week" id="nwsWeek" role="group" aria-label="Next 7 days: tap a day to read its forecast"></div>
+        <div class="nws-detail" id="nwsDetail" aria-live="polite"></div>
+        <p class="nws-credit" id="nwsCredit"></p>
+      </div>
       <!-- Conditions behind the pick -->
       <div class="card" id="conditionsCard">
         <div class="label" id="condLabel">Estimated snow temperature</div>

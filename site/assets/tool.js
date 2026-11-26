@@ -62,6 +62,8 @@ const state = {
   live: null,          // {id: conditions}
   updatedAt: null,
   diag: null,          // {base, side} when user overrides diagram
+  nws: null,           // National Weather Service forecast for this resort (US only), from /api/nws/:id
+  nwsPick: null,       // a day tapped in the 7-day strip ("YYYY-MM-DD"); null = follow Today / Tomorrow / This weekend
   done: store.get("done", {})
 };
 if(!RESORTS.some(r=>r.id===state.resort)) state.resort="vail";
@@ -485,6 +487,85 @@ function render(){
   renderSteps(c, wax, edges);
   renderKit(wax, edges);
   renderWaxLog(c, wax);
+  renderNws(c);
+}
+
+/* ---------- National Weather Service forecast (US resorts) ---------- */
+const NWS_ICONS = {
+  clear:'<circle cx="12" cy="12" r="4.2"/><path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M5.3 18.7l1.6-1.6M17.1 6.9l1.6-1.6"/>',
+  night:'<path d="M19.5 14.6A8 8 0 0 1 9.4 4.5a8 8 0 1 0 10.1 10.1z"/>',
+  partly:'<path d="M9 3.2v1.6M3.2 9h1.6M5 5l1.1 1.1M13 5l-1.1 1.1"/><path d="M6.4 10.9A3.2 3.2 0 0 1 11.5 7"/><path d="M8.5 20h9a3.6 3.6 0 0 0 .5-7.2 5.2 5.2 0 0 0-9.9 1.4A2.9 2.9 0 0 0 8.5 20z"/>',
+  cloud:'<path d="M7 19h10.5a4 4 0 0 0 .6-7.96 6 6 0 0 0-11.6 1.3A3.4 3.4 0 0 0 7 19z"/>',
+  rain:'<path d="M7 15h10.5a4 4 0 0 0 .6-7.96 6 6 0 0 0-11.6 1.3A3.4 3.4 0 0 0 7 15z"/><path d="M8.5 18l-1 2.5M12.5 18l-1 2.5M16.5 18l-1 2.5"/>',
+  snow:'<path d="M7 15h10.5a4 4 0 0 0 .6-7.96 6 6 0 0 0-11.6 1.3A3.4 3.4 0 0 0 7 15z"/><path d="M8 18.2v2.6M6.7 19.5h2.6M12 18.2v2.6M10.7 19.5h2.6M16 18.2v2.6M14.7 19.5h2.6"/>',
+  mix:'<path d="M7 15h10.5a4 4 0 0 0 .6-7.96 6 6 0 0 0-11.6 1.3A3.4 3.4 0 0 0 7 15z"/><path d="M8.5 18l-1 2.5M16.5 18l-1 2.5M12 18.2v2.6M10.7 19.5h2.6"/>',
+  storm:'<path d="M7 15h10.5a4 4 0 0 0 .6-7.96 6 6 0 0 0-11.6 1.3A3.4 3.4 0 0 0 7 15z"/><path d="M12.5 15l-2 3.5h3l-2 3.5"/>',
+  fog:'<path d="M4 9h16M6 13h12M4 17h16"/>'
+};
+function nwsIcon(short, day){
+  const s = (short||"").toLowerCase();
+  const snow = /snow|flurr|blizzard/.test(s), wet = /rain|drizzle|sleet|freezing/.test(s);
+  const k = /thunder/.test(s) ? "storm" : snow && wet ? "mix" : snow ? "snow" : /sleet|freezing/.test(s) ? "mix"
+    : wet || /shower/.test(s) ? "rain" : /fog|haze|smoke|mist/.test(s) ? "fog"
+    : /partly|mostly sunny|mostly clear/.test(s) ? "partly" : /cloud|overcast/.test(s) ? "cloud" : day ? "clear" : "night";
+  return `<svg class="nws-ic" viewBox="0 0 24 24" aria-hidden="true">${NWS_ICONS[k]}</svg>`;
+}
+const ymd = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+const f2c = f => (f-32)*5/9;
+function nwsDays(){
+  // Group NWS's day and night periods by the resort's calendar date, dropping periods that are over.
+  const now = Date.now(), days = [];
+  for(const p of (state.nws && state.nws.periods) || []){
+    if(Date.parse(p.end) <= now) continue;
+    const date = p.start.slice(0,10);
+    let d = days[days.length-1];
+    if(!d || d.date!==date){ d = {date, periods:[]}; days.push(d); }
+    d.periods.push(p);
+  }
+  return days.slice(0,7);
+}
+function renderNws(c){
+  const card = $("nwsCard"); if(!card) return;
+  const days = nwsDays();
+  card.hidden = !days.length;
+  if(!days.length) return;
+  const [y,m,d0] = days[0].date.split("-").map(Number);
+  const dateOf = i => ymd(new Date(y, m-1, d0+i));
+  // Which days to read out: the day tapped in the strip, else the day picked with Today / Tomorrow / This weekend.
+  let pick = state.nwsPick && days.some(d=>d.date===state.nwsPick) ? [state.nwsPick]
+    : state.day==="today" ? [dateOf(0)] : state.day==="tomorrow" ? [dateOf(1)]
+    : c.weekend ? (state.wkPick===null ? c.weekend.days.map(x=>ymd(x.date)) : [ymd(c.weekend.days[c.weekend.chosen].date)]) : [dateOf(0)];
+  if(!days.some(d=>pick.includes(d.date))) pick = [days[0].date];
+  const dayLabel = d => d.date===dateOf(0) ? "Today" : new Date(d.date+"T12:00:00").toLocaleDateString("en-US", {weekday:"short"});
+  $("nwsWeek").innerHTML = days.map(d=>{
+    const hi = d.periods.find(p=>p.day), lo = d.periods.find(p=>!p.day), main = hi || lo;
+    const pops = d.periods.map(p=>p.pop).filter(v=>typeof v==="number"), pop = pops.length ? Math.max(...pops) : null;
+    const on = pick.includes(d.date);
+    return `<button type="button" class="nws-day${on?" pick":""}" data-nws="${d.date}" aria-pressed="${on}" title="${main.short.replace(/"/g,"&quot;")}">` +
+      `<b>${dayLabel(d)}</b>${nwsIcon(main.short, !!hi)}` +
+      `<span class="nws-t">${hi ? `<strong>${fmtTshort(f2c(hi.temp))}</strong>` : ""}${lo ? `<span>${fmtTshort(f2c(lo.temp))}</span>` : ""}</span>` +
+      `<span class="nws-pop">${pop ? pop+"%" : "&nbsp;"}</span></button>`;
+  }).join("");
+  $("nwsDetail").innerHTML = days.filter(d=>pick.includes(d.date)).map(d=>
+    `<div class="nws-read">` + d.periods.map(p=>
+      `<p><b>${p.name}:</b> ${p.detail}</p>`).join("") + `</div>`).join("");
+  const r = resort(), n = state.nws;
+  $("nwsElev").textContent = n.elev ? "at " + fmtElev(n.elev) : "";
+  const upd = new Date(n.updated);
+  $("nwsCredit").innerHTML = `Forecast text from the <a href="https://forecast.weather.gov/MapClick.php?lat=${r.lat}&lon=${r.lon}" rel="noopener">National Weather Service</a>` +
+    (isNaN(upd) ? "" : `, issued ${upd.toLocaleDateString("en-US",{weekday:"short"})} ${upd.toLocaleTimeString([], {hour:"numeric", minute:"2-digit"})}`) +
+    `. Its forecast is for the ${n.elev ? fmtElev(n.elev) + " " : ""}grid square around the resort, so it can differ a little from the mid-mountain numbers above. Chance of rain or snow under each day.`;
+}
+async function loadNws(){
+  const r = resort();
+  if(!r || !String(r.api||"").startsWith("US-")) return;
+  try{
+    const res = await fetch("/api/nws/" + encodeURIComponent(r.id));
+    if(!res.ok) return;
+    const data = await res.json();
+    if(!data || !Array.isArray(data.periods) || !data.periods.length) return;
+    state.nws = data; render();
+  }catch(e){ /* no NWS box; the rest of the page works as before */ }
 }
 
 /* ---------- Live data ---------- */
@@ -885,12 +966,13 @@ if(PAGE==="resort"){
   buildRadio("sideRow", [1,2,3,4], v=>`${v}° (${90-v}°)`, "side");
   $("unitF").onclick = ()=>{ state.unit="F"; store.set("unit","F"); render(); };
   $("unitC").onclick = ()=>{ state.unit="C"; store.set("unit","C"); render(); };
-  $("dayToday").onclick = ()=>{ state.day="today"; state.adj={air:null,snow48:null,surface:"auto"}; render(); };
-  $("dayTomorrow").onclick = ()=>{ state.day="tomorrow"; state.adj={air:null,snow48:null,surface:"auto"}; render(); };
+  $("dayToday").onclick = ()=>{ state.day="today"; state.nwsPick=null; state.adj={air:null,snow48:null,surface:"auto"}; render(); };
+  $("dayTomorrow").onclick = ()=>{ state.day="tomorrow"; state.nwsPick=null; state.adj={air:null,snow48:null,surface:"auto"}; render(); };
   $("modeTraining").onclick = ()=>{ state.raceMode="training"; store.set("raceMode","training"); render(); };
   $("modeRace").onclick = ()=>{ state.raceMode="race"; store.set("raceMode","race"); render(); };
-  $("wkBox").addEventListener("click", e=>{ const b = e.target.closest("[data-wk]"); if(!b) return; state.wkPick = Number(b.dataset.wk); state.diag = null; render(); });
-  $("dayWeekend").onclick =()=>{ state.day="weekend"; state.wkPick=null; state.adj={air:null,snow48:null,surface:"auto"}; render(); };
+  $("nwsWeek").addEventListener("click", e=>{ const b = e.target.closest("[data-nws]"); if(!b) return; state.nwsPick = b.dataset.nws; render(); });
+  $("wkBox").addEventListener("click", e=>{ const b = e.target.closest("[data-wk]"); if(!b) return; state.wkPick = Number(b.dataset.wk); state.nwsPick = null; state.diag = null; render(); });
+  $("dayWeekend").onclick =()=>{ state.day="weekend"; state.nwsPick=null; state.wkPick=null; state.adj={air:null,snow48:null,surface:"auto"}; render(); };
   $("airRange").addEventListener("input", e=>{ state.adj.air = Number(e.target.value); state.diag=null; render(); });
   $("snowSel").addEventListener("change", e=>{ state.adj.snow48 = e.target.value==="" ? null : Number(e.target.value); render(); });
   $("surfSel").addEventListener("change", e=>{ state.adj.surface = e.target.value; state.diag=null; render(); });
@@ -905,6 +987,7 @@ if(PAGE==="resort"){
   initShare();
   render();
   loadLive();
+  loadNws();
 } else if(document.querySelector("[data-home-wax]")){
   renderHome();
   loadLive();

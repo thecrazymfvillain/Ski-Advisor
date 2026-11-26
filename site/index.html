@@ -803,6 +803,29 @@ section.block .section-head h2,.home-sec h2{font-size:clamp(26px,3.4vw,36px)}
 .fc-lead svg{flex:none}
 /* On phones the buttons drop below the label, so the arrow points down at them. */
 @media (max-width:560px){.fc-lead svg{transform:rotate(90deg)}}
+
+/* Resort pages: National Weather Service 7-day forecast (US resorts). */
+.nws-head{display:flex;justify-content:space-between;align-items:baseline;gap:4px 10px;flex-wrap:wrap}
+.nws-head h2.label{margin:0;font-size:15px;font-weight:700;color:var(--ink);font-family:var(--body);letter-spacing:0}
+.nws-elev{font-size:13px;color:var(--muted)}
+.nws-week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+.nws-day{font:inherit;color:inherit;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 2px 8px;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;min-width:0}
+.nws-day:hover{border-color:var(--muted)}
+.nws-day.pick{border-color:var(--t-primary);box-shadow:inset 0 0 0 1px var(--t-primary);background:var(--snow)}
+.nws-day b{font-size:13px;font-weight:600}
+.nws-ic{width:28px;height:28px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.nws-t{display:flex;gap:5px;font-size:14px;white-space:nowrap}
+.nws-t strong{font-weight:700}
+.nws-t span{color:var(--muted)}
+.nws-pop{font-size:12px;font-weight:600;color:var(--t-primary)}
+.nws-detail{display:grid;gap:6px}
+.nws-read p{margin:0 0 6px;font-size:15px;line-height:1.55}
+.nws-credit{font-size:12.5px;line-height:1.5;color:var(--muted);margin:0}
+/* Phones: the seven days scroll sideways inside the card instead of squeezing. */
+@media (max-width:560px){
+  .nws-week{display:flex;overflow-x:auto;scroll-snap-type:x proximity;padding-bottom:4px;scrollbar-width:none}
+  .nws-day{flex:0 0 70px;scroll-snap-align:start}
+}
 </style>
 <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "7effe80b68fa4bdd9944534b8a820936"}'></script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebSite", "name": "The Ski Advisor", "url": "https://theskiadvisor.com/"}</script>
@@ -921,7 +944,7 @@ section.block .section-head h2,.home-sec h2{font-size:clamp(26px,3.4vw,36px)}
   </section>
   <section class="t-sec wrap" aria-labelledby="faqH">
     <h2 class="t-h2" id="faqH">Got questions? <span class="t-serif">We've got answers</span></h2>
-    <div class="t-faq"><details class="t-q" open><summary>Is The Ski Advisor free?<span class="t-plus" aria-hidden="true"></span></summary><p>Yes. There's no account and no app. Your saved mountains, your style and your wax log stay in your own browser. The site earns a small commission when you buy through its Amazon links.</p></details><details class="t-q"><summary>How do you pick the wax?<span class="t-plus" aria-hidden="true"></span></summary><p>We take the forecast at your resort's mid-mountain elevation, estimate the snow temperature and surface, and match it to the standard wax color bands. New and man-made snow get one step colder; wet snow gets a warm wax and extra brushing.</p></details><details class="t-q"><summary>Does it work for snowboards?<span class="t-plus" aria-hidden="true"></span></summary><p>Yes. Choose Snowboard and the tune steps, edge settings and kit switch to board wording. The wax is the same.</p></details><details class="t-q"><summary>Should I change my edge angles for the conditions?<span class="t-plus" aria-hidden="true"></span></summary><p>No. Most people set their angles once, usually at a shop, and keep them. The snow changes how much edge work is worth doing, not the angles.</p></details><details class="t-q"><summary>Where does the weather come from?<span class="t-plus" aria-hidden="true"></span></summary><p>MET Norway's forecast, refreshed for every resort every six hours. Resort locations and elevations come from OpenStreetMap.</p></details><details class="t-q"><summary>Are the waxes fluoro-free?<span class="t-plus" aria-hidden="true"></span></summary><p>Yes. Every wax we suggest is fluoro-free, including race waxes and top coats.</p></details></div>
+    <div class="t-faq"><details class="t-q" open><summary>Is The Ski Advisor free?<span class="t-plus" aria-hidden="true"></span></summary><p>Yes. There's no account and no app. Your saved mountains, your style and your wax log stay in your own browser. The site earns a small commission when you buy through its Amazon links.</p></details><details class="t-q"><summary>How do you pick the wax?<span class="t-plus" aria-hidden="true"></span></summary><p>We take the forecast at your resort's mid-mountain elevation, estimate the snow temperature and surface, and match it to the standard wax color bands. New and man-made snow get one step colder; wet snow gets a warm wax and extra brushing.</p></details><details class="t-q"><summary>Does it work for snowboards?<span class="t-plus" aria-hidden="true"></span></summary><p>Yes. Choose Snowboard and the tune steps, edge settings and kit switch to board wording. The wax is the same.</p></details><details class="t-q"><summary>Should I change my edge angles for the conditions?<span class="t-plus" aria-hidden="true"></span></summary><p>No. Most people set their angles once, usually at a shop, and keep them. The snow changes how much edge work is worth doing, not the angles.</p></details><details class="t-q"><summary>Where does the weather come from?<span class="t-plus" aria-hidden="true"></span></summary><p>MET Norway's forecast, refreshed for every resort every six hours. US resort pages also show the National Weather Service's 7-day forecast. Resort locations and elevations come from OpenStreetMap.</p></details><details class="t-q"><summary>Are the waxes fluoro-free?<span class="t-plus" aria-hidden="true"></span></summary><p>Yes. Every wax we suggest is fluoro-free, including race waxes and top coats.</p></details></div>
   </section>
 </main>
 <div class="t-cta-wrap"><section class="report" aria-labelledby="reportH">
@@ -952,6 +975,6 @@ section.block .section-head h2,.home-sec h2{font-size:clamp(26px,3.4vw,36px)}
     <p class="t-copy">© 2026 The Ski Advisor</p>
   </div>
 </footer>
-<script src="assets/tool.js?v=7c64ecb6f1"></script>
+<script src="assets/tool.js?v=fe810fe27a"></script>
 </body>
 </html>

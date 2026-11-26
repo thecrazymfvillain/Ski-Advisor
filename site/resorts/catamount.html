@@ -803,6 +803,29 @@ section.block .section-head h2,.home-sec h2{font-size:clamp(26px,3.4vw,36px)}
 .fc-lead svg{flex:none}
 /* On phones the buttons drop below the label, so the arrow points down at them. */
 @media (max-width:560px){.fc-lead svg{transform:rotate(90deg)}}
+
+/* Resort pages: National Weather Service 7-day forecast (US resorts). */
+.nws-head{display:flex;justify-content:space-between;align-items:baseline;gap:4px 10px;flex-wrap:wrap}
+.nws-head h2.label{margin:0;font-size:15px;font-weight:700;color:var(--ink);font-family:var(--body);letter-spacing:0}
+.nws-elev{font-size:13px;color:var(--muted)}
+.nws-week{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+.nws-day{font:inherit;color:inherit;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 2px 8px;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;min-width:0}
+.nws-day:hover{border-color:var(--muted)}
+.nws-day.pick{border-color:var(--t-primary);box-shadow:inset 0 0 0 1px var(--t-primary);background:var(--snow)}
+.nws-day b{font-size:13px;font-weight:600}
+.nws-ic{width:28px;height:28px;fill:none;stroke:currentColor;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.nws-t{display:flex;gap:5px;font-size:14px;white-space:nowrap}
+.nws-t strong{font-weight:700}
+.nws-t span{color:var(--muted)}
+.nws-pop{font-size:12px;font-weight:600;color:var(--t-primary)}
+.nws-detail{display:grid;gap:6px}
+.nws-read p{margin:0 0 6px;font-size:15px;line-height:1.55}
+.nws-credit{font-size:12.5px;line-height:1.5;color:var(--muted);margin:0}
+/* Phones: the seven days scroll sideways inside the card instead of squeezing. */
+@media (max-width:560px){
+  .nws-week{display:flex;overflow-x:auto;scroll-snap-type:x proximity;padding-bottom:4px;scrollbar-width:none}
+  .nws-day{flex:0 0 70px;scroll-snap-align:start}
+}
 </style>
 <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "7effe80b68fa4bdd9944534b8a820936"}'></script>
 <script type="application/ld+json">[{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://theskiadvisor.com/"}, {"@type": "ListItem", "position": 2, "name": "Resorts", "item": "https://theskiadvisor.com/resorts/index.html"}, {"@type": "ListItem", "position": 3, "name": "New York", "item": "https://theskiadvisor.com/regions/us-ny.html"}, {"@type": "ListItem", "position": 4, "name": "Catamount Mountain Resort", "item": "https://theskiadvisor.com/resorts/catamount.html"}]}, {"@context": "https://schema.org", "@type": "SkiResort", "name": "Catamount Mountain Resort", "mainEntityOfPage": "https://theskiadvisor.com/resorts/catamount.html", "geo": {"@type": "GeoCoordinates", "latitude": 42.1655, "longitude": -73.4764, "elevation": 576}, "address": {"@type": "PostalAddress", "addressRegion": "New York", "addressCountry": "US", "addressLocality": "Copake"}, "sameAs": ["https://www.catamountski.com/"]}]</script>
@@ -874,6 +897,13 @@ section.block .section-head h2,.home-sec h2{font-size:clamp(26px,3.4vw,36px)}
           <ol class="race" id="raceList" hidden></ol>
           <p class="examples" id="waxEx"></p>
         </div>
+      </div>
+      <!-- National Weather Service 7-day forecast (US resorts only; filled by tool.js from /api/nws/:id) -->
+      <div class="card nws-card" id="nwsCard" hidden>
+        <div class="nws-head"><h2 class="label">National Weather Service forecast</h2><span class="nws-elev" id="nwsElev"></span></div>
+        <div class="nws-week" id="nwsWeek" role="group" aria-label="Next 7 days: tap a day to read its forecast"></div>
+        <div class="nws-detail" id="nwsDetail" aria-live="polite"></div>
+        <p class="nws-credit" id="nwsCredit"></p>
       </div>
       <!-- Conditions behind the pick -->
       <div class="card" id="conditionsCard">
@@ -1027,6 +1057,6 @@ section.block .section-head h2,.home-sec h2{font-size:clamp(26px,3.4vw,36px)}
     <p class="t-copy">© 2026 The Ski Advisor</p>
   </div>
 </footer>
-<script src="../assets/tool.js?v=7c64ecb6f1"></script>
+<script src="../assets/tool.js?v=fe810fe27a"></script>
 </body>
 </html>
