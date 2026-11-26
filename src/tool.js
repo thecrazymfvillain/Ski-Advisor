@@ -26,12 +26,12 @@ const STYLES = {
 
 // Coldest → warmest. lo/hi = snow-temperature range in °C as printed on typical wax labels.
 const BANDS = [
-  {id:"polar",  name:"Polar",     color:"var(--wax-polar)",  lo:-30, hi:-15, iron:150, ex:"Swix PS Polar or a polar/arctic wax",  race:"Swix HS5 Turquoise", tone:"dark"},
-  {id:"turq",   name:"Turquoise", color:"var(--wax-turq)",   lo:-18, hi:-10, iron:145, ex:"Swix PS5 Turquoise or a very cold wax", race:"Swix HS5 Turquoise", tone:"dark"},
-  {id:"blue",   name:"Blue",      color:"var(--wax-blue)",   lo:-12, hi:-6,  iron:140, ex:"Swix PS6 Blue or a cold wax",           race:"Swix HS6 Blue", tone:"light"},
-  {id:"violet", name:"Violet",    color:"var(--wax-violet)", lo:-8,  hi:-2,  iron:135, ex:"Swix PS7 Violet or a cool/mid wax",     race:"Swix HS7 Violet", tone:"light"},
-  {id:"red",    name:"Red",       color:"var(--wax-red)",    lo:-4,  hi:4,   iron:130, ex:"Swix PS8 Red or a mild wax",            race:"Swix HS8 Red", tone:"light"},
-  {id:"yellow", name:"Yellow",    color:"var(--wax-yellow)", lo:0,   hi:10,  iron:120, ex:"Swix PS10 Yellow or a warm wax",        race:"Swix HS10 Yellow", tone:"dark"}
+  {id:"polar",  name:"Polar",     color:"var(--wax-polar)",  lo:-30, hi:-15, iron:150, ex:"Swix PS Polar or a polar/arctic wax",  race:"Swix HS5 Turquoise", brands:"Swix PS Polar, Wend MF Performance Cold, Toko Performance Blue, Holmenkol Ultramix Blue", tone:"dark"},
+  {id:"turq",   name:"Turquoise", color:"var(--wax-turq)",   lo:-18, hi:-10, iron:145, ex:"Swix PS5 Turquoise or a very cold wax", race:"Swix HS5 Turquoise", brands:"Swix PS5 Turquoise, Wend MF Performance Cold, Toko Performance Blue, Holmenkol Ultramix Blue", tone:"dark"},
+  {id:"blue",   name:"Blue",      color:"var(--wax-blue)",   lo:-12, hi:-6,  iron:140, ex:"Swix PS6 Blue or a cold wax",           race:"Swix HS6 Blue", brands:"Swix PS6 Blue, Wend MF Performance Mid, Toko Performance Red, Holmenkol Betamix Red", tone:"light"},
+  {id:"violet", name:"Violet",    color:"var(--wax-violet)", lo:-8,  hi:-2,  iron:135, ex:"Swix PS7 Violet or a cool/mid wax",     race:"Swix HS7 Violet", brands:"Swix PS7 Violet, Wend MF Performance Mid, Toko Performance Red, Holmenkol Betamix Red", tone:"light"},
+  {id:"red",    name:"Red",       color:"var(--wax-red)",    lo:-4,  hi:4,   iron:130, ex:"Swix PS8 Red or a mild wax",            race:"Swix HS8 Red", brands:"Swix PS8 Red, Wend MF Performance Warm, Toko Performance Yellow, Holmenkol Alphamix Yellow", tone:"light"},
+  {id:"yellow", name:"Yellow",    color:"var(--wax-yellow)", lo:0,   hi:10,  iron:120, ex:"Swix PS10 Yellow or a warm wax",        race:"Swix HS10 Yellow", brands:"Swix PS10 Yellow, Wend MF Performance Warm, Toko Performance Yellow, Holmenkol Alphamix Yellow", tone:"dark"}
 ];
 // Non-overlapping picking thresholds on the strip (°C): segment edges.
 const STRIP_MIN = -24, STRIP_MAX = 6;
@@ -473,7 +473,7 @@ function render(){
   $("waxEx").textContent = raceDay
     ? "Toko, Holmenkol, Vauhti and others make fluoro-free race lines too. Match the temperature on the label."
     : racer ? "Any brand's fluoro-free performance wax works for training. Match the temperature on the label."
-    : `Examples for Swix, Wend, Toko and other main brands of wax: ${band.ex}. Match the temperature on the label.`;
+    : `Examples for Swix, Wend, Toko, Holmenkol and other main brands of wax: ${band.brands}. Match the temperature on the label.`;
 
   // edges
   $("eBase").textContent = edges.base+"°";
