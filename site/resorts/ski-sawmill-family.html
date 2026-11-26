@@ -796,6 +796,15 @@ section.block .section-head h2,.home-sec h2{font-size:clamp(26px,3.4vw,36px)}
 .t-cta-wrap{padding-top:72px}
 .t-cta-wrap .report{border-radius:0;padding:96px 16px;margin:0}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.t-card .t-art svg{transition:none}}
+
+/* Resort pages: a red "Forecast →" lead-in right before Today / Tomorrow / This weekend (red from the logo). */
+.fc-pick{display:flex;align-items:center;gap:10px 12px;flex-wrap:wrap;flex-basis:100%}
+.fc-lead{display:inline-flex;align-items:center;gap:6px;color:#E0112A;font-weight:800;font-size:15px;letter-spacing:.06em;text-transform:uppercase}
+.fc-lead svg{flex:none}
+/* On phones the buttons drop below the label, so the arrow points down at them. */
+@media (max-width:560px){.fc-lead svg{transform:rotate(90deg)}}
+/* Wax examples in the same dark lettering as the notes above them. */
+#waxEx{color:var(--ink)}
 </style>
 <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "7effe80b68fa4bdd9944534b8a820936"}'></script>
 <script type="application/ld+json">[{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://theskiadvisor.com/"}, {"@type": "ListItem", "position": 2, "name": "Resorts", "item": "https://theskiadvisor.com/resorts/index.html"}, {"@type": "ListItem", "position": 3, "name": "Pennsylvania", "item": "https://theskiadvisor.com/regions/us-pa.html"}, {"@type": "ListItem", "position": 4, "name": "Ski Sawmill Family Resort", "item": "https://theskiadvisor.com/resorts/ski-sawmill-family.html"}]}, {"@context": "https://schema.org", "@type": "SkiResort", "name": "Ski Sawmill Family Resort", "mainEntityOfPage": "https://theskiadvisor.com/resorts/ski-sawmill-family.html", "geo": {"@type": "GeoCoordinates", "latitude": 41.5176, "longitude": -77.2924, "elevation": 622}, "address": {"@type": "PostalAddress", "addressRegion": "Pennsylvania", "addressCountry": "US", "addressLocality": "Pine"}, "sameAs": ["https://skisawmill.com/"]}]</script>
@@ -818,10 +827,13 @@ section.block .section-head h2,.home-sec h2{font-size:clamp(26px,3.4vw,36px)}
     <h1><span class="h1-pre">Wax and tune for</span> Ski Sawmill Family Resort</h1>
     <p class="lede">360 ft of vertical, 5 lifts, eastern snow and ice. Wax color and iron temperature from the forecast at mid-mountain, edge settings for how you ski or ride, and a step-by-step home tune.</p>
     <div class="hero-sub">
-      <div class="seg" role="group" aria-label="When are you skiing?">
-        <button type="button" id="dayToday" aria-pressed="true">Today</button>
-        <button type="button" id="dayTomorrow" aria-pressed="false">Tomorrow</button>
-        <button type="button" id="dayWeekend" aria-pressed="false">This weekend</button>
+      <div class="fc-pick">
+        <span class="fc-lead" aria-hidden="true">Forecast<svg width="22" height="14" viewBox="0 0 22 14"><path d="M1 7h17M13 1.5L19.5 7 13 12.5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <div class="seg" role="group" aria-label="Forecast: when are you skiing?">
+          <button type="button" id="dayToday" aria-pressed="true">Today</button>
+          <button type="button" id="dayTomorrow" aria-pressed="false">Tomorrow</button>
+          <button type="button" id="dayWeekend" aria-pressed="false">This weekend</button>
+        </div>
       </div>
       <div class="seg" role="group" aria-label="Units">
         <button type="button" id="unitF" aria-pressed="true">°F / in</button>
@@ -1017,6 +1029,6 @@ section.block .section-head h2,.home-sec h2{font-size:clamp(26px,3.4vw,36px)}
     <p class="t-copy">© 2026 The Ski Advisor</p>
   </div>
 </footer>
-<script src="../assets/tool.js?v=7c64ecb6f1"></script>
+<script src="../assets/tool.js?v=5d115eaf2e"></script>
 </body>
 </html>

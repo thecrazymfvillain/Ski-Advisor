@@ -858,10 +858,13 @@ def resort_page(x):
     <h1><span class="h1-pre">Wax and tune for</span> {name}</h1>
     <p class="lede">{x['tag']}. Wax color and iron temperature from the forecast at mid-mountain, edge settings for how you ski or ride, and a step-by-step home tune.</p>{pass_line}
     <div class="hero-sub">
-      <div class="seg" role="group" aria-label="When are you skiing?">
-        <button type="button" id="dayToday" aria-pressed="true">Today</button>
-        <button type="button" id="dayTomorrow" aria-pressed="false">Tomorrow</button>
-        <button type="button" id="dayWeekend" aria-pressed="false">This weekend</button>
+      <div class="fc-pick">
+        <span class="fc-lead" aria-hidden="true">Forecast<svg width="22" height="14" viewBox="0 0 22 14"><path d="M1 7h17M13 1.5L19.5 7 13 12.5" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <div class="seg" role="group" aria-label="Forecast: when are you skiing?">
+          <button type="button" id="dayToday" aria-pressed="true">Today</button>
+          <button type="button" id="dayTomorrow" aria-pressed="false">Tomorrow</button>
+          <button type="button" id="dayWeekend" aria-pressed="false">This weekend</button>
+        </div>
       </div>
       <div class="seg" role="group" aria-label="Units">
         <button type="button" id="unitF" aria-pressed="true">°F / in</button>

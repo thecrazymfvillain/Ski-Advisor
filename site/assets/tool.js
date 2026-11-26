@@ -473,7 +473,7 @@ function render(){
   $("waxEx").textContent = raceDay
     ? "Toko, Holmenkol, Vauhti and others make fluoro-free race lines too. Match the temperature on the label."
     : racer ? "Any brand's fluoro-free performance wax works for training. Match the temperature on the label."
-    : `Examples: ${band.ex}. Toko, Holmenkol and others make equivalents; match the temperature on the label.`;
+    : `Examples for Swix, Wend, Toko and other main brands of wax: ${band.ex}. Match the temperature on the label.`;
 
   // edges
   $("eBase").textContent = edges.base+"°";

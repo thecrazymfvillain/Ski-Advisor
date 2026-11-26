@@ -796,9 +796,18 @@ section.block .section-head h2,.home-sec h2{font-size:clamp(26px,3.4vw,36px)}
 .t-cta-wrap{padding-top:72px}
 .t-cta-wrap .report{border-radius:0;padding:96px 16px;margin:0}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}.t-card .t-art svg{transition:none}}
+
+/* Resort pages: a red "Forecast →" lead-in right before Today / Tomorrow / This weekend (red from the logo). */
+.fc-pick{display:flex;align-items:center;gap:10px 12px;flex-wrap:wrap;flex-basis:100%}
+.fc-lead{display:inline-flex;align-items:center;gap:6px;color:#E0112A;font-weight:800;font-size:15px;letter-spacing:.06em;text-transform:uppercase}
+.fc-lead svg{flex:none}
+/* On phones the buttons drop below the label, so the arrow points down at them. */
+@media (max-width:560px){.fc-lead svg{transform:rotate(90deg)}}
+/* Wax examples in the same dark lettering as the notes above them. */
+#waxEx{color:var(--ink)}
 </style>
 <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "7effe80b68fa4bdd9944534b8a820936"}'></script>
-<script type="application/ld+json">[{"@context": "https://schema.org", "@type": "Article", "headline": "Best Ski Wax Iron: What to Buy and What to Skip", "description": "How to choose a ski or snowboard waxing iron: plate thickness, thermostat, wattage, 120-volt models, and which irons fit a few waxes a season versus race prep.", "datePublished": "2026-11-25", "dateModified": "2026-11-25", "author": {"@type": "Organization", "name": "The Ski Advisor"}, "mainEntityOfPage": "https://theskiadvisor.com/guides/best-ski-wax-iron.html"}, {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://theskiadvisor.com/"}, {"@type": "ListItem", "position": 2, "name": "Guides", "item": "https://theskiadvisor.com/guides/index.html"}, {"@type": "ListItem", "position": 3, "name": "Best Ski Wax Iron: What to Buy and What to Skip", "item": "https://theskiadvisor.com/guides/best-ski-wax-iron.html"}]}]</script>
+<script type="application/ld+json">[{"@context": "https://schema.org", "@type": "Article", "headline": "Best Ski Wax Iron: What to Buy and What to Skip", "description": "How to choose a ski or snowboard waxing iron: plate thickness, thermostat, wattage, 120-volt models, and which irons fit a few waxes a season versus race prep.", "datePublished": "2026-11-26", "dateModified": "2026-11-26", "author": {"@type": "Organization", "name": "The Ski Advisor"}, "mainEntityOfPage": "https://theskiadvisor.com/guides/best-ski-wax-iron.html"}, {"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://theskiadvisor.com/"}, {"@type": "ListItem", "position": 2, "name": "Guides", "item": "https://theskiadvisor.com/guides/index.html"}, {"@type": "ListItem", "position": 3, "name": "Best Ski Wax Iron: What to Buy and What to Skip", "item": "https://theskiadvisor.com/guides/best-ski-wax-iron.html"}]}]</script>
 </head>
 <body>
 <div id="pageInfo" data-page="guide" data-resort="" hidden></div>
@@ -871,6 +880,6 @@ section.block .section-head h2,.home-sec h2{font-size:clamp(26px,3.4vw,36px)}
     <p class="t-copy">© 2026 The Ski Advisor</p>
   </div>
 </footer>
-<script src="../assets/tool.js?v=7c64ecb6f1"></script>
+<script src="../assets/tool.js?v=5d115eaf2e"></script>
 </body>
 </html>
