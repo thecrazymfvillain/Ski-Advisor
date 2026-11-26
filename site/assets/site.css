@@ -780,5 +780,3 @@ section.block .section-head h2,.home-sec h2{font-size:clamp(26px,3.4vw,36px)}
 .fc-lead svg{flex:none}
 /* On phones the buttons drop below the label, so the arrow points down at them. */
 @media (max-width:560px){.fc-lead svg{transform:rotate(90deg)}}
-/* Wax examples in the same dark lettering as the notes above them. */
-#waxEx{color:var(--ink)}
