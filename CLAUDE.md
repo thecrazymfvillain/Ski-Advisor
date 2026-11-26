@@ -52,9 +52,11 @@ python3 src/preview.py                                # http://localhost:8000
   from MET Norway (every resort every 6 hours) and stores them in Netlify Blobs ("weather" store).
 - `netlify/functions/conditions.mts`: serves `/api/conditions/:key` from that store.
 - `netlify/functions/nws-update.mts`: runs hourly at minute 41 UTC; saves the National Weather Service 7-day text
-  forecast for the US resorts in that hour's sixth of the regions (`nws-v1/<region>`, grid lookups in `nws-grid`).
-  `netlify/functions/nws.mts` serves `/api/nws/:id` (US only). Parsing is in `netlify/lib/nws.mts`. The preview runs
-  that same code through `src/nws_preview.mts` until the live site has the route (needs api.weather.gov reachable).
+  forecast for the US resorts in that hour's sixth of the regions (`nws-v1/<region>`).
+  `netlify/functions/nws.mts` serves `/api/nws/:id` (US only). Parsing, including the new-snow amounts read from
+  NWS's wording, is in `netlify/lib/nws.mts`. Each resort uses the NWS grid square closest to its mid-mountain, saved
+  in `netlify/lib/nws-grid.json` by `src/nws_grids.mts` (re-run it when resorts are added). The preview runs the
+  same code through `src/nws_preview.mts` until the live site has the route (needs api.weather.gov reachable).
 - `netlify/lib/met.mts`: forecast parsing, the snow estimate (`snowFrom`: MET's rain/sleet/snow label plus
   temperature), daily summaries, and the 48-hour new-snow history. MET requires the User-Agent it sets.
 

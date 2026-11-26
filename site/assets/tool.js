@@ -524,6 +524,13 @@ function nwsDays(){
   }
   return days.slice(0,7);
 }
+function fmtSnowRange([lo, hi]){
+  const v = x => state.unit==="F" ? x : x*2.54;
+  const u = state.unit==="F" ? " in" : " cm";
+  const n = x => { const r = v(x); return r===0.5 ? "½" : String(Math.round(r)); };
+  if(lo===0) return "&lt;" + n(hi) + u;
+  return lo===hi ? n(lo) + u : n(lo) + "–" + n(hi) + u;
+}
 function renderNws(c){
   const card = $("nwsCard"); if(!card) return;
   const days = nwsDays();
@@ -538,13 +545,18 @@ function renderNws(c){
   if(!days.some(d=>pick.includes(d.date))) pick = [days[0].date];
   const dayLabel = d => d.date===dateOf(0) ? "Today" : new Date(d.date+"T12:00:00").toLocaleDateString("en-US", {weekday:"short"});
   $("nwsWeek").innerHTML = days.map(d=>{
-    const hi = d.periods.find(p=>p.day), lo = d.periods.find(p=>!p.day), main = hi || lo;
+    const hi = d.periods.find(p=>p.day), lo = d.periods.find(p=>!p.day);
+    // The icon follows the wettest part of the day, so snow overnight still shows as a snow day.
+    const main = d.periods.reduce((a,p)=>(p.pop||0) > (a.pop||0) ? p : a, hi || lo);
     const pops = d.periods.map(p=>p.pop).filter(v=>typeof v==="number"), pop = pops.length ? Math.max(...pops) : null;
     const on = pick.includes(d.date);
+    // Expected new snow for the day and night together (NWS gives a range in inches).
+    const sn = d.periods.map(p=>p.snow).filter(Boolean), snow = sn.length ? [sn.reduce((a,x)=>a+x[0],0), sn.reduce((a,x)=>a+x[1],0)] : null;
     return `<button type="button" class="nws-day${on?" pick":""}" data-nws="${d.date}" aria-pressed="${on}" title="${main.short.replace(/"/g,"&quot;")}">` +
-      `<b>${dayLabel(d)}</b>${nwsIcon(main.short, !!hi)}` +
+      `<b>${dayLabel(d)}</b>${nwsIcon(main.short, main.day)}` +
       `<span class="nws-t">${hi ? `<strong>${fmtTshort(f2c(hi.temp))}</strong>` : ""}${lo ? `<span>${fmtTshort(f2c(lo.temp))}</span>` : ""}</span>` +
-      `<span class="nws-pop">${pop ? pop+"%" : "&nbsp;"}</span></button>`;
+      `<span class="nws-pop">${pop ? pop+"%" : "&nbsp;"}</span>` +
+      `<span class="nws-snow${snow && snow[1]>=6 ? " deep" : ""}">${snow && snow[1]>0 ? fmtSnowRange(snow) : "&nbsp;"}</span></button>`;
   }).join("");
   $("nwsDetail").innerHTML = days.filter(d=>pick.includes(d.date)).map(d=>
     `<div class="nws-read">` + d.periods.map(p=>
@@ -554,7 +566,7 @@ function renderNws(c){
   const upd = new Date(n.updated);
   $("nwsCredit").innerHTML = `Forecast text from the <a href="https://forecast.weather.gov/MapClick.php?lat=${r.lat}&lon=${r.lon}" rel="noopener">National Weather Service</a>` +
     (isNaN(upd) ? "" : `, issued ${upd.toLocaleDateString("en-US",{weekday:"short"})} ${upd.toLocaleTimeString([], {hour:"numeric", minute:"2-digit"})}`) +
-    `. Its forecast is for the ${n.elev ? fmtElev(n.elev) + " " : ""}grid square around the resort, so it can differ a little from the mid-mountain numbers above. Chance of rain or snow under each day.`;
+    `. It covers the ${n.elev ? fmtElev(n.elev) + " " : ""}grid square nearest the resort's mid-mountain, so it can differ a little from the numbers above. Under each day: the chance of rain or snow, then the new snow expected.`;
 }
 async function loadNws(){
   const r = resort();
