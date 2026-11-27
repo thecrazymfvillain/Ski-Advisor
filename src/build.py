@@ -751,6 +751,15 @@ def mtn_art(seed):
             f'<polygon points="{ridge(150, 70, rnd.choice([4, 5, 6]))}" fill="#E8F0FC"/>'
             f'<polygon points="{ridge(196, 44, rnd.choice([3, 4]))}" fill="#FFFFFF"/></svg>')
 
+# Home hero: layered mountain ridges in front of the navy-to-blue sky (brand colors from the logo).
+HERO_MTNS = """<svg class="hero-mtns" viewBox="0 0 1440 360" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+  <path fill="#B9CCEE" d="M0 360V212L120 150L230 192L360 95L470 162L590 122L720 40L850 140L960 100L1080 172L1210 80L1330 150L1440 112V360Z"/>
+  <path fill="#FFFFFF" d="M684 83L720 40L756 86L739 79L722 94L705 77ZM330 130L360 95L392 133L374 126L360 139L346 125ZM1180 115L1210 80L1242 118L1225 111L1210 124L1196 111Z"/>
+  <path fill="#4F78C8" d="M0 360V262L150 200L280 252L420 168L560 240L700 150L830 232L980 180L1120 252L1260 188L1440 244V360Z"/>
+  <path fill="#18377A" d="M0 360V300L180 252L330 292L520 238L690 296L860 250L1030 298L1220 246L1440 290V360Z"/>
+  <path fill="#FFFFFF" d="M0 360V330C200 312 380 324 560 318C740 312 900 330 1080 322C1240 315 1340 326 1440 320V360Z"/>
+</svg>"""
+
 def hero_search():
     chips = ''.join(f'<button type="button" class="chip" data-passpick="{k}" aria-pressed="{"true" if not k else "false"}">{n}</button>' for k, n in (("", "Any"), ("epic", "Epic"), ("ikon", "Ikon")))
     return f"""<form class="search t-ask" data-search data-index="assets/resort-index.json" data-prefix="resorts/" role="search">
@@ -792,12 +801,15 @@ def home(full):
     body = f"""{page_info("home")}
 {rd_script({"api": "featured", "resorts": [rd_resort(x) for x in FEATURED]})}
 {header(0)}
-<section class="t-hero" aria-labelledby="heroH">
+<section class="t-hero t-hero-mtn" aria-labelledby="heroH">
+  {HERO_MTNS}
   <div class="t-hero-in">
     <p class="t-tag">{ICON_SNOW}<span class="t-serif">Free wax &amp; tune advice for <span class="t-blue">{len(ALL)} ski areas</span></span></p>
-    <h1 id="heroH">Your Mountain Your Snow<br><span class="t-serif">Your Skis</span></h1>
-    <p class="t-hero-p">Pick your mountain. Get the wax color and iron temperature for today, tomorrow or this weekend, edge settings for how you ski or ride, and a step-by-step home tune to match.</p>
+    <h1 id="heroH">Today's ski wax<br>for your mountain</h1>
+    <p class="t-motto t-serif">Your mountain. Your snow. Your skis.</p>
+    <p class="t-hero-p">Pick your mountain and get the wax color and iron temperature for today, tomorrow or this weekend, plus edge settings and a step-by-step home tune. Free, no sign-up.</p>
     {hero_search()}
+    <div class="hero-live"><span class="hero-live-l">Right now:</span>{"".join(f'<a href="resorts/{i}.html"><b>{A_BY[i]["name"].split(" ")[0]}</b><span class="wax-chip" data-home-wax="{i}"><i></i><span>Loading…</span></span></a>' for i in ("vail", "whistler", "killington"))}</div>
   </div>
 </section>
 <main>

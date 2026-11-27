@@ -832,6 +832,20 @@ section.block .section-head h2,.home-sec h2{font-size:clamp(26px,3.4vw,36px)}
 /* Guide tables that should wrap to fit a phone instead of scrolling sideways. */
 .table-wrap.fit th,.table-wrap.fit td{white-space:normal;vertical-align:top}
 @media (max-width:560px){.table-wrap.fit th,.table-wrap.fit td{padding:10px 8px}}
+
+/* Home hero: the old look's navy sky, mountains, heavy headline and red button, in the new layout. */
+.t-hero.t-hero-mtn{background:linear-gradient(180deg,#00174B 0%,#0A3486 45%,#2A63D2 80%,#5D8FE6 100%);overflow:hidden;padding-bottom:140px}
+.t-hero-mtn .t-hero-in{position:relative;z-index:1}
+.hero-mtns{position:absolute;left:0;right:0;bottom:0;width:100%;height:min(40vh,330px);z-index:0}
+.t-hero.t-hero-mtn h1{font-weight:800;font-size:clamp(40px,7.2vw,82px);line-height:1.02;letter-spacing:-.045em;text-wrap:balance}
+.t-motto{margin:-2px 0 0;font-size:clamp(19px,2.4vw,26px);color:rgba(255,255,255,.92)}
+.t-hero-mtn .t-ask .btn{background:var(--brand-red);border-color:var(--brand-red);font-weight:600}
+.hero-live{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:8px;font-size:14px}
+.hero-live-l{color:#FFFFFF;font-weight:600;background:rgba(0,23,75,.8);border-radius:999px;padding:7px 12px}
+.hero-live a{display:inline-flex;align-items:center;gap:8px;background:#FFFFFF;color:var(--ink);border-radius:999px;padding:6px 14px;text-decoration:none;box-shadow:0 2px 8px rgba(0,23,75,.15)}
+.hero-live a:hover{box-shadow:0 2px 10px rgba(0,23,75,.3)}
+.hero-live .wax-chip{border:0;padding:0;gap:6px;font-size:13.5px;font-weight:400}
+.hero-live .wax-chip i{width:12px;height:12px;border-radius:50%;background:var(--wax,var(--line));box-shadow:inset 0 0 0 1px rgba(0,0,0,.15)}
 </style>
 <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "7effe80b68fa4bdd9944534b8a820936"}'></script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebSite", "name": "The Ski Advisor", "url": "https://theskiadvisor.com/"}</script>
@@ -847,11 +861,19 @@ section.block .section-head h2,.home-sec h2{font-size:clamp(26px,3.4vw,36px)}
   </div>
   <nav class="t-menu" id="tMenu" aria-label="Menu" hidden><a href="resorts/index.html">Resorts</a><a href="guides/index.html">Guides</a><a href="about.html">About</a><a href="contact.html">Contact</a><hr><a class="btn" href="resorts/index.html">Find your mountain</a></nav>
 </header>
-<section class="t-hero" aria-labelledby="heroH">
+<section class="t-hero t-hero-mtn" aria-labelledby="heroH">
+  <svg class="hero-mtns" viewBox="0 0 1440 360" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+  <path fill="#B9CCEE" d="M0 360V212L120 150L230 192L360 95L470 162L590 122L720 40L850 140L960 100L1080 172L1210 80L1330 150L1440 112V360Z"/>
+  <path fill="#FFFFFF" d="M684 83L720 40L756 86L739 79L722 94L705 77ZM330 130L360 95L392 133L374 126L360 139L346 125ZM1180 115L1210 80L1242 118L1225 111L1210 124L1196 111Z"/>
+  <path fill="#4F78C8" d="M0 360V262L150 200L280 252L420 168L560 240L700 150L830 232L980 180L1120 252L1260 188L1440 244V360Z"/>
+  <path fill="#18377A" d="M0 360V300L180 252L330 292L520 238L690 296L860 250L1030 298L1220 246L1440 290V360Z"/>
+  <path fill="#FFFFFF" d="M0 360V330C200 312 380 324 560 318C740 312 900 330 1080 322C1240 315 1340 326 1440 320V360Z"/>
+</svg>
   <div class="t-hero-in">
     <p class="t-tag"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><g stroke="#286FEC" stroke-width="2" stroke-linecap="round" fill="none"><path d="M12 2v20M3.3 7l17.4 10M20.7 7 3.3 17"/><path d="M9 4l3 2 3-2M9 20l3-2 3 2M4.2 10.5l3.4-.3-1.3-3.2M19.8 13.5l-3.4.3 1.3 3.2M4.2 13.5l3.4.3-1.3 3.2M19.8 10.5l-3.4-.3 1.3-3.2"/></g></svg><span class="t-serif">Free wax &amp; tune advice for <span class="t-blue">745 ski areas</span></span></p>
-    <h1 id="heroH">Your Mountain Your Snow<br><span class="t-serif">Your Skis</span></h1>
-    <p class="t-hero-p">Pick your mountain. Get the wax color and iron temperature for today, tomorrow or this weekend, edge settings for how you ski or ride, and a step-by-step home tune to match.</p>
+    <h1 id="heroH">Today's ski wax<br>for your mountain</h1>
+    <p class="t-motto t-serif">Your mountain. Your snow. Your skis.</p>
+    <p class="t-hero-p">Pick your mountain and get the wax color and iron temperature for today, tomorrow or this weekend, plus edge settings and a step-by-step home tune. Free, no sign-up.</p>
     <form class="search t-ask" data-search data-index="assets/resort-index.json" data-prefix="resorts/" role="search">
       <div class="t-ask-in"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><g stroke="#286FEC" stroke-width="2" stroke-linecap="round" fill="none"><path d="M12 2v20M3.3 7l17.4 10M20.7 7 3.3 17"/><path d="M9 4l3 2 3-2M9 20l3-2 3 2M4.2 10.5l3.4-.3-1.3-3.2M19.8 13.5l-3.4.3 1.3 3.2M4.2 13.5l3.4.3-1.3 3.2M19.8 10.5l-3.4-.3 1.3-3.2"/></g></svg><label class="sr" for="homeSearch">Find a ski resort</label><input id="homeSearch" type="search" autocomplete="off" placeholder="Search by resort, town or state"></div>
       <div class="t-ask-bar">
@@ -861,6 +883,7 @@ section.block .section-head h2,.home-sec h2{font-size:clamp(26px,3.4vw,36px)}
       <ul hidden></ul>
       <p class="near-msg muted" hidden></p>
     </form>
+    <div class="hero-live"><span class="hero-live-l">Right now:</span><a href="resorts/vail.html"><b>Vail</b><span class="wax-chip" data-home-wax="vail"><i></i><span>Loading…</span></span></a><a href="resorts/whistler.html"><b>Whistler</b><span class="wax-chip" data-home-wax="whistler"><i></i><span>Loading…</span></span></a><a href="resorts/killington.html"><b>Killington</b><span class="wax-chip" data-home-wax="killington"><i></i><span>Loading…</span></span></a></div>
   </div>
 </section>
 <main>
