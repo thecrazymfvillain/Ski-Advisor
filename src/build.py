@@ -621,7 +621,7 @@ def header(depth, current="", chips=""):
     cur = lambda k: ' aria-current="page"' if current == k else ""
     links = (f'<a href="{r}resorts/index.html"{cur("resorts")}>Resorts</a><a href="{r}guides/index.html"{cur("guides")}>Guides</a>'
              f'<a href="{r}about.html">About</a><a href="{r}contact.html">Contact</a>')
-    cta = f'<a class="btn" href="{r}resorts/index.html">Find your mountain</a>'
+    cta = f'<a class="btn btn-red" href="{r}resorts/index.html">Find your mountain</a>'
     burger = '<svg width="24" height="24" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>'
     chiprow = f'<div class="wrap t-chiprow">{chips}</div>' if chips else ""
     return f"""<header class="t-nav">
@@ -756,6 +756,7 @@ _hp = lambda d: f'<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="t
 HP_ICONS = {
     "wax": _hp('<path d="M10 13.5V5a2 2 0 1 1 4 0v8.5a4 4 0 1 1-4 0z"/><path d="M12 15.5v-5"/>'),
     "edge": _hp('<path d="M4 20h16"/><path d="M4 20 17 6"/><path d="M10.5 20a6.5 6.5 0 0 0-1.9-4.6"/>'),
+    "snow": _hp('<path d="M12 3v18M4.2 7.5l15.6 9M4.2 16.5l15.6-9"/><path d="M9.5 4.5 12 6.5l2.5-2M9.5 19.5 12 17.5l2.5 2"/>'),
     "bag": _hp('<path d="M5 8h14l-1.2 12H6.2z"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8"/>'),
 }
 
@@ -803,7 +804,7 @@ def home(full):
     steps_html = "".join(f'<div class="t-step"><span class="t-step-l">Step - {i+1:02d}</span><div><h3>{t}</h3><p>{d}</p></div><span class="t-step-n" aria-hidden="true">{i+1}</span></div>' for i, (t, d) in enumerate(steps))
     faq_html = "".join(f'<details class="t-q"{" open" if i == 0 else ""}><summary>{q}<span class="t-plus" aria-hidden="true"></span></summary><p>{a}</p></details>' for i, (q, a) in enumerate(FAQ))
     ld = {"@context":"https://schema.org","@type":"WebSite","name":"The Ski Advisor","url":DOMAIN+"/"}
-    h = head("The Ski Advisor: Ski and Snowboard Wax for Today's Snow",
+    h = head("The Ski Advisor: Snow Forecast, Ski Wax and Tuning for Your Mountain",
              f"Ski and snowboard wax color and iron temperature for today's snow at {len(ALL)} resorts across the US, Canada and Mexico, edge settings for how you ski or ride, and step-by-step home tuning guides.",
              "", 0, ld)
     body = f"""{page_info("home")}
@@ -813,9 +814,10 @@ def home(full):
   {HERO_MTNS}
   <div class="t-hero-in">
     <p class="t-tag">{ICON_SNOW}<span class="t-serif">Free wax &amp; tune advice for <span class="t-blue">{len(ALL)} ski areas</span></span></p>
-    <h1 id="heroH">Today's ski wax<br>for your mountain</h1>
-    <p class="t-lead">Wax and ski tuning info for <b>your mountain</b>, <b>your snow</b> and <b>your skis</b>.</p>
+    <h1 id="heroH">Snow forecast and ski wax for your mountain</h1>
+    <p class="t-lead">Weather you can depend on, plus wax and ski tuning info for <b>your mountain</b>, <b>your snow</b> and <b>your skis</b>.</p>
     <ul class="hero-points">
+      <li><div class="hp-card"><span class="hp-ic">{HP_ICONS["snow"]}</span><span><b>Snow forecast at mid-mountain</b>, plus the National Weather Service 7-day forecast for US resorts</span></div></li>
       <li><div class="hp-card"><span class="hp-ic">{HP_ICONS["wax"]}</span><span><b>Wax color and iron temp</b> for today, tomorrow or the weekend</span></div></li>
       <li><div class="hp-card"><span class="hp-ic">{HP_ICONS["edge"]}</span><span><b>Edge angles and a home tune</b>, step by step</span></div></li>
       <li><a class="hp-card" href="guides/index.html#buyH"><span class="hp-ic">{HP_ICONS["bag"]}</span><span><b>Tuning gear worth buying</b>: kits, irons and wax</span></a></li>
