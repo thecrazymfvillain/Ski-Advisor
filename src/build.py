@@ -1198,12 +1198,16 @@ import hashlib
 ASSET_V = {}   # file name -> short content hash, so a changed stylesheet or script gets a new URL
 
 # When each page's content last really changed, for the sitemap and the guides' dates. A page counts as
-# changed only when its text changes, not its inlined CSS or scripts, so a restyle doesn't tell Google that
-# all 816 pages are new. Kept in src/page-dates.json and committed with site/.
+# changed only when its title, description or main content changes, not its inlined CSS, scripts, menu or
+# footer, so a restyle or a renamed footer link doesn't tell Google that every page is new.
+# Kept in src/page-dates.json and committed with site/.
 DATES_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "page-dates.json")
 PAGE_DATES = json.load(open(DATES_FILE)) if os.path.exists(DATES_FILE) else {}
 def page_fingerprint(text):
-    t = re.sub(r'<style\b.*?</style>|<script\b.*?</script>', '', text, flags=re.S | re.I)
+    head = "".join(re.findall(r'<title>.*?</title>|<meta name="description"[^>]*>', text, flags=re.S))
+    main = re.search(r'<main\b.*?</main>', text, flags=re.S)
+    t = head + (main.group(0) if main else text)
+    t = re.sub(r'<style\b.*?</style>|<script\b.*?</script>', '', t, flags=re.S | re.I)
     return hashlib.sha1(re.sub(r'\?v=[0-9a-f]+', '', t).encode()).hexdigest()[:16]
 
 def write(rel, text):
