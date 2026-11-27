@@ -859,6 +859,28 @@ a.hp-card b{text-decoration:underline;text-decoration-color:var(--brand-red);tex
 .t-hero-mtn .t-tag svg{width:22px;height:22px}
 /* Red call-to-action, from the logo: the menu's "Find your mountain" on every page. */
 .btn.btn-red{background:var(--brand-red);border-color:var(--brand-red);font-weight:600}
+
+/* Search box: a clear label, a plain Search button, "Use my location", and states and towns in the results. */
+.t-ask-label{align-self:flex-start;font-weight:700;font-size:16px;color:var(--heading);padding:2px 8px 0}
+.t-ask-in{background:#FFFFFF;border:1px solid #D1D5DB;border-radius:999px;padding:4px 4px 4px 16px}
+.t-ask-ic{display:grid;place-items:center;color:#6B7280}
+.search.t-ask input{padding:10px 0;min-width:0;flex:1}
+.t-ask-in .btn{flex:none;padding:11px 22px;font-size:15px}
+.t-ask-bar{padding:0 4px}
+.t-near{display:inline-flex;align-items:center;gap:6px;border:1px solid #D1D5DB;background:#FFFFFF;color:var(--t-primary);padding:8px 14px;font-size:14px;font-weight:600}
+.t-near:hover{border-color:var(--t-primary)}
+.search li.hd{padding:8px 10px 4px;font-size:13px;font-weight:700;color:var(--muted)}
+.search li a.go b{color:var(--t-primary)}
+.search li .go-town{display:flex;align-items:center;gap:8px;width:100%;font:inherit;text-align:left;background:none;border:0;padding:10px;border-radius:6px;cursor:pointer;color:var(--ink)}
+.search li .go-town:hover,.search li .go-town:focus{background:var(--soft)}
+.search li .go-town svg{flex:none;color:var(--t-primary)}
+.search-row{display:flex;gap:8px}
+.search-row .near-btn{display:inline-flex;align-items:center;gap:6px}
+@media (max-width:560px){
+  .search.t-ask input{font-size:16px}
+  .t-ask-in .btn{padding:10px 16px}
+  .t-ask-bar{flex-direction:column;align-items:flex-start;gap:12px}
+}
 </style>
 <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "7effe80b68fa4bdd9944534b8a820936"}'></script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebSite", "name": "The Ski Advisor", "url": "https://theskiadvisor.com/"}</script>
@@ -892,14 +914,15 @@ a.hp-card b{text-decoration:underline;text-decoration-color:var(--brand-red);tex
       <li><div class="hp-card"><span class="hp-ic"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h16"/><path d="M4 20 17 6"/><path d="M10.5 20a6.5 6.5 0 0 0-1.9-4.6"/></svg></span><span><b>Edge angles and a home tune</b>, step by step</span></div></li>
       <li><a class="hp-card" href="guides/index.html#buyH"><span class="hp-ic"><svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M5 8h14l-1.2 12H6.2z"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8"/></svg></span><span><b>Tuning gear worth buying</b>: kits, irons and wax</span></a></li>
     </ul>
-    <form class="search t-ask" data-search data-index="assets/resort-index.json" data-prefix="resorts/" role="search">
-      <div class="t-ask-in"><svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><g stroke="#286FEC" stroke-width="2" stroke-linecap="round" fill="none"><path d="M12 2v20M3.3 7l17.4 10M20.7 7 3.3 17"/><path d="M9 4l3 2 3-2M9 20l3-2 3 2M4.2 10.5l3.4-.3-1.3-3.2M19.8 13.5l-3.4.3 1.3 3.2M4.2 13.5l3.4.3-1.3 3.2M19.8 10.5l-3.4-.3 1.3-3.2"/></g></svg><label class="sr" for="homeSearch">Find a ski resort</label><input id="homeSearch" type="search" autocomplete="off" placeholder="Search by resort, town or state"></div>
+    <form class="search t-ask" data-search data-index="assets/resort-index.json" data-cities="assets/cities.json" data-prefix="resorts/" data-rprefix="regions/" role="search">
+      <label class="t-ask-label" for="homeSearch">Find your mountain</label>
+      <div class="t-ask-in"><span class="t-ask-ic"><svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg></span><input id="homeSearch" type="search" autocomplete="off" enterkeyhint="search" placeholder="Resort, town or state: try Vail, Denver or Utah"><button type="submit" class="btn btn-red">Search</button></div>
       <div class="t-ask-bar">
-        <div class="pass-row" role="group" aria-label="Filter by season pass"><span>Pass</span><button type="button" class="chip" data-passpick="" aria-pressed="true">Any</button><button type="button" class="chip" data-passpick="epic" aria-pressed="false">Epic</button><button type="button" class="chip" data-passpick="ikon" aria-pressed="false">Ikon</button></div>
-        <div class="t-ask-act"><button type="button" class="near-btn t-near" data-near><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="10" r="2.6" fill="currentColor"/></svg><span>Near me</span></button><button type="submit" class="btn">Find my wax</button></div>
+        <button type="button" class="near-btn t-near" data-near><svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="10" r="2.6" fill="currentColor"/></svg><span>Use my location</span></button>
+        <div class="pass-row" role="group" aria-label="Filter by season pass"><span>Season pass</span><button type="button" class="chip" data-passpick="" aria-pressed="true">Any</button><button type="button" class="chip" data-passpick="epic" aria-pressed="false">Epic</button><button type="button" class="chip" data-passpick="ikon" aria-pressed="false">Ikon</button></div>
       </div>
       <ul hidden></ul>
-      <p class="near-msg muted" hidden></p>
+      <p class="near-msg muted" role="status" hidden></p>
     </form>
     <p class="hero-hook">Is your wax right for today's snow?</p>
     <div class="hero-live"><span class="hero-live-l">Right now:</span><a href="resorts/vail.html"><b>Vail</b><span class="wax-chip" data-home-wax="vail"><i></i><span>Loading…</span></span></a><a href="resorts/whistler.html"><b>Whistler</b><span class="wax-chip" data-home-wax="whistler"><i></i><span>Loading…</span></span></a><a href="resorts/killington.html"><b>Killington</b><span class="wax-chip" data-home-wax="killington"><i></i><span>Loading…</span></span></a></div>
@@ -1023,6 +1046,6 @@ a.hp-card b{text-decoration:underline;text-decoration-color:var(--brand-red);tex
     <p class="t-copy">© 2026 The Ski Advisor</p>
   </div>
 </footer>
-<script src="assets/tool.js?v=e7dfdc3901"></script>
+<script src="assets/tool.js?v=8f94d06b5c"></script>
 </body>
 </html>

@@ -859,6 +859,28 @@ a.hp-card b{text-decoration:underline;text-decoration-color:var(--brand-red);tex
 .t-hero-mtn .t-tag svg{width:22px;height:22px}
 /* Red call-to-action, from the logo: the menu's "Find your mountain" on every page. */
 .btn.btn-red{background:var(--brand-red);border-color:var(--brand-red);font-weight:600}
+
+/* Search box: a clear label, a plain Search button, "Use my location", and states and towns in the results. */
+.t-ask-label{align-self:flex-start;font-weight:700;font-size:16px;color:var(--heading);padding:2px 8px 0}
+.t-ask-in{background:#FFFFFF;border:1px solid #D1D5DB;border-radius:999px;padding:4px 4px 4px 16px}
+.t-ask-ic{display:grid;place-items:center;color:#6B7280}
+.search.t-ask input{padding:10px 0;min-width:0;flex:1}
+.t-ask-in .btn{flex:none;padding:11px 22px;font-size:15px}
+.t-ask-bar{padding:0 4px}
+.t-near{display:inline-flex;align-items:center;gap:6px;border:1px solid #D1D5DB;background:#FFFFFF;color:var(--t-primary);padding:8px 14px;font-size:14px;font-weight:600}
+.t-near:hover{border-color:var(--t-primary)}
+.search li.hd{padding:8px 10px 4px;font-size:13px;font-weight:700;color:var(--muted)}
+.search li a.go b{color:var(--t-primary)}
+.search li .go-town{display:flex;align-items:center;gap:8px;width:100%;font:inherit;text-align:left;background:none;border:0;padding:10px;border-radius:6px;cursor:pointer;color:var(--ink)}
+.search li .go-town:hover,.search li .go-town:focus{background:var(--soft)}
+.search li .go-town svg{flex:none;color:var(--t-primary)}
+.search-row{display:flex;gap:8px}
+.search-row .near-btn{display:inline-flex;align-items:center;gap:6px}
+@media (max-width:560px){
+  .search.t-ask input{font-size:16px}
+  .t-ask-in .btn{padding:10px 16px}
+  .t-ask-bar{flex-direction:column;align-items:flex-start;gap:12px}
+}
 </style>
 <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "7effe80b68fa4bdd9944534b8a820936"}'></script>
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://theskiadvisor.com/"}, {"@type": "ListItem", "position": 2, "name": "About", "item": "https://theskiadvisor.com/about.html"}]}</script>
@@ -889,7 +911,7 @@ a.hp-card b{text-decoration:underline;text-decoration-color:var(--brand-red);tex
 <li><b>Edges from how you ski.</b> Edge angles are a one-time setup for your style of skiing. The snow only changes how much edge work is worth doing.</li>
 </ul>
 <h2>Where the data comes from</h2>
-<p>Weather comes from <a href="https://api.met.no/">MET Norway</a> under the <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> license. The 7-day forecast text on US resort pages comes from the <a href="https://www.weather.gov/">National Weather Service</a>. Resort locations, elevations, lifts and runs come from <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a> and <a href="https://openskimap.org">OpenSkiMap</a> under the <a href="https://opendatacommons.org/licenses/odbl/">Open Database License</a>. Volunteers maintain that map, so some details will be wrong. If you spot one, <a href="contact.html">tell us</a> or fix it in OpenStreetMap; the fix reaches this site at the next data refresh.</p>
+<p>Weather comes from <a href="https://api.met.no/">MET Norway</a> under the <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> license. The 7-day forecast text on US resort pages comes from the <a href="https://www.weather.gov/">National Weather Service</a>. The town list that lets you search "near Denver" comes from <a href="https://www.geonames.org/">GeoNames</a> under the <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> license. Resort locations, elevations, lifts and runs come from <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a> and <a href="https://openskimap.org">OpenSkiMap</a> under the <a href="https://opendatacommons.org/licenses/odbl/">Open Database License</a>. Volunteers maintain that map, so some details will be wrong. If you spot one, <a href="contact.html">tell us</a> or fix it in OpenStreetMap; the fix reaches this site at the next data refresh.</p>
 <h2>Starting points, not rules</h2>
 <p>The temperature on your wax label beats our chart, and a snow thermometer beats any forecast. Use the recommendations as a starting point and adjust from what you see on the hill.</p>
 <h2>How the site makes money</h2>
@@ -909,6 +931,6 @@ a.hp-card b{text-decoration:underline;text-decoration-color:var(--brand-red);tex
     <p class="t-copy">© 2026 The Ski Advisor</p>
   </div>
 </footer>
-<script src="assets/tool.js?v=e7dfdc3901"></script>
+<script src="assets/tool.js?v=8f94d06b5c"></script>
 </body>
 </html>

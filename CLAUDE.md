@@ -70,7 +70,7 @@ python3 src/preview.py                                # http://localhost:8000
 - Amazon Associates tag: `theskiadvisor-20` (amazon.com only), set in both build.py and tool.js.
 - Anything new that collects or stores information about visitors needs a matching update to the privacy
   page (`privacy_page()` in build.py) and its effective date.
-- Weather credit: MET Norway (CC BY 4.0); the National Weather Service for the US 7-day forecast text (public domain). Resort data credit: OpenStreetMap contributors and OpenSkiMap (ODbL).
+- Weather credit: MET Norway (CC BY 4.0); the National Weather Service for the US 7-day forecast text (public domain). Resort data credit: OpenStreetMap contributors and OpenSkiMap (ODbL). Town search ("near Denver"): GeoNames (CC BY 4.0), credited on the About page; `src/cities.json` is made by `src/make_cities.py`.
 
 ## Services
 

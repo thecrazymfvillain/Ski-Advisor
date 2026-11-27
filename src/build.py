@@ -606,6 +606,7 @@ def head(title, desc, path, depth, jsonld=None, noindex=False):
     return "\n".join(out)
 
 ICON_SNOW = '''<svg width="18" height="18" viewBox="0 0 24 24" aria-hidden="true"><g stroke="#286FEC" stroke-width="2" stroke-linecap="round" fill="none"><path d="M12 2v20M3.3 7l17.4 10M20.7 7 3.3 17"/><path d="M9 4l3 2 3-2M9 20l3-2 3 2M4.2 10.5l3.4-.3-1.3-3.2M19.8 13.5l-3.4.3 1.3 3.2M4.2 13.5l3.4.3-1.3 3.2M19.8 10.5l-3.4-.3 1.3-3.2"/></g></svg>'''
+ICON_SEARCH = '''<svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="10.5" cy="10.5" r="6.5"/><path d="m15.5 15.5 5 5"/></svg>'''
 ICON_PIN = '''<svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="10" r="2.6" fill="currentColor"/></svg>'''
 ICON_THERMO = '''<svg width="26" height="26" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13.5V5a2 2 0 1 1 4 0v8.5a4 4 0 1 1-4 0z" fill="none" stroke="#FFFFFF" stroke-width="2"/><circle cx="12" cy="17" r="1.8" fill="#FFFFFF"/></svg>'''
 ICON_WAX = '''<svg width="96" height="96" viewBox="0 0 96 96" aria-hidden="true"><defs>
@@ -656,13 +657,13 @@ def footer(depth):
 </footer>"""
 
 def search_box(depth, prefix, sid):
-    return f"""<form class="search" data-search data-index="{"../"*depth}assets/resort-index.json" data-prefix="{prefix}" role="search">
+    return f"""<form class="search" data-search data-index="{"../"*depth}assets/resort-index.json" data-cities="{"../"*depth}assets/cities.json" data-prefix="{prefix}" data-rprefix="{"../"*depth}regions/" role="search">
       <label class="sr" for="{sid}">Find a ski resort</label>
       <div class="search-row">
-        <input id="{sid}" type="search" autocomplete="off" placeholder="Search {len(ALL)} ski resorts by name, town or state">
-        <button type="button" class="near-btn" data-near>Near me</button>
+        <input id="{sid}" type="search" autocomplete="off" enterkeyhint="search" placeholder="Resort, town or state: try Vail, Denver or Utah">
+        <button type="button" class="near-btn" data-near>{ICON_PIN}<span>Use my location</span></button>
       </div>
-      <div class="pass-row" role="group" aria-label="Filter by season pass"><span>Pass</span><button type="button" class="chip" data-passpick="" aria-pressed="true">Any</button><button type="button" class="chip" data-passpick="epic" aria-pressed="false">Epic</button><button type="button" class="chip" data-passpick="ikon" aria-pressed="false">Ikon</button></div>
+      <div class="pass-row" role="group" aria-label="Filter by season pass"><span>Season pass</span><button type="button" class="chip" data-passpick="" aria-pressed="true">Any</button><button type="button" class="chip" data-passpick="epic" aria-pressed="false">Epic</button><button type="button" class="chip" data-passpick="ikon" aria-pressed="false">Ikon</button></div>
       <ul hidden></ul>
       <p class="near-msg muted" hidden></p>
     </form>"""
@@ -771,14 +772,15 @@ HERO_MTNS = """<svg class="hero-mtns" viewBox="0 0 1440 360" preserveAspectRatio
 
 def hero_search():
     chips = ''.join(f'<button type="button" class="chip" data-passpick="{k}" aria-pressed="{"true" if not k else "false"}">{n}</button>' for k, n in (("", "Any"), ("epic", "Epic"), ("ikon", "Ikon")))
-    return f"""<form class="search t-ask" data-search data-index="assets/resort-index.json" data-prefix="resorts/" role="search">
-      <div class="t-ask-in">{ICON_SNOW}<label class="sr" for="homeSearch">Find a ski resort</label><input id="homeSearch" type="search" autocomplete="off" placeholder="Search by resort, town or state"></div>
+    return f"""<form class="search t-ask" data-search data-index="assets/resort-index.json" data-cities="assets/cities.json" data-prefix="resorts/" data-rprefix="regions/" role="search">
+      <label class="t-ask-label" for="homeSearch">Find your mountain</label>
+      <div class="t-ask-in"><span class="t-ask-ic">{ICON_SEARCH}</span><input id="homeSearch" type="search" autocomplete="off" enterkeyhint="search" placeholder="Resort, town or state: try Vail, Denver or Utah"><button type="submit" class="btn btn-red">Search</button></div>
       <div class="t-ask-bar">
-        <div class="pass-row" role="group" aria-label="Filter by season pass"><span>Pass</span>{chips}</div>
-        <div class="t-ask-act"><button type="button" class="near-btn t-near" data-near>{ICON_PIN}<span>Near me</span></button><button type="submit" class="btn">Find my wax</button></div>
+        <button type="button" class="near-btn t-near" data-near>{ICON_PIN}<span>Use my location</span></button>
+        <div class="pass-row" role="group" aria-label="Filter by season pass"><span>Season pass</span>{chips}</div>
       </div>
       <ul hidden></ul>
-      <p class="near-msg muted" hidden></p>
+      <p class="near-msg muted" role="status" hidden></p>
     </form>"""
 
 FAQ = [
@@ -1041,7 +1043,7 @@ def about_page():
 <li><b>Edges from how you ski.</b> Edge angles are a one-time setup for your style of skiing. The snow only changes how much edge work is worth doing.</li>
 </ul>
 <h2>Where the data comes from</h2>
-<p>Weather comes from <a href="https://api.met.no/">MET Norway</a> under the <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> license. The 7-day forecast text on US resort pages comes from the <a href="https://www.weather.gov/">National Weather Service</a>. Resort locations, elevations, lifts and runs come from <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a> and <a href="https://openskimap.org">OpenSkiMap</a> under the <a href="https://opendatacommons.org/licenses/odbl/">Open Database License</a>. Volunteers maintain that map, so some details will be wrong. If you spot one, <a href="contact.html">tell us</a> or fix it in OpenStreetMap; the fix reaches this site at the next data refresh.</p>
+<p>Weather comes from <a href="https://api.met.no/">MET Norway</a> under the <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> license. The 7-day forecast text on US resort pages comes from the <a href="https://www.weather.gov/">National Weather Service</a>. The town list that lets you search "near Denver" comes from <a href="https://www.geonames.org/">GeoNames</a> under the <a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a> license. Resort locations, elevations, lifts and runs come from <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a> and <a href="https://openskimap.org">OpenSkiMap</a> under the <a href="https://opendatacommons.org/licenses/odbl/">Open Database License</a>. Volunteers maintain that map, so some details will be wrong. If you spot one, <a href="contact.html">tell us</a> or fix it in OpenStreetMap; the fix reaches this site at the next data refresh.</p>
 <h2>Starting points, not rules</h2>
 <p>The temperature on your wax label beats our chart, and a snow thermometer beats any forecast. Use the recommendations as a starting point and adjust from what you see on the hill.</p>
 <h2>How the site makes money</h2>
@@ -1274,7 +1276,8 @@ def main():
         with open(os.path.join(SRC, "fonts", f), "rb") as a, open(dst, "wb") as b: b.write(a.read())
     write("assets/tool.js", open(os.path.join(SRC, "tool.js")).read())
     write("assets/flyover.js", open(os.path.join(SRC, "flyover.js")).read())
-    write("assets/resort-index.json", json.dumps([[x["id"], x["name"], x["short"], x["regionName"], x.get("locality") or "", x["lat"], x["lon"], pass_code(x)] for x in ALL], ensure_ascii=False, separators=(",", ":")))
+    with open(os.path.join(SRC, "cities.json"), encoding="utf-8") as f: write("assets/cities.json", f.read())   # GeoNames towns, for "near Denver"
+    write("assets/resort-index.json", json.dumps([[x["id"], x["name"], x["short"], x["regionName"], x.get("locality") or "", x["lat"], x["lon"], pass_code(x), x["region"]] for x in ALL], ensure_ascii=False, separators=(",", ":")))
     # resort list, shard plan and featured resorts for the Netlify weather functions
     lib = os.path.join(ROOT, "netlify", "lib"); os.makedirs(lib, exist_ok=True)
     with open(os.path.join(lib, "resorts.json"), "w") as f:

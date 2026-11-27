@@ -631,30 +631,34 @@ function kmBetween(la1, lo1, la2, lo2){
   const r = Math.PI/180, a = Math.sin((la2-la1)*r/2)**2 + Math.cos(la1*r)*Math.cos(la2*r)*Math.sin((lo2-lo1)*r/2)**2;
   return 12742 * Math.asin(Math.sqrt(a));
 }
-// "Near me": the browser's location stays in the browser; it only sorts the resort list.
+// Nearest resorts to a point: "Use my location", or a town typed in the search ("Denver").
+// The browser's location stays in the browser; it only sorts the resort list.
+const PIN_SVG = '<svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s7-6.2 7-12a7 7 0 1 0-14 0c0 5.8 7 12 7 12z" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="10" r="2.5" fill="none" stroke="currentColor" stroke-width="2"/></svg>';
+async function showNearest(form, la, lo, label){
+  const list = form.querySelector("ul"), msg = form.querySelector(".near-msg");
+  const idx = await loadIndex(form.dataset.index), pv = passPref();
+  const near = idx.filter(e=>passMatch(e, pv)).map(e=>({e, km: kmBetween(la, lo, e[5], e[6])})).sort((a,b)=>a.km-b.km).slice(0, 8);
+  const dist = km => state.unit==="F" ? Math.round(km*0.621371) + " mi" : Math.round(km) + " km";
+  list.innerHTML = `<li class="hd">${escH(label)}${pv ? " · " + PASS_NAME[pv] + " only" : ""}</li>` +
+    near.map(({e, km}) => `<li><a href="${form.dataset.prefix}${encodeURIComponent(e[0])}.html"><b>${escH(e[1])}${passBadge(e)}</b><span>${dist(km)} away · ${escH(e[4] ? e[4] + ", " : "")}${escH(e[3])}</span></a></li>`).join("");
+  list.hidden = false; msg.hidden = true;
+  form._near = {la, lo, label}; form.dataset.mode = "near";
+}
 function initNearMe(){
   document.querySelectorAll("[data-search]").forEach(form=>{
-    const btn = form.querySelector("[data-near]"), list = form.querySelector("ul"), msg = form.querySelector(".near-msg");
+    const btn = form.querySelector("[data-near]"), msg = form.querySelector(".near-msg");
     if(!btn) return;
     if(!("geolocation" in navigator)){ btn.hidden = true; return; }
-    let here = null;
-    const showNear = async () => {
-      const idx = await loadIndex(form.dataset.index);
-      const [la, lo] = here, pv = passPref();
-      const near = idx.filter(e=>passMatch(e, pv)).map(e=>({e, km: kmBetween(la, lo, e[5], e[6])})).sort((a,b)=>a.km-b.km).slice(0, 8);
-      const dist = km => state.unit==="F" ? Math.round(km*0.621371) + " mi" : Math.round(km) + " km";
-      list.innerHTML = near.map(({e, km}) => `<li><a href="${form.dataset.prefix}${encodeURIComponent(e[0])}.html"><b>${escH(e[1])}${passBadge(e)}</b><span>${dist(km)} away · ${escH(e[4] ? e[4] + ", " : "")}${escH(e[3])}</span></a></li>`).join("");
-      list.hidden = false; msg.hidden = true; form.dataset.mode = "near";
-    };
-    passListeners.push(()=>{ if(here && form.dataset.mode==="near" && !list.hidden) showNear(); });
+    passListeners.push(()=>{ if(form._near && form.dataset.mode==="near") showNearest(form, form._near.la, form._near.lo, form._near.label); });
     btn.addEventListener("click", ()=>{
-      msg.hidden = false; msg.textContent = "Finding resorts near you…";
+      msg.hidden = false; msg.textContent = "Finding ski areas near you…";
       navigator.geolocation.getCurrentPosition(pos=>{
-        here = [pos.coords.latitude, pos.coords.longitude];
-        showNear();
+        showNearest(form, pos.coords.latitude, pos.coords.longitude, "Closest to you");
       }, err=>{
-        msg.textContent = err.code === 1 ? "Location is off for this site. Search by name instead." : "Couldn't get your location. Search by name instead.";
-      }, { timeout: 10000, maximumAge: 600000 });
+        msg.textContent = err.code === 1
+          ? "Your browser is blocking location for this site. To allow it, click the icon at the left of the address bar and turn Location on. Or just type your town above, like Denver or Salt Lake City."
+          : "Your device couldn't find your location. On a Mac, check System Settings, Privacy & Security, Location Services for your browser. Or just type your town above, like Denver or Salt Lake City.";
+      }, { timeout: 12000, maximumAge: 600000 });
     });
   });
 }
@@ -690,31 +694,80 @@ async function initMyMountains(){
   }).catch(()=>{})));
   renderHome();
 }
+// Search: resorts by name or town, states and provinces ("Utah", "UT"), and towns ("Denver", "Jackson WY")
+// for the ski areas nearest them. The town list (GeoNames) only loads once someone starts typing.
 function initSearch(){
   document.querySelectorAll("[data-search]").forEach(form=>{
-    const input = form.querySelector("input"), list = form.querySelector("ul");
-    let idx = null, loading = null;
-    const load = () => loading || (loading = loadIndex(form.dataset.index).then(d=>{ idx = d.map(e=>({e, hay: fold(e.slice(1, 5).join(" "))})); }));
+    const input = form.querySelector("input"), list = form.querySelector("ul"), msg = form.querySelector(".near-msg");
+    let idx = null, regions = null, cities = null, loading = null;
+    const load = () => loading || (loading = Promise.all([
+      loadIndex(form.dataset.index).then(d=>{
+        idx = d.map(e=>{ const hay = fold(e.slice(1, 5).join(" ")); return {e, hay, words: hay.split(/[\s,()\/-]+/).filter(Boolean)}; });
+        regions = {};
+        for(const e of d){ const k = e[8] || e[2]; (regions[k] = regions[k] || {name:e[3], short:e[2], code:k, n:0}).n++; }
+      }),
+      form.dataset.cities ? loadIndex(form.dataset.cities).then(c=>{ cities = Array.isArray(c) ? c : []; }) : Promise.resolve()
+    ]));
     function show(){
-      const q = fold(input.value.trim());
+      const raw = input.value.trim(), q = fold(raw);
       if(!q || !idx){ list.hidden = true; list.innerHTML = ""; return; }
-      const terms = q.split(/\s+/), pv = passPref();
-      const hits = idx.filter(x => passMatch(x.e, pv) && terms.every(t => x.hay.includes(t)))
-        .sort((a,b) => (fold(a.e[1]).startsWith(terms[0]) ? 0 : 1) - (fold(b.e[1]).startsWith(terms[0]) ? 0 : 1)).slice(0, 8);
-      list.innerHTML = hits.length
-        ? hits.map(({e}) => `<li><a href="${form.dataset.prefix}${encodeURIComponent(e[0])}.html"><b>${escH(e[1])}${passBadge(e)}</b><span>${escH(e[4] ? e[4] + ", " : "")}${escH(e[3])}</span></a></li>`).join("")
-        : `<li class="none">No ${pv ? PASS_NAME[pv] + " " : ""}ski resort matches “${escH(input.value.trim())}”.</li>`;
-      list.hidden = false; form.dataset.mode = "search";
+      const terms = q.split(/\s+/), pv = passPref(), items = [];
+      // 1. a state or province: "utah", "ut", "british col"
+      const regs = Object.values(regions).filter(g => fold(g.name) === q || g.short.toLowerCase() === q || (q.length >= 3 && fold(g.name).startsWith(q)));
+      for(const g of regs.slice(0, 2))
+        items.push(`<li><a class="go" href="${form.dataset.rprefix}${g.code.toLowerCase()}.html"><b>All ${g.n} ski area${g.n===1?"":"s"} in ${escH(g.name)}</b><span>Today's wax for each one</span></a></li>`);
+      // 2. resorts by name or town
+      // Short terms ("ut", "co") must start a word, so they don't match letters inside other names.
+      const has = (x, t) => t.length > 2 ? x.hay.includes(t) : x.words.some(w => w.startsWith(t));
+      const hits = idx.filter(x => passMatch(x.e, pv) && terms.every(t => has(x, t)))
+        .sort((a,b) => (fold(a.e[1]).startsWith(terms[0]) ? 0 : 1) - (fold(b.e[1]).startsWith(terms[0]) ? 0 : 1)).slice(0, regs.length ? 4 : 6);
+      for(const {e} of hits)
+        items.push(`<li><a href="${form.dataset.prefix}${encodeURIComponent(e[0])}.html"><b>${escH(e[1])}${passBadge(e)}</b><span>${escH(e[4] ? e[4] + ", " : "")}${escH(e[3])}</span></a></li>`);
+      // 3. towns: "denver", "jackson wy", "jackson, wy"
+      if(cities && q.length >= 3 && !regs.some(g => fold(g.name) === q)){
+        const m = q.match(/^(.*?)[,\s]+([a-z]{2})$/), name = m ? m[1].trim() : q, st = m ? m[2].toUpperCase() : "";
+        // Bigger towns first, but weighed by how far the nearest ski area is, so Jackson, WY beats Jackson, MS,
+        // Vail, CO beats Vail, AZ, and Portland, OR still comes before Portland, CT.
+        const nearKm = c => Math.min(...idx.map(x => kmBetween(c[2], c[3], x.e[5], x.e[6])));
+        let cand = cities.filter(c => fold(c[0]).startsWith(name) && (!st || c[1] === st));
+        const exact = cand.filter(c => fold(c[0]) === name);
+        if(exact.length) cand = exact;   // "Jackson" means Jackson, not Jacksonville
+        const towns = cand.slice(0, 8)
+          .map(c => ({c, score: Math.max(c[4], 1) / (1 + nearKm(c) / 20)}))
+          .sort((a, b) => b.score - a.score)
+          .slice(0, hits.length ? 2 : 3).map(x => x.c);
+        const townBtn = (c, pre) => `<li><button type="button" class="go-town" data-la="${c[2]}" data-lo="${c[3]}" data-label="Closest to ${escH(c[0])}, ${c[1]}">${PIN_SVG}<b>${pre} ${escH(c[0])}, ${c[1]}</b></button></li>`;
+        if(towns.length && !hits.length && !regs.length){
+          // Only a town matched ("Boise"): show its closest ski areas straight away.
+          const t = towns[0], dist = km => state.unit==="F" ? Math.round(km*0.621371) + " mi" : Math.round(km) + " km";
+          const near = idx.filter(x => passMatch(x.e, pv)).map(x => ({e: x.e, km: kmBetween(t[2], t[3], x.e[5], x.e[6])})).sort((a,b) => a.km - b.km).slice(0, 5);
+          items.push(`<li class="hd">Closest to ${escH(t[0])}, ${t[1]}</li>`);
+          near.forEach(({e, km}) => items.push(`<li><a href="${form.dataset.prefix}${encodeURIComponent(e[0])}.html"><b>${escH(e[1])}${passBadge(e)}</b><span>${dist(km)} away · ${escH(e[4] ? e[4] + ", " : "")}${escH(e[3])}</span></a></li>`));
+          towns.slice(1).forEach(c => items.push(townBtn(c, "Or near")));
+        } else towns.forEach(c => items.push(townBtn(c, "Ski areas near")));
+      }
+      list.innerHTML = items.length ? items.join("")
+        : `<li class="none">No ${pv ? PASS_NAME[pv] + " " : ""}ski area, town or state matches “${escH(raw)}”. Try a resort name like Vail, a town like Denver, or a state like Utah.</li>`;
+      list.hidden = false; msg.hidden = true; form.dataset.mode = "search";
     }
-    passListeners.push(()=>{ if(input.value.trim()) load().then(show); });
+    list.addEventListener("click", e => {
+      const b = e.target.closest(".go-town"); if(!b) return;
+      e.preventDefault(); showNearest(form, Number(b.dataset.la), Number(b.dataset.lo), b.dataset.label);
+    });
+    passListeners.push(()=>{ if(input.value.trim() && form.dataset.mode==="search") load().then(show); });
     input.addEventListener("focus", load);
     input.addEventListener("input", () => load().then(show));
     input.addEventListener("keydown", e => { if(e.key === "Escape"){ list.hidden = true; } });
     form.addEventListener("submit", async e => {
       e.preventDefault();
-      if(!input.value.trim()){ input.focus(); return; }
+      if(!input.value.trim()){
+        input.focus(); msg.hidden = false; msg.textContent = "Type a resort, town or state first, like Vail, Denver or Utah.";
+        return;
+      }
       await load(); show();
-      const a = list.querySelector("a"); if(a) location.href = a.href;
+      const first = list.querySelector("a, .go-town");
+      if(!first) return;
+      if(first.matches(".go-town")) first.click(); else location.href = first.href;
     });
     document.addEventListener("click", e => { if(!form.contains(e.target)) list.hidden = true; });
   });
