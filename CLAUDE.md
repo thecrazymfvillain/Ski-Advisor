@@ -28,7 +28,7 @@ the change and said to push. No pull requests or review needed.
 ## Build and preview
 
 ```bash
-python3 src/build.py                                  # writes all 817 pages to site/, plus netlify/lib/*.json
+python3 src/build.py                                  # writes all 818 pages to site/, plus netlify/lib/*.json
 python3 src/preview.py                                # http://localhost:8000
 ```
 

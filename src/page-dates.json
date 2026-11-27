@@ -50,9 +50,9 @@
 "modified": "2026-11-27"
 },
 "guides/how-to-wax-skis.html": {
-"hash": "9150115963043daa",
+"hash": "378cecfb329eb173",
 "published": "2026-11-19",
-"modified": "2026-11-26"
+"modified": "2026-11-27"
 },
 "guides/icy-and-man-made-snow.html": {
 "hash": "4a4a3a514c079b1b",
@@ -60,7 +60,7 @@
 "modified": "2026-11-27"
 },
 "guides/index.html": {
-"hash": "b3ac65b07ffad589",
+"hash": "0de3a9cdfac011b5",
 "published": "2026-11-19",
 "modified": "2026-11-27"
 },
@@ -70,7 +70,7 @@
 "modified": "2026-11-27"
 },
 "guides/ski-edge-angles.html": {
-"hash": "344d51318764ad77",
+"hash": "c759e75dfc3857e0",
 "published": "2026-11-19",
 "modified": "2026-11-27"
 },
@@ -89,13 +89,18 @@
 "published": "2026-11-19",
 "modified": "2026-11-27"
 },
+"guides/stone-grind-and-base-structure.html": {
+"hash": "72ab107ca4c930a8",
+"published": "2026-11-27",
+"modified": "2026-11-27"
+},
 "guides/waxing-for-spring-snow.html": {
 "hash": "232ef71309e50e81",
 "published": "2026-11-19",
 "modified": "2026-11-26"
 },
 "index.html": {
-"hash": "d1e7c420dde87f2f",
+"hash": "254d205d2adc4552",
 "published": "2026-11-19",
 "modified": "2026-11-27"
 },

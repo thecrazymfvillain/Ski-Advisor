@@ -17,7 +17,7 @@ EXTRA = {
 <h2>Waxing indoors</h2>
 <p>Lay cardboard or an old sheet under the bench; wax shavings get everywhere and are slippery on hard floors. Keep the room ventilated, and keep the iron moving: fumes come from overheated wax, so if you see smoke, the iron is too hot. Unplug the iron as soon as you're done.</p>
 <h2>When to take your skis to a shop</h2>
-<p>Home waxing doesn't replace a shop tune. Take your skis in for deep gouges that show the core, a base that's no longer flat, edges with serious damage, or a fresh stone grind, which resets the base structure and the base bevel. Many skiers get a shop tune once a season and wax at home in between.</p>""",
+<p>Home waxing doesn't replace a shop tune. Take your skis in for deep gouges that show the core, a base that's no longer flat, edges with serious damage, or a fresh <a href="stone-grind-and-base-structure.html">stone grind</a>, which resets the base structure and the base bevel. Many skiers get a shop tune once a season and wax at home in between.</p>""",
 
 "ski-wax-temperature-chart": """
 <h2>Reading the forecast for wax</h2>
@@ -188,7 +188,7 @@ SNOWBOARD_GUIDE = dict(
 """)
 
 XC_GUIDE = dict(
-  slug="cross-country-ski-wax", title="Cross-Country Ski Wax: Grip and Glide Wax Temperature Chart",
+  kind="xc", slug="cross-country-ski-wax", title="Cross-Country Ski Wax: Grip and Glide Wax Temperature Chart",
   desc="Cross-country ski wax explained: a grip (kick) wax temperature chart in °F and °C, when to use klister, glide wax for classic and skate skis, waxless and skin skis, and how to fix slipping or icing.",
   card="Grip wax and klister by snow temperature, glide wax, and fixing slipping or icing.",
   dek="Cross-country skis use two kinds of wax: glide wax to slide, and on classic skis, grip wax under the foot to push off. Here's which to use for the snow you'll ski.",
@@ -239,4 +239,51 @@ XC_GUIDE = dict(
 <p>When in doubt, start one step colder. It's easy to add a warmer layer on the trail and hard to remove a warm one that's icing.</p>
 <h2>Glide wax for cross-country skis</h2>
 <p>Pick glide wax by snow temperature with the same chart as alpine skis: see the <a href="ski-wax-temperature-chart.html">ski wax temperature chart</a>. Iron, scrape and brush it as in <a href="how-to-wax-skis.html">how to wax skis</a>, keeping glide wax out of a classic ski's grip zone. Every wax we name is sold as fluoro-free; fluorinated waxes are banned in FIS racing. Check the package when you buy.</p>
+""")
+
+GRIND_GUIDE = dict(
+  slug="stone-grind-and-base-structure", title="Stone Grind and Base Structure Explained",
+  desc="What a ski or snowboard stone grind does, how it sets the base bevel, what base structure is, which structure suits cold or wet snow, and when your skis need a stone grind.",
+  card="What a stone grind fixes, how base structure works, and when to get one.",
+  dek="A stone grind is the shop tune that flattens your base, cuts fresh base structure and sets the base bevel. Here's what each part does and when you need one.",
+  related=["ski-edge-angles", "how-to-sharpen-ski-edges", "how-to-wax-skis"],
+  body="""
+<h2>What a stone grind is</h2>
+<p>A stone grind is done on a shop machine: the ski's base is passed over a turning stone wheel, cooled with water, which takes a very thin layer off the base. In one pass it does three jobs:</p>
+<ul>
+<li><b>Flattens the base</b>, so the base and edges sit in one flat plane again.</li>
+<li><b>Cuts fresh base structure</b>, a fine pattern of grooves in the base (below).</li>
+<li><b>Resets the base bevel</b>, since the base edge is ground along with the base and then beveled to the angle you ask for.</li>
+</ul>
+<p>Most shops sell it as part of a full tune: stone grind, base bevel and side bevel set, edges polished, and a wax. A grind is the one part of a tune you can't do at home.</p>
+<h2>What a stone grind fixes</h2>
+<ul>
+<li><b>A base that isn't flat.</b> A concave or "railed" base, where the edges sit higher than the middle, feels grabby and hooks into turns. A convex base, where the middle sits higher, feels vague and squirrelly on hard snow.</li>
+<li><b>Base burn.</b> Dry, white or chalky patches, usually along the edges, where the base has gone too long without wax. Burned base doesn't hold wax well; a grind takes it off.</li>
+<li><b>Worn or clogged structure</b> after a lot of skiing.</li>
+<li><b>Shallow scratches</b>, and the surface left after a shop repairs deeper gouges.</li>
+<li><b>A base bevel that's drifted</b> after a season of filing and stoning.</li>
+</ul>
+<h2>What base structure is</h2>
+<p>Base structure is the pattern of fine grooves cut into the base. On snow, a thin film of water forms under the ski. A perfectly smooth base would stick to that film by suction; structure breaks the film up and lets the water run off, so the ski glides. How much structure works best depends on how much water there is:</p>
+<div class="table-wrap fit"><table><thead><tr><th>Snow</th><th>Base structure</th></tr></thead><tbody>
+<tr><td><b>Cold, dry snow</b><br><small>and most man-made snow</small></td><td>Fine structure. Little water to move, and fine grooves add less drag.</td></tr>
+<tr><td><b>Most everyday skiing</b></td><td>A medium, all-round structure. This is what most shops cut unless you ask.</td></tr>
+<tr><td><b>Wet, warm spring snow</b></td><td>Coarser or broken structure, to drain more water and break the suction.</td></tr>
+</tbody></table></div>
+<p>Patterns differ too: straight lines running tip to tail, crossed or broken patterns, and chevrons. Broken and crossed patterns break up water better in wet snow. If you ski one kind of snow most of the time, tell the shop; otherwise ask for their all-round structure.</p>
+<p>Brushing after you wax matters for structure too. Scraping leaves wax in the grooves; brushing clears it out so the structure can do its job. That's why a well-brushed base shows its fine lines again. See <a href="how-to-wax-skis.html">how to wax skis</a>.</p>
+<h2>Stone grind and base bevel</h2>
+<p>The base bevel is set at the grind, usually 0.5° to 1°, and should stay put all season. At home you only deburr the base edge with a light pass of a fine stone. The side bevel is the one you maintain yourself through the winter. Tell the shop the angles you want when you drop the skis off, for example "1° base, 2° side". See <a href="ski-edge-angles.html">base bevel and side bevel explained</a>.</p>
+<h2>When to get a stone grind</h2>
+<p>For most skiers and riders, <b>once a season, in the fall</b>, before the first ski day. Racers and people who ski a lot of days often grind more often. Get one sooner if you see:</p>
+<ul>
+<li>Base burn that a couple of hot waxes don't fix.</li>
+<li>Skis that suddenly feel hooky or vague, a sign the base isn't flat.</li>
+<li>Deep scratches or a shop base repair.</li>
+</ul>
+<p>To check flatness yourself, lay a metal straightedge (a true bar) across the base and hold it up to a light. Light showing under the middle means a concave, railed base; a bar that rocks on the middle means a convex one. Check in a few spots from tip to tail.</p>
+<p>Don't grind more than you need to. Every grind takes off a little base, and a base only has so much to give over the life of the ski.</p>
+<h2>After a stone grind</h2>
+<p>A fresh grind opens the base, and the shop's machine wax only goes so deep. Hot wax your skis two or three times over the next few ski days, scraping and brushing each time, so the new base soaks up wax and the fresh structure stays clean. Pick the wax for the snow you'll ski with the <a href="ski-wax-temperature-chart.html">wax temperature chart</a>.</p>
 """)

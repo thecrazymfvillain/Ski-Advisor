@@ -359,16 +359,16 @@ GUIDES = [
   dek="What base and side bevel do, why the same edge is called 88° on one tool and 92° on another, and which angles to pick for how you ski.",
   related=["how-to-sharpen-ski-edges","icy-and-man-made-snow","race-wax-vs-training-wax"],
   body="""
-<h2>Two bevels</h2>
+<h2>Base bevel and side bevel</h2>
 <p><b>Base bevel</b> is how far the edge is lifted off the flat of the base, usually 0.5° to 1°. More base bevel means the ski rolls onto its edge more gradually.</p>
 <p><b>Side bevel</b> is how far the side of the edge is filed past vertical, usually 1° to 3°. More side bevel makes a sharper, more aggressive edge that bites harder snow.</p>
 [[EDGEFIGS]]
 <p class="disclose">Material removed by each bevel is shaded. Angles are drawn five times their real size so you can see them.</p>
-<h2>Who looks after which edge</h2>
-<p class="callout"><b>The short version:</b> a shop sets your base edge once a season, usually in the fall, when it grinds the base. You keep the side edge sharp yourself, all winter.</p>
+<h2>Base bevel vs side bevel: who sets which</h2>
+<p class="callout"><b>The short version:</b> a shop sets your base bevel once a season, usually in the fall, with a stone grind. You keep the side bevel sharp yourself, all winter.</p>
 <ul>
-<li><b>Base edge: set in the fall, by a shop.</b> A stone grind flattens the base and sets the base bevel, usually 0.5° to 1°. That angle then stays put for the season. At home, only take burrs off it with one or two light passes of a fine stone in a base guide. Never file the base edge yourself.</li>
-<li><b>Side edge: yours to maintain all winter.</b> This is the edge that wears and gets rock hits, and it's where the grip comes from. Every few ski days, and before firm or icy days, sharpen and polish it at home at the same angle the shop set. See <a href="how-to-sharpen-ski-edges.html">how to sharpen ski edges</a>.</li>
+<li><b>Base bevel: set in the fall, by a shop.</b> A <a href="stone-grind-and-base-structure.html">stone grind</a> flattens the base, cuts fresh base structure and sets the base bevel, usually 0.5° to 1°. That angle then stays put for the season. At home, only take burrs off it with one or two light passes of a fine stone in a base guide. Never file the base edge yourself.</li>
+<li><b>Side bevel: yours to maintain all winter.</b> This is the edge that wears and gets rock hits, and it's where the grip comes from. Every few ski days, and before firm or icy days, sharpen and polish it at home at the same angle the shop set. See <a href="how-to-sharpen-ski-edges.html">how to sharpen ski edges</a>.</li>
 </ul>
 <p>Tell the shop the angles you want when you drop the skis off in the fall, for example "1° base, 2° side". Then buy a side edge guide at that same side angle, so your sharpening at home matches their work.</p>
 <h2>88° or 90°?</h2>
@@ -552,10 +552,11 @@ GUIDES = [
 </ul>
 """),
 ]
-from guides_extra import EXTRA, SNOWBOARD_GUIDE, XC_GUIDE   # longer guide sections + the snowboard and cross-country guides
+from guides_extra import EXTRA, SNOWBOARD_GUIDE, XC_GUIDE, GRIND_GUIDE   # longer guide sections + the snowboard, cross-country and stone grind guides
 for _g in GUIDES: _g["body"] += EXTRA.get(_g["slug"], "")
 GUIDES.insert(1, SNOWBOARD_GUIDE)
 GUIDES.insert(2, XC_GUIDE)
+GUIDES.insert(GUIDES.index(next(g for g in GUIDES if g["slug"] == "how-to-sharpen-ski-edges")) + 1, GRIND_GUIDE)
 from guides_buy import BUY_GUIDES   # buying guides (iron, $100 kit, race wax)
 GUIDES.extend(BUY_GUIDES)
 G_BY = {g["slug"]: g for g in GUIDES}
@@ -1135,7 +1136,7 @@ def not_found_page():
     # served at any missing path, so every link must start from the site root
     return re.sub(r'((?:href|src|data-index|data-prefix)=")(?!https?:|/|#|mailto:)', r'\1/', html_text)
 
-def guide_kind(g): return "Buying guide · " if g.get("kind") == "buy" else ""
+def guide_kind(g): return {"buy": "Buying guide · ", "xc": "Cross-country · "}.get(g.get("kind"), "")
 
 def guide_page(g):
     gb = guide_body(g)
@@ -1171,7 +1172,8 @@ def guide_page(g):
 
 def guides_index():
     card = lambda g: f'<a class="guide-card" href="{g["slug"]}.html"><small>{read_minutes(guide_body(g))} min read</small><b>{g["title"]}</b><span>{g["card"]}</span></a>'
-    cards = "".join(card(g) for g in GUIDES if g.get("kind") != "buy")
+    cards = "".join(card(g) for g in GUIDES if g.get("kind") not in ("buy", "xc"))
+    xc = "".join(card(g) for g in GUIDES if g.get("kind") == "xc")
     buy = "".join(card(g) for g in GUIDES if g.get("kind") == "buy")
     body = f"""{page_info("guides")}
 {header(1, "guides")}
@@ -1182,6 +1184,10 @@ def guides_index():
     <p class="lede">How to wax, sharpen and set up your skis at home, from your first wax job to race day.</p>
   </div>
   <div class="guide-grid">{cards}</div>
+  <section class="home-sec" aria-labelledby="xcH">
+    <div class="section-head"><h2 id="xcH">Cross-country</h2><p class="muted">Grip wax, klister and glide wax for classic and skate skis.</p></div>
+    <div class="guide-grid">{xc}</div>
+  </section>
   <section class="home-sec" aria-labelledby="buyH">
     <div class="section-head"><h2 id="buyH">Buying guides</h2><p class="muted">What to buy, what to skip, and where to spend.</p></div>
     <div class="guide-grid">{buy}</div>
