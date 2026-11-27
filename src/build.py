@@ -353,10 +353,10 @@ GUIDES = [
 <h2>Fluoro-free</h2>
 <p>Fluorinated waxes are banned in FIS racing, and major brands have moved their lines to fluoro-free formulas. Everything we recommend is fluoro-free.</p>
 """),
- dict(slug="ski-edge-angles", title="Ski Edge Angles Explained: 89°, 88° and 87°",
-  desc="Ski edge angles explained: what base bevel and side bevel do, how 88° and 87° edges are measured, and which angles to choose for how you ski.",
-  card="Base bevel, side bevel, and what an 88° edge actually means.",
-  dek="What base and side bevel do, how they add up to the number people quote, and which to pick for how you ski.",
+ dict(slug="ski-edge-angles", title="Ski Edge Angles Explained: 88° or 90°, and Why Some Tools Say 92°",
+  desc="Ski edge angles explained: 88° vs 90°, why an 88° and a 92° file guide cut the same 2° edge, what base and side bevel do, and which angles to choose for how you ski.",
+  card="88° or 90°? Base and side bevel, and why 88° and 92° guides cut the same edge.",
+  dek="What base and side bevel do, why the same edge is called 88° on one tool and 92° on another, and which angles to pick for how you ski.",
   related=["how-to-sharpen-ski-edges","icy-and-man-made-snow","race-wax-vs-training-wax"],
   body="""
 <h2>Two bevels</h2>
@@ -364,14 +364,36 @@ GUIDES = [
 <p><b>Side bevel</b> is how far the side of the edge is filed past vertical, usually 1° to 3°. More side bevel makes a sharper, more aggressive edge that bites harder snow.</p>
 [[EDGEFIGS]]
 <p class="disclose">Material removed by each bevel is shaded. Angles are drawn five times their real size so you can see them.</p>
+<h2>Who looks after which edge</h2>
+<p class="callout"><b>The short version:</b> a shop sets your base edge once a season, usually in the fall, when it grinds the base. You keep the side edge sharp yourself, all winter.</p>
+<ul>
+<li><b>Base edge: set in the fall, by a shop.</b> A stone grind flattens the base and sets the base bevel, usually 0.5° to 1°. That angle then stays put for the season. At home, only take burrs off it with one or two light passes of a fine stone in a base guide. Never file the base edge yourself.</li>
+<li><b>Side edge: yours to maintain all winter.</b> This is the edge that wears and gets rock hits, and it's where the grip comes from. Every few ski days, and before firm or icy days, sharpen and polish it at home at the same angle the shop set. See <a href="how-to-sharpen-ski-edges.html">how to sharpen ski edges</a>.</li>
+</ul>
+<p>Tell the shop the angles you want when you drop the skis off in the fall, for example "1° base, 2° side". Then buy a side edge guide at that same side angle, so your sharpening at home matches their work.</p>
+<h2>88° or 90°?</h2>
+<p><b>A 90° edge is square: no side bevel at all.</b> The side of the edge stands straight up from the base. Very few skis are set up this way, because a square edge grips less on firm snow. <b>An 88° edge has a 2° side bevel</b>: the side is filed 2° past square, which makes the corner sharper so it bites better on hard snow. 88° is the most common setting for all-mountain skiing.</p>
+<h2>88° or 92°: the same edge, labeled two ways</h2>
+<p>Tool makers don't agree on how to write the angle, so the same 2° side bevel can be sold as an <b>88°</b> guide or a <b>92°</b> guide.</p>
+<ul>
+<li><b>Counting down from 90:</b> most European brands, such as Swix, Toko and Holmenkol, label the angle of the steel at the edge's corner. A 2° bevel makes that corner 88°.</li>
+<li><b>Counting up from 90:</b> some American tool makers, such as SVST (SkiVisions), label the angle the file sits at, measured from the base on the other side. The same 2° bevel reads 92°.</li>
+<li><b>Just the bevel:</b> other tools skip both and print the bevel itself: 1°, 2° or 3°.</li>
+</ul>
+<div class="table-wrap fit"><table><thead><tr><th>Side bevel</th><th>Counting down<br><small>most European tools</small></th><th>Counting up<br><small>some American tools</small></th></tr></thead><tbody>
+<tr><td>0° (square)</td><td>90°</td><td>90°</td></tr>
+<tr><td>1°</td><td>89°</td><td>91°</td></tr>
+<tr><td>2°</td><td>88°</td><td>92°</td></tr>
+<tr><td>3°</td><td>87°</td><td>93°</td></tr>
+<tr><td>4°</td><td>86°</td><td>94°</td></tr>
+</tbody></table></div>
+<p>So a 92° guide is not "less sharp than square". It cuts the same edge as an 88° guide. Before you buy a guide or tell a shop what you want, check which way the tool counts, or just say the bevel: "a 2° side edge" means the same thing everywhere.</p>
 <h2>What "88°" means</h2>
 <p>Shops usually describe the side bevel by its angle: a 2° side bevel is called an 88° edge. The actual angle at the corner of the edge also includes the base bevel:</p>
 <p><b>included angle = 90° − side bevel + base bevel</b></p>
 <p>So a ski with 1° base and 2° side has an 89° included angle, even though everyone calls it an 88° edge.</p>
 <h2>Which angles to choose</h2>
 [[STYLETABLE]]
-<h2>Leave base bevel to the shop</h2>
-<p>Base bevel is set by a shop's stone grind and you should rarely change it at home. Too much base bevel makes the ski feel vague. At home, only deburr the base edge with one or two light passes in a base guide.</p>
 <h2>Changing the side bevel</h2>
 <p>Going from 2° to 3° means filing away more steel, and you can't put it back. Choose an angle and stick with it, and only change it when your skiing changes.</p>
 <h2>Detuning</h2>
@@ -530,9 +552,10 @@ GUIDES = [
 </ul>
 """),
 ]
-from guides_extra import EXTRA, SNOWBOARD_GUIDE   # longer guide sections + the snowboard guide
+from guides_extra import EXTRA, SNOWBOARD_GUIDE, XC_GUIDE   # longer guide sections + the snowboard and cross-country guides
 for _g in GUIDES: _g["body"] += EXTRA.get(_g["slug"], "")
 GUIDES.insert(1, SNOWBOARD_GUIDE)
+GUIDES.insert(2, XC_GUIDE)
 from guides_buy import BUY_GUIDES   # buying guides (iron, $100 kit, race wax)
 GUIDES.extend(BUY_GUIDES)
 G_BY = {g["slug"]: g for g in GUIDES}
@@ -840,8 +863,12 @@ def resort_page(x):
         pass_line = (f'\n    <p class="pass-line"><span class="pass-tag {x["pass"]}">{pi["name"]}</span> On the {PASS_SEASON} pass' +
                      ("" if x["passAccess"] == "full" else f' as a {pi["limited"]}') +
                      f'. <a href="../passes/{x["pass"]}.html">See all {pi["name"]} mountains</a></p>')
-    title = f"{x['name']} Ski & Snowboard Wax: Today's Pick and Home Tune"
-    desc = f"Which ski or snowboard wax to use at {x['name']}, {x['regionName']}, today, tomorrow or this weekend, from the forecast at mid-mountain ({ft(x['mid'])}). Plus edge settings and a step-by-step home tune."
+    if x["country"] == "US":   # US pages also carry the National Weather Service 7-day forecast
+        title = f"{x['name']} Ski & Snowboard Wax and 7-Day Snow Forecast"
+        desc = f"Which ski or snowboard wax to use at {x['name']}, {x['regionName']}, today, tomorrow or this weekend, from the forecast at mid-mountain ({ft(x['mid'])}), plus the 7-day snow forecast. Edge settings and a step-by-step home tune too."
+    else:
+        title = f"{x['name']} Ski & Snowboard Wax: Today's Pick and Home Tune"
+        desc = f"Which ski or snowboard wax to use at {x['name']}, {x['regionName']}, today, tomorrow or this weekend, from the forecast at mid-mountain ({ft(x['mid'])}). Plus edge settings and a step-by-step home tune."
     place = {"@context": "https://schema.org", "@type": "SkiResort", "name": x["name"],
              "mainEntityOfPage": f"{DOMAIN}/resorts/{x['id']}.html",
              "geo": {"@type": "GeoCoordinates", "latitude": x["lat"], "longitude": x["lon"], "elevation": x["summit"]},
@@ -1115,7 +1142,7 @@ def guide_page(g):
     mins = read_minutes(gb)
     rel = "".join(f'<a class="guide-card" href="{s}.html"><small>{read_minutes(guide_body(G_BY[s]))} min read</small><b>{G_BY[s]["title"]}</b><span>{G_BY[s]["card"]}</span></a>' for s in g["related"])
     ld = [{"@context":"https://schema.org","@type":"Article","headline":g["title"],"description":g["desc"],
-           "datePublished":TODAY,"dateModified":TODAY,"author":{"@type":"Organization","name":"The Ski Advisor"},
+           "datePublished":"__DATE_PUBLISHED__","dateModified":"__DATE_MODIFIED__","author":{"@type":"Organization","name":"The Ski Advisor"},
            "mainEntityOfPage":DOMAIN+f"/guides/{g['slug']}.html"},
           bc_ld([("Home",""),("Guides","guides/index.html"),(g["title"],f"guides/{g['slug']}.html")])]
     body = f"""{page_info("guide")}
@@ -1170,11 +1197,25 @@ def guides_index():
 import hashlib
 ASSET_V = {}   # file name -> short content hash, so a changed stylesheet or script gets a new URL
 
+# When each page's content last really changed, for the sitemap and the guides' dates. A page counts as
+# changed only when its text changes, not its inlined CSS or scripts, so a restyle doesn't tell Google that
+# all 816 pages are new. Kept in src/page-dates.json and committed with site/.
+DATES_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "page-dates.json")
+PAGE_DATES = json.load(open(DATES_FILE)) if os.path.exists(DATES_FILE) else {}
+def page_fingerprint(text):
+    t = re.sub(r'<style\b.*?</style>|<script\b.*?</script>', '', text, flags=re.S | re.I)
+    return hashlib.sha1(re.sub(r'\?v=[0-9a-f]+', '', t).encode()).hexdigest()[:16]
+
 def write(rel, text):
     p = os.path.join(OUT, rel); os.makedirs(os.path.dirname(p), exist_ok=True)
     if rel.startswith("assets/") and rel.endswith((".css", ".js")):
         ASSET_V[os.path.basename(rel)] = hashlib.sha1(text.encode()).hexdigest()[:10]
-    if rel.endswith(".html"): text = version_assets(text)
+    if rel.endswith(".html"):
+        text = version_assets(text)
+        h, d = page_fingerprint(text), PAGE_DATES.get(rel)
+        if not d: d = PAGE_DATES[rel] = {"hash": h, "published": TODAY, "modified": TODAY}
+        elif d["hash"] != h: d.update(hash=h, modified=TODAY)
+        text = text.replace("__DATE_PUBLISHED__", d["published"]).replace("__DATE_MODIFIED__", d["modified"])
     open(p, "w").write(text)
 
 def version_assets(html_text):
@@ -1233,7 +1274,8 @@ def main():
     urls = ([""] + ["resorts/index.html"] + [f"regions/{c.lower()}.html" for c in sorted(REGIONS)] + [f"resorts/{x['id']}.html" for x in ALL] +
             ["passes/epic.html", "passes/ikon.html"] + ["guides/index.html"] + [f"guides/{g['slug']}.html" for g in GUIDES] + ["about.html", "contact.html", "privacy.html"])
     write("sitemap.xml", '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' +
-          "".join(f"  <url><loc>{DOMAIN}/{u}</loc><lastmod>{TODAY}</lastmod></url>\n" for u in urls) + "</urlset>\n")
+          "".join(f"  <url><loc>{DOMAIN}/{u}</loc><lastmod>{PAGE_DATES.get(u or 'index.html', {}).get('modified', TODAY)}</lastmod></url>\n" for u in urls) + "</urlset>\n")
+    with open(DATES_FILE, "w") as f: json.dump(dict(sorted(PAGE_DATES.items())), f, indent=0); f.write("\n")
     write("robots.txt", f"User-agent: *\nAllow: /\nSitemap: {DOMAIN}/sitemap.xml\n")
     os.makedirs(os.path.join(ROOT, "preview"), exist_ok=True)
     open(os.path.join(ROOT, "preview", "index.html"), "w").write(version_assets(home(False)))

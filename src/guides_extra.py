@@ -32,6 +32,8 @@ EXTRA = {
 </ul>
 <h2>Graphite and other additives</h2>
 <p>Graphite and similar additives help on dirty spring snow and in very dry, cold conditions, where static and dirt slow a base down. They're optional for most recreational skiing.</p>
+<h2>Cross-country skis</h2>
+<p>Glide wax for cross-country skis follows this same chart. Classic skis also need grip wax under the foot, which has its own chart: see <a href="cross-country-ski-wax.html">cross-country ski wax</a>.</p>
 <h2>Quick °F and °C conversions</h2>
 <p>32°F is 0°C, 23°F is −5°C, 14°F is −10°C, 5°F is −15°C and −4°F is −20°C. Each 10°C step is 18°F.</p>""",
 
@@ -141,11 +143,11 @@ EXTRA = {
 }
 
 SNOWBOARD_GUIDE = dict(
-  slug="how-to-wax-a-snowboard", title="How to Wax a Snowboard at Home",
-  desc="How to wax a snowboard at home: tools, which wax to use, iron temperature, scraping, brushing, and how to look after a snowboard's edges.",
-  card="The full hot-wax process for a snowboard, plus edge care for riders.",
-  dek="Waxing a snowboard works like waxing skis, on one wide base. Here's the whole process, and how board edges differ.",
-  related=["ski-wax-temperature-chart", "how-to-wax-skis", "how-often-to-wax-skis"],
+  slug="how-to-wax-a-snowboard", title="Snowboard Waxing and Edge Tuning at Home",
+  desc="Snowboard maintenance at home: how to wax a snowboard step by step, which wax and iron temperature to use, and how to sharpen, deburr and detune a snowboard's edges.",
+  card="The full hot wax for a board, plus sharpening and detuning its edges.",
+  dek="Waxing a snowboard works like waxing skis, on one wide base. Here's the whole wax, then how to sharpen, deburr and detune a board's edges.",
+  related=["ski-edge-angles", "ski-wax-temperature-chart", "how-to-sharpen-ski-edges"],
   body="""
 <h2>What you need</h2>
 <ul>
@@ -166,9 +168,75 @@ SNOWBOARD_GUIDE = dict(
 <li><b>Brush</b> nose to tail until the base shines and the structure shows again.</li>
 </ol>
 <h2>Snowboard edges</h2>
-<p>Most snowboards come from the factory with a 1° base bevel and a 1° side bevel (an 89° edge). Riders who carve on firm snow often prefer a 2° side bevel; park riders keep 1° and detune more. Like ski edges, the angle is a one-time setup. Keep your board's angle and change how sharp you keep it: polish before firm days, deburr before soft ones.</p>
+<p>Most snowboards come from the factory with a 1° base bevel and a 1° side bevel (an 89° edge; some tools call the same edge 91°, see <a href="ski-edge-angles.html">edge angles explained</a>). Riders who carve on firm snow often prefer a 2° side bevel; park riders keep 1° and detune more. Like ski edges, the angle is a one-time setup. Keep your board's angle and change how sharp you keep it: polish before firm days, deburr before soft ones.</p>
+<h2>Sharpening a snowboard's edges</h2>
+<p>Do the edges before you wax, so filings don't end up in fresh wax.</p>
+<ol>
+<li><b>Find your angle.</b> Ask the shop that last tuned the board, or check the maker's spec. If you don't know, 1° side is the safe guess for most boards.</li>
+<li><b>Set the board base-up</b> on a vise or padded bench, with the edge you're working on just past the bench. A side edge guide rides on the base and holds the stone against the side of the edge.</li>
+<li><b>Knock down burrs and rock damage</b> with a coarse (100 to 200 grit) diamond stone held in the side edge guide. Rock hits leave hard spots that a guide rides over if you skip this.</li>
+<li><b>Sharpen the side edge</b> with the guide set to your angle: smooth, overlapping strokes from nose to tail, 200 grit then 400 grit. Use a file only to repair real damage, because it removes steel fast.</li>
+<li><b>Polish</b> with a fine 600 grit stone for firm snow.</li>
+<li><b>Deburr the base edge</b> with one or two light passes of a fine stone in a base guide. Leave the base bevel itself to a shop.</li>
+<li><b>Do both edges,</b> heelside and toeside, then detune the contact points (below).</li>
+</ol>
+<p>Run a fingernail across the edge to check: a sharp edge shaves the nail; a dull spot lets it slide. See <a href="how-to-sharpen-ski-edges.html">how to sharpen edges</a> for stones, rust and rock damage.</p>
 <h2>Detuning a board</h2>
 <p>Many riders lightly dull the edge near the nose and tail contact points, where the base starts to lift, so the board doesn't catch when sliding or riding rails and boxes. Freestyle riders detune more; freeriders and carvers detune little or not at all. Never detune the edge underfoot unless you ride mostly park features.</p>
 <h2>How often</h2>
 <p>Every three to five riding days for most riders, sooner on man-made or very cold snow. White, dry-looking patches near the edges mean the base is overdue. Our <a href="../resorts/index.html">resort pages</a> pick the wax for your mountain and show the whole tune for a snowboard when you choose Snowboard.</p>
+""")
+
+XC_GUIDE = dict(
+  slug="cross-country-ski-wax", title="Cross-Country Ski Wax: Grip and Glide Wax Temperature Chart",
+  desc="Cross-country ski wax explained: a grip (kick) wax temperature chart in °F and °C, when to use klister, glide wax for classic and skate skis, waxless and skin skis, and how to fix slipping or icing.",
+  card="Grip wax and klister by snow temperature, glide wax, and fixing slipping or icing.",
+  dek="Cross-country skis use two kinds of wax: glide wax to slide, and on classic skis, grip wax under the foot to push off. Here's which to use for the snow you'll ski.",
+  related=["ski-wax-temperature-chart", "how-to-wax-skis", "how-often-to-wax-skis"],
+  body="""
+<h2>Two kinds of wax</h2>
+<ul>
+<li><b>Glide wax</b> makes skis slide. It's the same kind of wax as alpine ski wax, picked by snow temperature, and it's ironed in, scraped and brushed the same way. Skate skis use glide wax on the whole base. Classic skis use it on the tips and tails.</li>
+<li><b>Grip wax</b> (also called kick wax) goes only on classic skis, in the zone under your foot. When you press down to kick, the wax bites into the snow so the ski doesn't slip back. When you glide, the ski's camber lifts that zone off the snow.</li>
+</ul>
+<p><b>Waxless skis</b> (fishscale or skin skis) don't need grip wax: the pattern or the skin does the gripping. Glide wax their tips and tails, and keep skins clean with the maker's skin cleaner or spray.</p>
+<h2>Grip wax temperature chart</h2>
+<p>Grip wax is matched to snow temperature, like glide wax, and also to how old the snow is. Colder snow needs harder wax. Warmer, older or icy snow needs softer wax, and past a point, klister.</p>
+<div class="table-wrap fit"><table><thead><tr><th>Snow</th><th>Grip wax</th></tr></thead><tbody>
+<tr><td><b>Very cold, dry snow</b><br><small>below 5°F (−15°C)</small></td><td>Polar or green hard wax</td></tr>
+<tr><td><b>Cold snow</b><br><small>5 to 19°F (−15 to −7°C)</small></td><td>Green or blue hard wax</td></tr>
+<tr><td><b>Cool snow</b><br><small>19 to 28°F (−7 to −2°C)</small></td><td>Blue or "blue extra" hard wax</td></tr>
+<tr><td><b>Near freezing</b><br><small>28 to 32°F (−2 to 0°C)</small></td><td>Violet hard wax</td></tr>
+<tr><td><b>New snow above freezing</b><br><small>above 32°F (0°C)</small></td><td>Red or yellow wet-snow hard wax</td></tr>
+<tr><td><b>Old, icy, crusty or wet granular snow</b><br><small>about 23°F (−5°C) and warmer</small></td><td>Klister</td></tr>
+</tbody></table></div>
+<p>These are typical bands, not a rule for every brand. Brands use different colors and ranges, so the temperature printed on the wax wins. Two examples:</p>
+<ul>
+<li><b>Toko Nordic GripWax</b> comes in three colors: Blue for about −30 to −7°C (−22 to 19°F), Red for about −10 to −2°C (14 to 28°F), and Yellow for about −2 to 0°C (28 to 32°F). [[SHOP:Toko Nordic grip wax]]</li>
+<li><b>Swix K22 Universal klister</b> is rated about −3 to +10°C (27 to 50°F), for wet, granular and refrozen snow. [[SHOP:Swix K22 universal klister]]</li>
+</ul>
+<h2>New snow or old snow</h2>
+<p>Fresh snow has sharp crystals that grip wax easily, so it takes a harder, colder wax. Old snow that has been packed, warmed or refrozen has rounded grains and needs a softer, warmer wax for the same temperature. Many grip waxes list two ranges, one for new snow and one for old. Icy tracks and corn snow usually need klister.</p>
+<h2>Finding the grip zone</h2>
+<p>The grip zone (kick zone) is the part of the base that stays off the snow when your weight is on both skis. To find it, stand on both skis on a hard, flat floor and have someone slide a sheet of paper under each foot. The paper slides freely through the zone; where it stops, the zone ends. Mark both ends on the sidewall. On most classic skis it runs from about your heel to roughly 30 to 60 cm (1 to 2 feet) ahead of it. Your shop can also mark it for you.</p>
+<h2>How to apply grip wax</h2>
+<ol>
+<li><b>Clean the zone</b> with wax remover if old wax is there, and let it dry.</li>
+<li><b>Lightly sand the zone</b> with fine sandpaper (about 100 to 150 grit) on new skis, so wax holds better. Do this once, not every time.</li>
+<li><b>Add a binder</b> on abrasive or icy tracks, ironed in thin and left to cool. It makes the grip wax last much longer.</li>
+<li><b>Crayon on a thin layer</b> of grip wax for the day's temperature, then <b>cork it smooth</b>.</li>
+<li><b>Build thin layers.</b> Three to six thin, corked layers grip better and last longer than one thick one.</li>
+<li><b>Test on snow</b> and adjust (below).</li>
+</ol>
+<h2>Applying klister</h2>
+<p>Klister is sticky, so warm the tube and apply short stripes in a ladder pattern on each side of the groove. Smooth it with a klister spatula or the heel of your hand, or with a little heat. Keep it thinner than you think, and stay inside the grip zone. If fresh, cold snow falls on an old klister track, a thin layer of hard wax corked over the klister keeps it from icing.</p>
+<h2>Slipping or icing? How to fix it</h2>
+<ul>
+<li><b>Skis slip back:</b> the wax is too cold and hard for the snow, or too thin. Add a layer one step warmer, add more layers, or lengthen the zone a little toward the tip.</li>
+<li><b>Skis stick, drag or ice up:</b> the wax is too warm and soft. Scrape it off and use a colder wax. Icing also happens when skis move between warm and cold snow, so cork the wax well and keep skis on the snow at stops.</li>
+<li><b>Grip wears off fast:</b> the track is abrasive. Use a binder under the grip wax next time.</li>
+</ul>
+<p>When in doubt, start one step colder. It's easy to add a warmer layer on the trail and hard to remove a warm one that's icing.</p>
+<h2>Glide wax for cross-country skis</h2>
+<p>Pick glide wax by snow temperature with the same chart as alpine skis: see the <a href="ski-wax-temperature-chart.html">ski wax temperature chart</a>. Iron, scrape and brush it as in <a href="how-to-wax-skis.html">how to wax skis</a>, keeping glide wax out of a classic ski's grip zone. Every wax we name is sold as fluoro-free; fluorinated waxes are banned in FIS racing. Check the package when you buy.</p>
 """)

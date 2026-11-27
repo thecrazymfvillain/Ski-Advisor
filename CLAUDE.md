@@ -28,7 +28,7 @@ the change and said to push. No pull requests or review needed.
 ## Build and preview
 
 ```bash
-python3 src/build.py                                  # writes all 816 pages to site/, plus netlify/lib/*.json
+python3 src/build.py                                  # writes all 817 pages to site/, plus netlify/lib/*.json
 python3 src/preview.py                                # http://localhost:8000
 ```
 
@@ -40,6 +40,8 @@ python3 src/preview.py                                # http://localhost:8000
 
 - `src/build.py`: all page templates and content: resorts, regions, Epic/Ikon pages, guides, About/Contact/
   Privacy, sitemap. Guides live in `GUIDES` (build.py), `src/guides_extra.py` and `src/guides_buy.py`.
+  `src/page-dates.json` records when each page's text last changed (sitemap `lastmod`, guide dates); the build
+  updates it, so commit it with `site/`.
 - `src/tool.js`: everything in the browser: wax and edge picks, weekend Saturday/Sunday toggle, search and
   Near me, Epic/Ikon filter, My mountains, share image, wax log, Weekend Wax Report signup, mobile menu.
   The wax bands (`BANDS`) must match `BANDS` in build.py.
