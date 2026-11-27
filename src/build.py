@@ -751,6 +751,14 @@ def mtn_art(seed):
             f'<polygon points="{ridge(150, 70, rnd.choice([4, 5, 6]))}" fill="#E8F0FC"/>'
             f'<polygon points="{ridge(196, 44, rnd.choice([3, 4]))}" fill="#FFFFFF"/></svg>')
 
+# Small white icons for the home hero's three points.
+_hp = lambda d: f'<svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">{d}</svg>'
+HP_ICONS = {
+    "wax": _hp('<path d="M10 13.5V5a2 2 0 1 1 4 0v8.5a4 4 0 1 1-4 0z"/><path d="M12 15.5v-5"/>'),
+    "edge": _hp('<path d="M4 20h16"/><path d="M4 20 17 6"/><path d="M10.5 20a6.5 6.5 0 0 0-1.9-4.6"/>'),
+    "bag": _hp('<path d="M5 8h14l-1.2 12H6.2z"/><path d="M9 8V6.5a3 3 0 0 1 6 0V8"/>'),
+}
+
 # Home hero: layered mountain ridges in front of the navy-to-blue sky (brand colors from the logo).
 HERO_MTNS = """<svg class="hero-mtns" viewBox="0 0 1440 360" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
   <path fill="#B9CCEE" d="M0 360V212L120 150L230 192L360 95L470 162L590 122L720 40L850 140L960 100L1080 172L1210 80L1330 150L1440 112V360Z"/>
@@ -806,9 +814,14 @@ def home(full):
   <div class="t-hero-in">
     <p class="t-tag">{ICON_SNOW}<span class="t-serif">Free wax &amp; tune advice for <span class="t-blue">{len(ALL)} ski areas</span></span></p>
     <h1 id="heroH">Today's ski wax<br>for your mountain</h1>
-    <p class="t-motto t-serif">Your mountain. Your snow. Your skis.</p>
-    <p class="t-hero-p">Pick your mountain and get the wax color and iron temperature for today, tomorrow or this weekend, plus edge settings and a step-by-step home tune. Free, no sign-up.</p>
+    <p class="t-lead">Wax and ski tuning info for <b>your mountain</b>, <b>your snow</b> and <b>your skis</b>.</p>
+    <ul class="hero-points">
+      <li><div class="hp-card"><span class="hp-ic">{HP_ICONS["wax"]}</span><span><b>Wax color and iron temp</b> for today, tomorrow or the weekend</span></div></li>
+      <li><div class="hp-card"><span class="hp-ic">{HP_ICONS["edge"]}</span><span><b>Edge angles and a home tune</b>, step by step</span></div></li>
+      <li><a class="hp-card" href="guides/index.html#buyH"><span class="hp-ic">{HP_ICONS["bag"]}</span><span><b>Tuning gear worth buying</b>: kits, irons and wax</span></a></li>
+    </ul>
     {hero_search()}
+    <p class="hero-hook">Is your wax right for today's snow?</p>
     <div class="hero-live"><span class="hero-live-l">Right now:</span>{"".join(f'<a href="resorts/{i}.html"><b>{A_BY[i]["name"].split(" ")[0]}</b><span class="wax-chip" data-home-wax="{i}"><i></i><span>Loading…</span></span></a>' for i in ("vail", "whistler", "killington"))}</div>
   </div>
 </section>

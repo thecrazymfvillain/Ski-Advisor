@@ -834,18 +834,29 @@ section.block .section-head h2,.home-sec h2{font-size:clamp(26px,3.4vw,36px)}
 @media (max-width:560px){.table-wrap.fit th,.table-wrap.fit td{padding:10px 8px}}
 
 /* Home hero: the old look's navy sky, mountains, heavy headline and red button, in the new layout. */
-.t-hero.t-hero-mtn{background:linear-gradient(180deg,#00174B 0%,#0A3486 45%,#2A63D2 80%,#5D8FE6 100%);overflow:hidden;padding-bottom:140px}
+.t-hero.t-hero-mtn{background:linear-gradient(180deg,#00174B 0%,#0A3486 45%,#2A63D2 80%,#5D8FE6 100%);overflow:hidden;padding-bottom:200px}
 .t-hero-mtn .t-hero-in{position:relative;z-index:1}
-.hero-mtns{position:absolute;left:0;right:0;bottom:0;width:100%;height:min(40vh,330px);z-index:0}
+.hero-mtns{position:absolute;left:0;right:0;bottom:0;width:100%;height:min(30vh,270px);z-index:0}
 .t-hero.t-hero-mtn h1{font-weight:800;font-size:clamp(40px,7.2vw,82px);line-height:1.02;letter-spacing:-.045em;text-wrap:balance}
-.t-motto{margin:-2px 0 0;font-size:clamp(19px,2.4vw,26px);color:rgba(255,255,255,.92)}
+.t-lead{margin:-2px 0 0;font-size:clamp(18px,2.3vw,23px);line-height:1.4;color:#FFFFFF;max-width:38rem;text-wrap:balance}
+.t-lead b{font-weight:700}
+.hero-points{list-style:none;margin:6px 0 4px;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;width:100%;max-width:860px;text-align:left}
+.hero-points li{display:flex}
+.hp-card{flex:1;display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.22);color:#FFFFFF;font-size:14.5px;line-height:1.35;text-decoration:none}
+a.hp-card:hover{background:rgba(255,255,255,.18)}
+a.hp-card b{text-decoration:underline;text-decoration-color:var(--brand-red);text-decoration-thickness:2px;text-underline-offset:3px}
+.hp-ic{flex:none;display:grid;place-items:center;width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.16)}
+.hero-hook{margin:6px 0 -4px;color:#FFFFFF;font-weight:700;font-size:clamp(17px,2vw,20px);background:rgba(0,23,75,.8);border-radius:999px;padding:6px 18px;position:relative;z-index:1}
+@media (max-width:760px){.hero-points{grid-template-columns:1fr;gap:8px;max-width:420px}.hp-card{padding:9px 12px}}
 .t-hero-mtn .t-ask .btn{background:var(--brand-red);border-color:var(--brand-red);font-weight:600}
-.hero-live{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:8px;font-size:14px}
+.hero-live{position:relative;z-index:1;display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:8px;font-size:14px}
 .hero-live-l{color:#FFFFFF;font-weight:600;background:rgba(0,23,75,.8);border-radius:999px;padding:7px 12px}
 .hero-live a{display:inline-flex;align-items:center;gap:8px;background:#FFFFFF;color:var(--ink);border-radius:999px;padding:6px 14px;text-decoration:none;box-shadow:0 2px 8px rgba(0,23,75,.15)}
 .hero-live a:hover{box-shadow:0 2px 10px rgba(0,23,75,.3)}
 .hero-live .wax-chip{border:0;padding:0;gap:6px;font-size:13.5px;font-weight:400}
 .hero-live .wax-chip i{width:12px;height:12px;border-radius:50%;background:var(--wax,var(--line));box-shadow:inset 0 0 0 1px rgba(0,0,0,.15)}
+.t-hero-mtn .t-tag{font-size:clamp(16px,1.9vw,19px);padding:10px 22px;gap:10px}
+.t-hero-mtn .t-tag svg{width:22px;height:22px}
 </style>
 <script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='{"token": "7effe80b68fa4bdd9944534b8a820936"}'></script>
 <script type="application/ld+json">[{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://theskiadvisor.com/"}, {"@type": "ListItem", "position": 2, "name": "Resorts", "item": "https://theskiadvisor.com/resorts/index.html"}, {"@type": "ListItem", "position": 3, "name": "Ontario", "item": "https://theskiadvisor.com/regions/ca-on.html"}, {"@type": "ListItem", "position": 4, "name": "Boler Mountain (London Ski Club)", "item": "https://theskiadvisor.com/resorts/boler-mountain-london-ski-club.html"}]}, {"@context": "https://schema.org", "@type": "SkiResort", "name": "Boler Mountain (London Ski Club)", "mainEntityOfPage": "https://theskiadvisor.com/resorts/boler-mountain-london-ski-club.html", "geo": {"@type": "GeoCoordinates", "latitude": 42.9447, "longitude": -81.3377, "elevation": 325}, "address": {"@type": "PostalAddress", "addressRegion": "Ontario", "addressCountry": "CA", "addressLocality": "London"}, "sameAs": ["https://www.bolermountain.com/"]}]</script>
