@@ -792,6 +792,10 @@ FAQ = [
  ("Are the waxes fluoro-free?", "Yes. Every wax we suggest is fluoro-free, including race waxes and top coats."),
 ]
 
+# AvantLink (REI and evo affiliate network) site-ownership check, on the home page only. Exactly as AvantLink
+# gave it: their checker looks for this tag in the page. Remove once AvantLink confirms the site.
+AVANTLINK_VERIFY = '<script type="text/javascript" src="http://classic.avantlink.com/affiliate_app_confirm.php?mode=js&authResponse=918d765b3f6bcf4bb353c23694cc8047a4e62a87"></script>'
+
 def home(full):
     """Home page in the Buildify theme's landing layout, with the site's real content."""
     cards = "".join(f"""<a class="resort-card t-card" href="resorts/{x['id']}.html">
@@ -871,6 +875,7 @@ def home(full):
 <div class="t-cta-wrap">{report_box(0)}</div>
 {footer(0)}
 <script src="assets/tool.js"></script>"""
+    if full: body += "\n" + AVANTLINK_VERIFY
     return doc(full, h, body)
 
 TOOL_FRAG = open(os.path.join(SRC, "tool-fragment.html")).read()
